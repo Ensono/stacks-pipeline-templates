@@ -1,0 +1,23 @@
+parameters:
+  # Basic Config
+  source_path: ''
+  target_path: ''
+  publish_path: ''
+  artefact_name: ''
+
+steps:
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '${{ parameters.source_path }}'
+    includeRootFolder: false
+    archiveType: 'tar'
+    archiveFile: '${{ parameters.target_path }}'
+    replaceExistingArchive: true
+
+# Publish Build Artifacts
+# Publish build artifacts to Azure Pipelines/TFS or a file share
+- task: PublishBuildArtifacts@1
+  displayName: Publish_Build_Artifacts
+  inputs:
+    pathtoPublish: '${{ parameters.publish_path }}'
+    artifactName: '${{ parameters.artefact_name }}'
