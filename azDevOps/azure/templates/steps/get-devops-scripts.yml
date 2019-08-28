@@ -1,3 +1,6 @@
+parameters:
+  destinationFolder: '$(Pipeline.Workspace)/DevOps'
+
 steps:
     - download: current
       displayName: 'Download: DevOps Artefacts'
@@ -6,5 +9,5 @@ steps:
     - task: ExtractFiles@1
       inputs:
         archiveFilePatterns: '$(Pipeline.Workspace)/DevOps/*.tar.gz' 
-        destinationFolder: '$(Pipeline.Workspace)/DevOps'
+        destinationFolder: '${{ parameters.destinationFolder }}'
       displayName: 'Extract: DevOps Artefacts'
