@@ -1,0 +1,23 @@
+parameters:
+  # Upload Config
+  source_file: ''
+  target_rg: ''
+  target_account: ''
+  target_container: ''
+  target_file: ''
+
+steps:
+s- task: Bash@3
+  displayName: 'Upload: File to Blob Storage'
+  inputs:
+    filePath: 'deploy/scripts/DevOps/Azure/upload-azstorage-blob.sh'
+    # rg, local, storage account, container, target
+    arguments: '$(uploadstoragerg) $(Build.ArtifactStagingDirectory)/$(packagename) $(uploadstorageaccount) $(uploadstoragecontainer) $(packagename)'
+
+- task: Bash@3
+  displayName: 'Get: SAS URI for File on Blob Storage'
+  inputs:
+    targetType: 'filePath'
+    filePath: deploy/scripts/DevOps/Azure/get-azstorage-sasurl.sh
+    arguments: $(uploadstoragerg) $(uploadstorageaccount) $(uploadstoragecontainer) $(packagename)
+    failOnStderr: true 
