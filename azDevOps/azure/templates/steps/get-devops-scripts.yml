@@ -1,17 +1,10 @@
-parameters:
-  # Basic Config
-  devops_artefact_name: ''
-  devops_filename: ''
-  devops_localdownloadpath: ''
-  devops_localextractpath: ''
-
 steps:
     - download: current
       displayName: 'Download: DevOps Artefacts'
-      artifact: ${{ parameters.devops_artefact_name }} # Pretty sure this needs to be explicit! 
+      artifact: DevOps 
 
     - task: ExtractFiles@1
       inputs:
-        archiveFilePatterns: '${{ parameters.devops_localdownloadpath }}/${{ parameters.devops_filename }}' 
-        destinationFolder: '${{ parameters.devops_localextractpath }}/${{ parameters.devops_artefact_name }}'
+        archiveFilePatterns: '$(Pipeline.Workspace)/DevOps' 
+        destinationFolder: '$(Pipeline.Workspace)/DevOps'
       displayName: 'Extract: DevOps Artefacts'
