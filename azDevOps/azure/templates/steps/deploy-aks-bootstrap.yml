@@ -1,0 +1,74 @@
+parameters:
+  # Basic Config
+  aks_cluster_name: ''
+  aks_cluster_rg: ''
+  devops_package_path: ''
+  # Ingress Config
+  IngressNamespace: ''
+  # DNS Config
+  DefaultDNSZone: ''
+  # SSL
+  DefaultCertImportfromBlob: true
+  BlobCertTLSkeyfile: ''
+  BlobCertTLScrtfile: ''
+  BlobCertCAfile: ''
+  DefaultCertSecretNameSpace: ''
+  DefaultCertSecretName: ''
+  BlobCertRG: ''
+  BlobCertStorageAccount: ''
+  BlobCertStorageContainer: ''
+
+steps:
+- task: Bash@3
+  displayName: 'Deploy: Helm2'
+  inputs:
+    targetType: 'filePath'
+    filePath: ${{ parameters.devops_package_path }}/Bootstrap/helm/helm-bootstrap.sh
+    arguments: ${{ parameters.aks_cluster_name }}
+    workingDirectory: ${{ parameters.devops_package_path }}/Bootstrap/helm
+  
+- task: Bash@3
+  displayName: 'Deploy: Nginx Ingress via Helm2'
+  inputs:
+    targetType: 'filePath'
+    filePath: ${{ parameters.devops_package_path }}/Bootstrap/ingress/helm-install-ingress.sh
+    arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.SSL_DefaultDNSZone }} ${{ parameters.IngressNamespace }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
+    workingDirectory: ${{ parameters.devops_package_path }}/Bootstrap/ingress
+
+- task: Bash@3
+  inputs:
+    targetType: 'filePath'
+    filePath: ${{ parameters.devops_package_path }}/Azure/get-ssl-cert-files-from-blob.sh
+    arguments: $(Build.BinariesDirectory)
+    workingDirectory: $(Build.BinariesDirectory)
+  displayName: 'Deploy: Default SSL Certificate Files'
+  condition: and(succeeded(), ${{ parameters.DefaultCertImportfromBlob }})
+  env:
+    BlobCertTLSkeyfile: ${{ parameters.BlobCertTLSkeyfile }}
+    BlobCertTLScrtfile: ${{ parameters.BlobCertTLScrtfile }}
+    BlobCertCAfile: ${{ parameters.BlobCertCAfile }}
+    BlobCertRG: ${{ parameters.BlobCertRG }}
+    BlobCertStorageAccount: ${{ parameters.BlobCertStorageAccount }}
+    BlobCertStorageContainer: ${{ parameters.BlobCertStorageContainer }}
+
+- task: Bash@3
+  inputs:
+    targetType: 'filePath'
+    filePath: ${{ parameters.devops_package_path }}/Kubectl/apply-default-ssl-cert.sh
+    arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.BlobCertTLSkeyfile }} ${{ parameters.BlobCertTLScrtfile }} ${{ parameters.BlobCertCAfile }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
+    workingDirectory: $(Build.BinariesDirectory)/SSL
+  displayName: Create Default SSL Certificate Secret
+  condition: and(succeeded(), ${{ parameters.DefaultCertImportfromBlob }})
+
+- task: Bash@3
+  displayName: 'Deploy: External DNS integration'
+  inputs:
+    targetType: 'filePath'
+    filePath: ${{ parameters.devops_package_path }}/Bootstrap/external-dns/external-dns.sh
+    arguments: ${{ parameters.aks_cluster_rg }} ${{ parameters.aks_cluster_name }} ${{ parameters.aks_cluster_rg }}
+    workingDirectory: ${{ parameters.devops_package_path }}/Bootstrap/external-dns/ 
+
+- bash: | 
+    kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/master/deploy/gatekeeper.yaml 
+  displayName: 'Deploy: Gatekeeper'
+# Example Gatekeeper policies  constraint-templates and constraints can be found in $(Pipeline.Workspace)/policies/

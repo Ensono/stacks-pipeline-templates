@@ -1,0 +1,118 @@
+parameters:
+  # Terraform Basic Config
+  terraform_artefact_path: ''
+  terraform_output_artefact: 'tfoutputs'
+  #  Terraform State Config
+  terraform_state_rg: ''
+  terraform_state_storage: ''
+  terraform_state_container: ''
+  terraform_state_key: ''
+  terraform_state_workspace: ''
+  # Global Config
+  company: 'amido'
+  project: 'stacks' 
+  environment: ''
+  # Azure config
+  location: 'uksouth'
+  tags: ''
+  # DNS Config
+  DNS_create: ''
+  DNS_suffix: ''
+  DefaultDNSZone: ''
+  # SSL
+  Cluster_version: 1.14.5
+  Cluster_nodeCount: 1
+  Cluster_spn_create: false
+  # Terraform Backend & Azure Credential config comes via Variable Group
+  # that must be inherited into this step! 
+
+steps:
+- bash: |
+    terraform version
+    terraform init \
+    -backend-config="key=${{ parameters.terraform_state_key }}" \
+    -backend-config="storage_account_name=${{ parameters.terraform_state_storage }}" \
+    -backend-config="resource_group_name=${{ parameters.terraform_state_rg }}" \
+    -backend-config="container_name=${{ parameters.terraform_state_container }}" \
+    -backend-config="subscription_id=$(azure_subscription_id)" \
+    -backend-config="tenant_id=$(azure_tenant_id)" \
+    -backend-config="client_id=$(azure_client_id)" \
+    -backend-config="client_secret=$(azure_client_secret)"
+  displayName: 'Terraform: Initialise'
+  workingDirectory: ${{ parameters.terraform_artefact_path }}
+
+
+- bash: | 
+    terraform workspace select ${{ parameters.terraform_state_workspace }} || terraform workspace new ${{ parameters.terraform_state_workspace }}
+  displayName: 'Terraform: Select Workspace'
+  workingDirectory: ${{ parameters.terraform_artefact_path }}
+
+- bash: terraform plan -input=false -out=tfplan
+  displayName: 'Terraform: Plan'
+  workingDirectory: ${{ parameters.terraform_artefact_path }}
+  env:
+    # Authentication (this comes from the AzureDevOps library as secured variables)
+    ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
+    ARM_CLIENT_ID: $(azure_client_id)
+    ARM_CLIENT_SECRET: $(azure_client_secret)
+    ARM_TENANT_ID: $(azure_tenant_id)
+    # Terraform 
+    TF_VAR_name_company: ${{ parameters.company }}
+    TF_VAR_name_platform: ${{ parameters.project }}   
+    TF_VAR_name_environment: ${{ parameters.environment }}
+    # DNS
+    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }} 
+    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }} 
+    # Resource Group
+    TF_VAR_resource_group_location_env: ${{ parameters.location }} 
+    TF_VAR_resource_group_tags: ${{ parameters.tags }}
+    # Kubernetes Cluster Tech Info.
+    TF_VAR_cluster_version: ${{ parameters.Cluster_version }}
+    TF_VAR_cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
+    # SPN configuration for Kubernetes Cluster
+    TF_VAR_create_aksspn: ${{ parameters.Cluster_spn_create }}
+    TF_VAR_cluster_spn_clientid: $(cluster_spn_clientid)
+    TF_VAR_cluster_spn_objectid: $(cluster_spn_objectid)
+    TF_VAR_cluster_spn_clientsecret: $(cluster_spn_clientsecret)
+
+- bash: terraform apply tfplan
+  displayName: 'Terraform: Apply'
+  workingDirectory: ${{ parameters.terraform_artefact_path }}
+  env:
+    # Authentication
+    ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
+    ARM_CLIENT_ID: $(azure_client_id)
+    ARM_CLIENT_SECRET: $(azure_client_secret)
+    ARM_TENANT_ID: $(azure_tenant_id)
+    # Terraform 
+    TF_VAR_name_company: ${{ parameters.company }}
+    TF_VAR_name_platform: ${{ parameters.project }}   
+    TF_VAR_name_environment: ${{ parameters.env }}
+    # DNS
+    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }} 
+    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }} 
+    # Resource Group
+    TF_VAR_resource_group_location_env: ${{ parameters.location }} 
+    TF_VAR_resource_group_tags: ${{ parameters.tags }}
+    # Kubernetes Cluster Tech Info.
+    TF_VAR_cluster_version: ${{ parameters.Cluster_version }}
+    TF_VAR_cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
+    # SPN configuration for Kubernetes Cluster
+    TF_VAR_create_aksspn: ${{ parameters.Cluster_spn_create }}
+    # If the above is set to false, the following vars must be populated!
+    TF_VAR_cluster_spn_clientid: $(cluster_spn_clientid)
+    TF_VAR_cluster_spn_objectid: $(cluster_spn_objectid)
+    TF_VAR_cluster_spn_clientsecret: $(cluster_spn_clientsecret)
+
+- bash: |
+    terraform output AKS-Cluster-Name
+    AKS_CLUSTER_NAME=$(terraform output AKS-Cluster-Name)
+    echo Setting Cluster Name to $AKS_CLUSTER_NAME
+    echo "##vso[task.setvariable variable=AKS_CLUSTER_NAME;isOutput=true]$AKS_CLUSTER_NAME"
+    terraform output Resource-Group-Name
+    AKS_CLUSTER_RG=$(terraform output Resource-Group-Name)              
+    echo Setting RG to $AKS_CLUSTER_RG
+    echo "##vso[task.setvariable variable=AKS_CLUSTER_RG;isOutput=true]$AKS_CLUSTER_RG"                        
+  displayName: 'Terraform: Write Outputs to Variables'
+  workingDirectory: ${{ parameters.terraform_artefact_path }}    
+  name: ${{ parameters.terraform_output_artefact }}
