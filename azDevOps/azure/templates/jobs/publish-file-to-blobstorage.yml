@@ -7,7 +7,7 @@ parameters:
   target_file: ''
 
 steps:
-s- task: Bash@3
+- task: Bash@3
   displayName: 'Upload: File to Blob Storage'
   inputs:
     filePath: 'deploy/scripts/DevOps/Azure/upload-azstorage-blob.sh'
