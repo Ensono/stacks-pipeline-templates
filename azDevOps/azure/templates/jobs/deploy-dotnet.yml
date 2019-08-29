@@ -24,7 +24,10 @@ parameters:
 
 
 jobs:
-- deployment: ${{ parameters.environment }} 
+- deployment: ${{ parameters.environment }}
+  variables:
+  - name: BaseURL
+    value: ${{ parameters.functional_test_baseurl }}
   pool:
     vmImage: 'ubuntu-latest'
   environment: devx
@@ -114,9 +117,6 @@ jobs:
 ## Functional Testing
         - ${{ if eq(parameters.functional_test, true) }}:
           - task: DotNetCoreCLI@2
-            variables:
-            - name: BaseURL
-              value: ${{ parameters.functional_test_baseurl }}
             displayName: 'Test: Run Functional Tests'
             inputs:
               command: test
