@@ -111,57 +111,57 @@ jobs:
             failOnStderr: true
 
 ## Functional Testing
-      - ${{ if eq(parameters.functional_test, true) }}:
-        - task: DotNetCoreCLI@2
-          displayName: 'Test: Run Functional Tests'
-          inputs:
-            command: test
-            projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
-            arguments: '-v n'
-            testRunTitle: 'Functional Tests'
-
-        - task: Bash@3
-          displayName: 'Upload: Test Results'
-          inputs:
-            targetType: 'filePath'
-            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
-            arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportSourcePath) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
-
-        - task: Bash@3
-          displayName: 'Retrieve URL: Test Results'
-          inputs:
-            targetType: 'filePath'
-            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-            arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+        - ${{ if eq(parameters.functional_test, true) }}:
+          - task: DotNetCoreCLI@2
+            displayName: 'Test: Run Functional Tests'
+            inputs:
+              command: test
+              projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+              arguments: '-v n'
+              testRunTitle: 'Functional Tests'
+  
+          - task: Bash@3
+            displayName: 'Upload: Test Results'
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+              arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportSourcePath) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+  
+          - task: Bash@3
+            displayName: 'Retrieve URL: Test Results'
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+              arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
 
 ## Smoke Testing
 
 ## Performance Testing
-      - ${{ if eq(parameters.performance_test, true) }}:
-        - bash: | 
-            echo "-Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)"
-            mvn clean gatling:test -Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
-          workingDirectory: '$(Test.PerformanceTestProjectSourcePath)'
-          displayName: 'Test: Run Performance Tests'
+        - ${{ if eq(parameters.performance_test, true) }}:
+          - bash: | 
+              echo "-Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)"
+              mvn clean gatling:test -Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
+            workingDirectory: '$(Test.PerformanceTestProjectSourcePath)'
+            displayName: 'Test: Run Performance Tests'
 
 ## Upload Release Notes Artefact
-      - ${{ if eq(parameters.releasenote, true) }}:
-        - download: current
-          displayName: 'Download: Release Notes Artefact'
-          artifact: releasenotes
-          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
-        - task: Bash@3
-          displayName: 'Upload: Release Notes'
-          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-          inputs:
-            targetType: 'filePath'
-            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
-            # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
-            arguments: $(ReleaseNote.StorageAccountRG) $(Pipeline.Workspace)/releasenotes/release.json $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)  
-        - task: Bash@3
-          displayName: 'Retrieve URL: Release Notes'
-          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-          inputs:
-            targetType: 'filePath'
-            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-            arguments: $(ReleaseNote.StorageAccountRG) $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)
+        - ${{ if eq(parameters.releasenote, true) }}:
+          - download: current
+            displayName: 'Download: Release Notes Artefact'
+            artifact: releasenotes
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+          - task: Bash@3
+            displayName: 'Upload: Release Notes'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+              # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
+              arguments: $(ReleaseNote.StorageAccountRG) $(Pipeline.Workspace)/releasenotes/release.json $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)  
+          - task: Bash@3
+            displayName: 'Retrieve URL: Release Notes'
+            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+              arguments: $(ReleaseNote.StorageAccountRG) $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)
