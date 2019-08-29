@@ -1,5 +1,6 @@
 parameters:
   devops_artefact_name: ''
+  dependsOn: 'GetPackage'
   # Docker Config
   docker_workdir: ''
   docker_imagename: ''
@@ -27,9 +28,10 @@ parameters:
   releasenote_github_project: ''
   releasenote_output: ''
   releasenote_failonmissingPR: ''
-
+  
 jobs:
 - job: BuildDotNet
+  dependsOn: ${{ parameters.dependsOn }}
   pool:
     vmImage: 'ubuntu-latest'
   continueOnError: false
