@@ -12,7 +12,6 @@ steps:
   displayName: 'Upload: File to Blob Storage'
   inputs:
     filePath: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh'
-    # rg, local, storage account, container, target
     arguments: '${{ parameters.target_rg }} ${{ parameters.source_file }} ${{ parameters.target_account }} ${{ parameters.target_container }} ${{ parameters.target_file }}'
 
 - task: Bash@3
