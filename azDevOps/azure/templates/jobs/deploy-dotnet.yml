@@ -23,7 +23,7 @@ parameters:
 
 
 jobs:
-- deployment: $ {{ parameters.environment }} # This should be made into a meta-template when it's available! 
+- deployment: ${{ parameters.environment }} 
   pool:
     vmImage: 'ubuntu-latest'
   environment: devx
