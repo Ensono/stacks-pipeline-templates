@@ -1,6 +1,6 @@
 parameters:
   # Basic Config
-  devops_artefact_name: ''
+  devops_artefact_name: 'DevOps'
   # Kustomize Config
   Kubernetes_KustomizeBinaryPath: '$(System.DefaultWorkingDirectory)/kustomize'
   Kubernetes_KustomizeDownloadPath: 'https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64' 
