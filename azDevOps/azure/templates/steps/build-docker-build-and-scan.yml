@@ -19,7 +19,7 @@ steps:
     displayName: 'Vulnerability Scan'
     inputs:
       targetType: 'filePath'
-      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Docker/new-image-scan.sh
+      filePath: $(Pipeline.Workspace)/DevOps/Docker/new-image-scan.sh
       arguments: ${{ parameters.docker_imagename }} ${{ parameters.docker_imagetag }}
       workingDirectory: ${{ parameters.vulnerability_workdir }}
     continueOnError: true
