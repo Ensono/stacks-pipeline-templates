@@ -1,0 +1,36 @@
+parameters:
+  docker_workdir: ''
+  docker_imagename: ''
+  docker_imagetag: '' 
+  docker_containerregistryname: ''
+  vulnerability_scan: ''
+  vulnerability_workdir: ''
+  devops_artefact_name: ''
+
+variables: 
+- name: $(Docker.ContainerRegistry)
+  value: ${{ parameters.docker_containerregistryname }}.azurecr.io
+steps:
+- bash: |
+    docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}:latest
+  displayName: Build Container Image 
+  workingDirectory: ${{ parameters.docker_workdir }}
+
+# Vulnerability Scanning
+- ${{ if eq(parameters.vulnerability_scan, true) }}:
+  - task: Bash@3
+    displayName: 'Vulnerability Scan'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/{{ parameters.devops_artefact_name }}/Docker/new-image-scan.sh
+      arguments: ${{ parameters.docker_imagename }} ${{ parameters.docker_imagetag }}
+      workingDirectory: ${{ parameters.vulnerability_workdir }}
+    continueOnError: true
+
+# Vulnerability Scanning
+
+- bash: |
+    az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
+    docker push $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}
+  displayName: Push Container Image to Azure Container Registry
+  workingDirectory: ${{ parameters.docker_workdir }
