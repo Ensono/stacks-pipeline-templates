@@ -30,4 +30,4 @@ steps:
     az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
     docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}
   displayName: Push Container Image to Azure Container Registry
-  workingDirectory: ${{ parameters.docker_workdir }
+  workingDirectory: ${{ parameters.docker_workdir }}
