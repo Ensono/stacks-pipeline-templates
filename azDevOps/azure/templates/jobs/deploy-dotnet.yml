@@ -1,0 +1,167 @@
+parameters:
+  devops_artefact_name: ''
+  environment: ''
+  build_file: ''
+  build_artefact: ''
+  functional_test: ''
+  functional_test_artefact: ''
+  kubernetes_clusterrg: ''
+  kubernetes_clustername: ''
+  kubernetes_kustomize_filepath: ''
+  cosmosdb_secret: ''
+  cosmosdb_accountName: ''
+  appinsights_enabled: ''
+  appinsights_instrumentationkey: ''
+  performance_test: ''
+  releasenote: ''
+  releasenote_artefact: ''
+  releasenote_storageaccountrg: ''
+  releasenote_storageaccountname: ''
+  releasenote_storageaccountcontainer: ''
+  releasenote_sourcefile: ''
+  releasenote_targetfile: ''
+
+
+jobs:
+- deployment: $ {{ parameters.environment }} # This should be made into a meta-template when it's available! 
+  pool:
+    vmImage: 'ubuntu-latest'
+  environment: devx
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+    ## Prerequisites
+        - ${{ if eq(parameters.build_file, true) }}:
+          - download: current
+            displayName: 'Download: Build Artefacts'
+            artifact: '${{ parameters.build_artefact }}'
+
+        - ${{ if eq(parameters.functional_test, true) }}:
+          - download: current
+            displayName: 'Download: Test Artefacts'
+            artifact: '${{ parameters.functional_test_artefact }}'
+        
+        - template: ../steps/build-consume-devops.yml@templates
+
+        - template: ../steps/login-services.yml
+          parameters:   
+            # Azure
+            login_azure: true
+            azure_tenant_id: '$(azure_tenant_id)'
+            azure_subscription_id: '$(azure_subscription_id)'
+            azure_client_id: '$(azure_client_id)'
+            azure_client_secret: '$(azure_client_secret)'
+            # Kubernetes
+            login_kubernetes: true
+            aks_rg: '${{ parameters.kubernetes_clusterrg }}'
+            aks_clustername: '${{ parameters.kubernetes_clustername }}' 
+            devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+
+    ## Mutation
+        - task: Bash@3
+          displayName:  'Mutate: Annotate Version Information'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kustomize/kustomize-annotate-version.sh
+            arguments: $(Kubernetes.KustomizeBinaryPath) $(Docker.ImageTag)
+            workingDirectory: $(Pipeline.Workspace)/build/base
+            failOnStderr: true 
+
+    # This step writes to cosmosDB.key and cosmosDB.endoint for consumption later in the pipeline
+        - ${{ if eq(parameters.cosmosdb_secret, true) }}:
+          - task: Bash@3
+            displayName: 'Get: CosmosDB Key and Endpoint'
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
+              arguments: ${{ parameters.cosmosdb_accountName}}
+
+        - task: Bash@3
+          displayName:  'Mutate: Secrets from Environment Vars'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kubectl/inject-secrets-from-env-var.sh
+            arguments: $(Pipeline.Workspace)/build/${{ parameters.kubernetes_kustomize_filepath }}/secrets
+            failOnStderr: true 
+          env:
+            # Conditionally expose this env-var if appinsights_enabled is true
+            ${{ if eq(parameters.appinsights_enabled, true) }}:
+              appinsights_instrumentationkey: ${{ parameters.appinsights_instrumentationkey }}
+            # Conditionally expose this env-var if cosmosDB_secret is true
+            ${{ if eq(parameters.cosmosdb_secret, true) }}:
+              cosmosdb_key: $(CosmosDB.key) # Remember this is pulled from the step above, it's dynamic and not a parameter.
+
+      # This step updates the image definition inside the deployment manifest
+        - bash: |
+           echo "Setting image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
+           $(Kubernetes.KustomizeBinaryPath) edit set image $(Docker.ImageName)=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
+          workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
+          displayName: 'Mutate: Set Docker Image Version'
+          failOnStderr: true 
+
+## Deployment
+        - task: Bash@3
+          displayName: 'Deploy: Kubectl Apply with Kustomize'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kubectl/apply-with-kustomize.sh
+            arguments: ./${{ parameters.kubernetes_kustomize_filepath }}
+            workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}
+            failOnStderr: true
+
+## Functional Testing
+      - ${{ if eq(parameters.functional_test, true) }}:
+        - task: DotNetCoreCLI@2
+          displayName: 'Test: Run Functional Tests'
+          inputs:
+            command: test
+            projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+            arguments: '-v n'
+            testRunTitle: 'Functional Tests'
+
+        - task: Bash@3
+          displayName: 'Upload: Test Results'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+            arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportSourcePath) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+
+        - task: Bash@3
+          displayName: 'Retrieve URL: Test Results'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+            arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+
+## Smoke Testing
+
+## Performance Testing
+      - ${{ if eq(parameters.performance_test, true) }}:
+        - bash: | 
+            echo "-Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)"
+            mvn clean gatling:test -Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
+          workingDirectory: '$(Test.PerformanceTestProjectSourcePath)'
+          displayName: 'Test: Run Performance Tests'
+
+## Upload Release Notes Artefact
+      - ${{ if eq(parameters.releasenote, true) }}:
+        - download: current
+          displayName: 'Download: Release Notes Artefact'
+          artifact: releasenotes
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+        - task: Bash@3
+          displayName: 'Upload: Release Notes'
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+            # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
+            arguments: $(ReleaseNote.StorageAccountRG) $(Pipeline.Workspace)/releasenotes/release.json $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)  
+        - task: Bash@3
+          displayName: 'Retrieve URL: Release Notes'
+          condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+            arguments: $(ReleaseNote.StorageAccountRG) $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)

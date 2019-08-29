@@ -1,0 +1,22 @@
+parameters:
+  devops_artefact_name: ''
+  source_registry: ''
+  destination_registry: ''
+  docker_imagename: ''
+  docker_imagetag: ''
+  
+jobs:
+- job: PromoteImage
+  pool:
+    vmImage: 'ubuntu-latest'
+  continueOnError: False
+  steps:
+
+        - template: ../steps/build-consume-devops.yml@templates
+
+        - task: Bash@3
+          displayName: 'Promote: Docker Image'
+          inputs:
+            targetType: 'filePath'
+            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/promote-acr-image.sh
+            arguments:  $(azure_tenant_id) $(azure_subscription_id) $(azure_client_id) $(azure_client_secret) ${{ parameters.source_registry }} ${{ parameters.destination_registry }} ${{ parameters.docker_imagename }} ${{ parameters.docker_imagetag }}

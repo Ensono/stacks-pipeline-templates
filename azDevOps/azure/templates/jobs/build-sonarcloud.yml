@@ -1,0 +1,38 @@
+parameters:
+  Sonar_serviceConnection: ''
+  Sonar_organization: ''
+  Sonar_scannerMode: ''
+  Sonar_projectKey: ''
+  Sonar_projectName: ''
+  Sonar_projectVersion: ''
+  dotnet_build_path: ''
+
+jobs:
+- job: SonarCloud
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: ${{ parameters.Sonar_serviceConnection }}
+      organization: ${{ parameters.Sonar_organization }}
+      scannerMode: ${{ parameters.Sonar_scannerMode }}
+      projectKey: ${{ parameters.Sonar_projectKey }}
+      projectName: ${{ parameters.Sonar_projectName }}
+      projectVersion: ${{ parameters.Sonar_projectVersion }}
+    displayName: 'SonarCloud: Prepare for Analysis'
+    
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'build'
+      workingDirectory: ${{ parameters.dotnet_build_path }}
+
+  - task: SonarCloudAnalyze@1
+    displayName: 'SonarCloud: Analysis'  
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
+    displayName: 'SonarCloud: Publish'
