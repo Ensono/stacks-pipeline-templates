@@ -5,6 +5,7 @@ parameters:
   build_artefact: ''
   functional_test: ''
   functional_test_artefact: ''
+  functional_test_baseurl: ''
   kubernetes_clusterrg: ''
   kubernetes_clustername: ''
   kubernetes_kustomize_filepath: ''
@@ -113,6 +114,9 @@ jobs:
 ## Functional Testing
         - ${{ if eq(parameters.functional_test, true) }}:
           - task: DotNetCoreCLI@2
+            variables:
+            - name: BaseURL
+              value: ${{ parameters.functional_test_baseurl }}
             displayName: 'Test: Run Functional Tests'
             inputs:
               command: test
@@ -136,11 +140,14 @@ jobs:
 
 ## Smoke Testing
 
+        ## TODO: !!!
+
+
 ## Performance Testing
         - ${{ if eq(parameters.performance_test, true) }}:
           - bash: | 
-              echo "-Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)"
-              mvn clean gatling:test -Denv=$(Release.Environment) -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
+              echo "-Denv=${{ parameters.environment }} -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)"
+              mvn clean gatling:test -Denv=${{ parameters.environment }} -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
             workingDirectory: '$(Test.PerformanceTestProjectSourcePath)'
             displayName: 'Test: Run Performance Tests'
 
@@ -150,6 +157,7 @@ jobs:
             displayName: 'Download: Release Notes Artefact'
             artifact: releasenotes
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
+
           - task: Bash@3
             displayName: 'Upload: Release Notes'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
@@ -158,6 +166,7 @@ jobs:
               filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
               # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
               arguments: $(ReleaseNote.StorageAccountRG) $(Pipeline.Workspace)/releasenotes/release.json $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)  
+
           - task: Bash@3
             displayName: 'Retrieve URL: Release Notes'
             condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

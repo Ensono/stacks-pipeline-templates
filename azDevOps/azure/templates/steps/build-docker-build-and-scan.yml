@@ -5,7 +5,7 @@ parameters:
   docker_containerregistryname: ''
   vulnerability_scan: ''
   vulnerability_workdir: ''
-  devops_artefact_name: ''
+  devops_artefact_name: 'DevOps'
 
 steps:
 - bash: |
