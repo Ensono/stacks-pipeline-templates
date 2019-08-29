@@ -7,12 +7,9 @@ parameters:
   vulnerability_workdir: ''
   devops_artefact_name: ''
 
-variables: 
-- name: $(Docker.ContainerRegistry)
-  value: ${{ parameters.docker_containerregistryname }}.azurecr.io
 steps:
 - bash: |
-    docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}:latest
+    docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
   displayName: Build Container Image 
   workingDirectory: ${{ parameters.docker_workdir }}
 
@@ -31,6 +28,6 @@ steps:
 
 - bash: |
     az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
-    docker push $(Docker.ContainerRegistry)/${{ parameters.docker_imagename }}
+    docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}
   displayName: Push Container Image to Azure Container Registry
   workingDirectory: ${{ parameters.docker_workdir }
