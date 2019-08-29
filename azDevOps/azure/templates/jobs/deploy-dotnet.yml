@@ -21,16 +21,17 @@ parameters:
   releasenote_storageaccountcontainer: ''
   releasenote_sourcefile: ''
   releasenote_targetfile: ''
-
+  dependsOn: ''
 
 jobs:
 - deployment: ${{ parameters.environment }}
+  dependsOn: ${{ parameters.dependsOn }}
   variables:
   - name: BaseURL
     value: ${{ parameters.functional_test_baseurl }}
   pool:
     vmImage: 'ubuntu-latest'
-  environment: devx
+  environment: ${{ parameters.environment }}
   strategy:
     runOnce:
       deploy:
