@@ -12,7 +12,7 @@ jobs:
   continueOnError: False
   steps:
 
-        - template: ../steps/build-consume-devops.yml@templates
+        - template: ../steps/build-consume-devops.yml
 
         - task: Bash@3
           displayName: 'Promote: Docker Image'
