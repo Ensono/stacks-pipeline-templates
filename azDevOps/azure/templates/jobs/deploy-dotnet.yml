@@ -42,7 +42,7 @@ jobs:
             displayName: 'Download: Test Artefacts'
             artifact: '${{ parameters.functional_test_artefact }}'
         
-        - template: ../steps/build-consume-devops.yml@templates
+        - template: ../steps/build-consume-devops.yml
 
         - template: ../steps/login-services.yml
           parameters:   
