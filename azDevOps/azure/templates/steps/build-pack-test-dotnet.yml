@@ -1,14 +1,24 @@
 parameters:
   test_path: ''
   package_path: ''
-
+  package_feed: ''
 # Test
+
 steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '${{ parameters.package_path }}**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '${{ parameters.package_feed }}'
+    includeNuGetOrg: true
+
 - task: DotNetCoreCLI@2
   displayName: 'Test: Unit Tests'
   inputs:
     command: 'test'
-    projects: '$(Package.Path).Tests/*.csproj'
+    projects: '${{ parameters.test_path }}/*.csproj'
     failOnStderr: true 
 
 # Pack NuGet packages.
@@ -19,4 +29,4 @@ steps:
     configuration: 'release'
     versioningScheme: byEnvVar
     versionEnvVar: Build.BuildNumber
-    packagesToPack: '$(Package.Path)/*.csproj'
+    packagesToPack: '${{ parameters.package_path }}/*.csproj'
