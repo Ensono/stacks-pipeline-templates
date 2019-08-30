@@ -14,7 +14,7 @@ parameters:
   cosmosdb_account: ''
 
 jobs:
-- template: azDevOps/azure/templates/jobs/publish-blob-as-artefact.yml@templates
+- template: ../jobs/publish-blob-as-artefact.yml
   parameters: 
     Package_RG: $(DevOps.RG)
     Package_storageAccount: $(DevOps.storageAccount) 
