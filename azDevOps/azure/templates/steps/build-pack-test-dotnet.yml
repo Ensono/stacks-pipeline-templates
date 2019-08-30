@@ -12,6 +12,7 @@ steps:
     projects: '${{ parameters.package_path }}**/*.csproj'
     feedsToUse: 'select'
     vstsFeed: '${{ parameters.package_feed }}'
+    arguments: '--no-restore'
     includeNuGetOrg: true
 
 - task: DotNetCoreCLI@2
@@ -27,6 +28,7 @@ steps:
   inputs:
     command: 'pack'
     configuration: 'release'
+    arguments: '--no-restore'
     versioningScheme: byEnvVar
     versionEnvVar: Build.BuildNumber
     packagesToPack: '${{ parameters.package_path }}/*.csproj'
