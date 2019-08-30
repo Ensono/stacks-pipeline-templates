@@ -1,6 +1,5 @@
 parameters:
   devops_artefact_name: 'DevOps'
-  dependsOn: ''
   # Version Config
   sourcebranch_name: ''
   raw_version_number: ''
@@ -10,8 +9,20 @@ parameters:
   # Deploy Config
   package_feed: ''
   publish_symbols: ''
+  # Secret Config
+  cosmosdb_secret: false
+  cosmosdb_account: ''
 
 jobs:
+- template: azDevOps/azure/templates/jobs/publish-blob-as-artefact.yml@templates
+  parameters: 
+    Package_RG: $(DevOps.RG)
+    Package_storageAccount: $(DevOps.storageAccount) 
+    Package_Container: $(DevOps.Container)
+    Package_File: $(DevOps.File)
+    Package_OutputFolder: $(Build.BinariesDirectory)
+    Package_OutputArtefact: '${{ parameters.devops_artefact_name }}'
+
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
   pool:
@@ -23,6 +34,14 @@ jobs:
     parameters:
       sourcebranch_name: '${{ parameters.sourcebranch_name }}'
       raw_version_number: '${{ parameters.raw_version_number }}'
+
+  - ${{ if eq(parameters.cosmosdb_secret, true) }}:
+    - task: Bash@3
+      displayName: 'Get: CosmosDB Key and Endpoint'
+      inputs:
+        targetType: 'filePath'
+        filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
+        arguments: $(CosmosDB.Account)
 
   - template: ../steps/build-pack-test-dotnet.yml
     parameters:
