@@ -6,6 +6,7 @@ parameters:
   functional_test: ''
   functional_test_artefact: ''
   functional_test_baseurl: ''
+  smoke_test: ''
   kubernetes_clusterrg: ''
   kubernetes_clustername: ''
   kubernetes_kustomize_filepath: ''
@@ -140,8 +141,16 @@ jobs:
               arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
 
 ## Smoke Testing
+        - ${{ if eq(parameters.smoke_test, true) }}:
+          - task: DotNetCoreCLI@2
+            displayName: 'Test: Run Smoke Tests'
+            inputs:
+              command: test
+              projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+              arguments: '-v n --filter Category=SmokeTest'
+              testRunTitle: 'Smoke Tests'
 
-        ## TODO: !!!
+
 
 
 ## Performance Testing
