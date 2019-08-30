@@ -17,3 +17,4 @@ steps:
     searchPattern: '**/bin/**/*.pdb'
     publishSymbols: ${{ parameters.publish_symbols }}
     symbolServerType: teamServices
+    workingDirectory: '$(Package.Path)'
