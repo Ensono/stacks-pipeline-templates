@@ -1,0 +1,20 @@
+parameters:
+  test_path: ''
+  package_path: ''
+
+# Test
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '$(Package.Path).Tests/*.csproj'
+    failOnStderr: false 
+
+# Pack NuGet packages.
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    configuration: 'release'
+    versioningScheme: byEnvVar
+    versionEnvVar: Build.BuildNumber
+    packagesToPack: '$(Package.Path)/*.csproj'
