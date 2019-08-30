@@ -1,0 +1,35 @@
+parameters:
+  devops_artefact_name: 'DevOps'
+  dependsOn: ''
+  # Version Config
+  sourcebranch_name: ''
+  raw_version_number: ''
+  # Build Config
+  test_path: ''
+  package_path: ''
+  # Deploy Config
+  package_feed: ''
+  publish_symbols: ''
+
+jobs:
+- job: BuildDotNet
+  dependsOn: ${{ parameters.dependsOn }}
+  pool:
+    vmImage: 'windows-2019'
+  continueOnError: false
+
+  steps:
+  - template: ../steps/build-updatebuildnumber-dotnet.yml
+    parameters:
+      sourcebranch_name: '${{ parameters.sourcebranch_name }}'
+      raw_version_number: '${{ parameters.raw_version_number }}'
+
+  - template: ../steps/build-pack-test-dotnet.yml
+    parameters:
+      test_path: '${{ parameters.test_path }}'
+      package_path: '${{ parameters.package_path }}'
+
+  - template: ../steps/deploy-push-package-symbols.yml
+    parameters:
+      package_feed: '${{ parameters.package_feed }}'
+      publish_symbols: '${{ parameters.publish_symbols }}'

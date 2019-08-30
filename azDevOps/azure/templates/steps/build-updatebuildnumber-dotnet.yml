@@ -1,0 +1,13 @@
+parameters:
+  sourcebranch_name: ''
+  raw_version_number: ''
+
+steps:
+- bash: |
+    echo 'setting build number for branch ${{ parameters.sourcebranch_name }}'    
+    if [[ ${{ parameters.sourcebranch_name }} == 'master' ]]; then 
+      echo '##vso[build.updatebuildnumber]${{ parameters.raw_version_number }}';
+    else
+      echo '##vso[build.updatebuildnumber]${{ parameters.raw_version_number }}-preview-${{ parameters.sourcebranch_name }}'; 
+    fi;
+  displayName: Update Build Number
