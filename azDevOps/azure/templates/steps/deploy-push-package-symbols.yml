@@ -5,12 +5,14 @@ parameters:
 steps:
 # Publish Nuget packages
 - task: DotNetCoreCLI@2
+  displayName: 'Publish: Push Packages'
   inputs:
     command: push
     publishVstsFeed: ${{ parameters.package_feed }}
 
 # Publish Symbols    
 - task: PublishSymbols@2
+  displayName: 'Publish: Push Symbols'
   inputs:
     searchPattern: '**/bin/**/*.pdb'
     publishSymbols: ${{ parameters.publish_symbols }}
