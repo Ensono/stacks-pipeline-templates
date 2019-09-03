@@ -1,7 +1,7 @@
 parameters:
   test_path: ''
   package_path: ''
-  package_feed: ''
+  package_feed: 'Stacks'
 # Test
 
 steps:
