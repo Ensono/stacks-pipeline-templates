@@ -10,6 +10,8 @@ parameters:
   vulnerability_scan: ''
   vulnerability_workdir: ''
   #  Testing
+  unit_test: ''
+  unit_test_project: ''
   contract_test: ''
   contract_test_project: ''
   functional_test: ''
@@ -54,7 +56,7 @@ jobs:
         # aks_clustername: '' 
       devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
-# Vulnerability Scanning
+# Contract tests
   - ${{ if eq(parameters.contract_test, true) }}:
     - task: DotNetCoreCLI@2
       displayName: 'Test: Provider Contracts'
@@ -63,6 +65,16 @@ jobs:
         projects: '${{ parameters.contract_test_project }}'
         arguments: '-v n'
         testRunTitle: 'Test: Provider Contracts'
+
+# Unit Test
+  - ${{ if eq(parameters.unit_test, true) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Test: Unit tests'
+      inputs:
+        command: test
+        projects: '${{ parameters.unit_test_project }}'
+        arguments: '--filter FullyQualifiedName!~ContractTests -v n '
+        testRunTitle: 'Test: Unit tests'
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
