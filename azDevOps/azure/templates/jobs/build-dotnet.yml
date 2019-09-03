@@ -65,7 +65,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.unit_test_project }}'
-        arguments: '--filter FullyQualifiedName!~ContractTests -v n '
+        arguments: '--filter FullyQualifiedName~UnitTests -v n '
         testRunTitle: 'Test: Unit tests'
 
 # Component Test
