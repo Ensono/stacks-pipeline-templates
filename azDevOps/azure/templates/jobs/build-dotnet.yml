@@ -11,6 +11,8 @@ parameters:
   vulnerability_workdir: ''
   #  Testing
   unit_test: ''
+  component_test: ''
+  integration_test: ''
   unit_test_project: ''
   contract_test: ''
   contract_test_project: ''
@@ -56,6 +58,36 @@ jobs:
         # aks_clustername: '' 
       devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
+# Unit Test
+  - ${{ if eq(parameters.unit_test, true) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Test: Unit tests'
+      inputs:
+        command: test
+        projects: '${{ parameters.unit_test_project }}'
+        arguments: '--filter FullyQualifiedName!~ContractTests -v n '
+        testRunTitle: 'Test: Unit tests'
+
+# Component Test
+  - ${{ if eq(parameters.component_test, true) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Test: Component tests'
+      inputs:
+        command: test
+        projects: '${{ parameters.unit_test_project }}'
+        arguments: '--filter "(FullyQualifiedName~ComponentTests)" -v n '
+        testRunTitle: 'Test: Component tests'
+
+# Integration Test
+  - ${{ if eq(parameters.integration_test, true) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Test: Integration tests'
+      inputs:
+        command: test
+        projects: '${{ parameters.unit_test_project }}'
+        arguments: '--filter "(FullyQualifiedName~IntegrationTests)" -v n '
+        testRunTitle: 'Test: Integration tests'
+
 # Contract tests
   - ${{ if eq(parameters.contract_test, true) }}:
     - task: DotNetCoreCLI@2
@@ -66,15 +98,6 @@ jobs:
         arguments: '-v n'
         testRunTitle: 'Test: Provider Contracts'
 
-# Unit Test
-  - ${{ if eq(parameters.unit_test, true) }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'Test: Unit tests'
-      inputs:
-        command: test
-        projects: '${{ parameters.unit_test_project }}'
-        arguments: '--filter FullyQualifiedName!~ContractTests -v n '
-        testRunTitle: 'Test: Unit tests'
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
