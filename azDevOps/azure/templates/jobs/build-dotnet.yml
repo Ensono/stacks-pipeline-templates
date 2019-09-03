@@ -11,9 +11,11 @@ parameters:
   vulnerability_workdir: ''
   #  Testing
   unit_test: ''
-  component_test: ''
-  integration_test: ''
   unit_test_project: ''
+  component_test: ''
+  component_test_project: ''
+  integration_test: ''
+  integration_test_project: ''
   contract_test: ''
   contract_test_project: ''
   functional_test: ''
