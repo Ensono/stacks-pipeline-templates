@@ -5,6 +5,11 @@ parameters:
 # Test
 
 steps:
+- bash: |
+    echo 'Testing ${{ parameters.test_path }}'
+    echo 'Building ${{ parameters.package_path }}'
+    echo 'Restoring from ${{ parameters.package_feed }}'
+  displayName: 'Display: Package Path Info'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build: Restore'
