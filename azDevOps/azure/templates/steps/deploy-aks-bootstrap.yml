@@ -4,7 +4,7 @@ parameters:
   aks_cluster_rg: ''
   devops_package_path: ''
   # Ingress Config
-  IngressNamespace: ''
+  IngressNamespace: 'ingress-nginx'
   # DNS Config
   DefaultDNSZone: ''
   # SSL
@@ -12,7 +12,7 @@ parameters:
   BlobCertTLSkeyfile: ''
   BlobCertTLScrtfile: ''
   BlobCertCAfile: ''
-  DefaultCertSecretNameSpace: ''
+  DefaultCertSecretNameSpace: 'ingress-nginx'
   DefaultCertSecretName: ''
   BlobCertRG: ''
   BlobCertStorageAccount: ''
@@ -32,6 +32,7 @@ steps:
   inputs:
     targetType: 'filePath'
     filePath: ${{ parameters.devops_package_path }}/Bootstrap/ingress/helm-install-ingress.sh
+    # context dns_zone namespace default_ssl_secret_namespace default_ssl_secret_name
     arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.SSL_DefaultDNSZone }} ${{ parameters.IngressNamespace }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
     workingDirectory: ${{ parameters.devops_package_path }}/Bootstrap/ingress
 
@@ -55,6 +56,7 @@ steps:
   inputs:
     targetType: 'filePath'
     filePath: ${{ parameters.devops_package_path }}/Kubectl/apply-default-ssl-cert.sh
+    # context tls_key_file tls_pem_file ca_cert_bundle target_namespace secret_name
     arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.BlobCertTLSkeyfile }} ${{ parameters.BlobCertTLScrtfile }} ${{ parameters.BlobCertCAfile }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
     workingDirectory: $(Build.BinariesDirectory)/SSL
   displayName: Create Default SSL Certificate Secret
