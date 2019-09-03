@@ -1,5 +1,5 @@
 parameters:
-  devops_artefact_name: ''
+  devops_artefact_name: 'DevOps'
   dependsOn: 'GetPackage'
   # Docker Config
   docker_workdir: ''
@@ -7,25 +7,27 @@ parameters:
   docker_imagetag: ''
   docker_containerregistryname: ''
   # Vulnerability Scanning
-  vulnerability_scan: ''
+  vulnerability_scan: false
   vulnerability_workdir: ''
   #  Testing
-  unit_test: ''
+  unit_test: false
   unit_test_project: ''
-  component_test: ''
+  component_test: false
   component_test_project: ''
-  integration_test: ''
+  integration_test: false
   integration_test_project: ''
-  contract_test: ''
+  integration_test_cosmosdb_secret: false
+  integration_test_cosmosdb_account: ''
+  contract_test: false
   contract_test_project: ''
-  functional_test: ''
+  functional_test: false
   functional_test_path: ''
   functional_test_artefact: ''
-  build_file: ''
+  build_file: false
   build_file_path: ''
   build_file_artefact: ''
   # Release notes
-  releasenote: ''
+  releasenote: false
   releasenote_artefact: ''
   releasenote_version: ''
   releasenote_user: ''
@@ -34,6 +36,7 @@ parameters:
   releasenote_github_project: ''
   releasenote_output: ''
   releasenote_failonmissingPR: ''
+  
   
 jobs:
 - job: BuildDotNet
@@ -81,6 +84,14 @@ jobs:
         testRunTitle: 'Test: Component tests'
 
 # Integration Test
+  - ${{ if eq(parameters.integration_test_cosmosdb_secret, true) }}:
+    - task: Bash@3
+      displayName: 'Get: CosmosDB Key and Endpoint'
+      inputs:
+        targetType: 'filePath'
+        filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
+        arguments: ${{ parameters.integration_test_cosmosdb_account }}
+
   - ${{ if eq(parameters.integration_test, true) }}:
     - task: DotNetCoreCLI@2
       displayName: 'Test: Integration tests'
