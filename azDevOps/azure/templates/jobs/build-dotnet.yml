@@ -65,7 +65,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.unit_test_project }}'
-        arguments: '--filter FullyQualifiedName~UnitTests -v n '
+        arguments: '-v n '
         testRunTitle: 'Test: Unit tests'
 
 # Component Test
@@ -74,8 +74,8 @@ jobs:
       displayName: 'Test: Component tests'
       inputs:
         command: test
-        projects: '${{ parameters.unit_test_project }}'
-        arguments: '--filter "(FullyQualifiedName~ComponentTests)" -v n '
+        projects: '${{ parameters.component_test_project }}'
+        arguments: '-v n '
         testRunTitle: 'Test: Component tests'
 
 # Integration Test
@@ -84,8 +84,8 @@ jobs:
       displayName: 'Test: Integration tests'
       inputs:
         command: test
-        projects: '${{ parameters.unit_test_project }}'
-        arguments: '--filter "(FullyQualifiedName~IntegrationTests)" -v n '
+        projects: '${{ parameters.integration_test_project }}'
+        arguments: '-v n '
         testRunTitle: 'Test: Integration tests'
 
 # Contract tests
