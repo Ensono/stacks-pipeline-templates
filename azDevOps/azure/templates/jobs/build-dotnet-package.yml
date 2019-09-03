@@ -47,6 +47,7 @@ jobs:
     parameters:
       test_path: '${{ parameters.test_path }}'
       package_path: '${{ parameters.package_path }}'
+      package_feed: '${{ parameters.package_feed }}'
 
   - template: ../steps/deploy-push-package-symbols.yml
     parameters:
