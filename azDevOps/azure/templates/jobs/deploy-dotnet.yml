@@ -70,7 +70,7 @@ jobs:
           inputs:
             targetType: 'filePath'
             filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kustomize/kustomize-annotate-version.sh
-            arguments: $(System.DefaultWorkingDirectory)/kustomize $(Docker.ImageTag)
+            arguments: $(Build.BinariesDirectory)/kustomize $(Docker.ImageTag)
             workingDirectory: $(Pipeline.Workspace)/build/base
             failOnStderr: true 
 
@@ -108,7 +108,7 @@ jobs:
 
         - bash: |
            echo "Setting api-image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
-           $(System.DefaultWorkingDirectory)/kustomize edit set image api-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
+           $(Build.BinariesDirectory)/kustomize edit set image api-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
           workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
           displayName: 'Mutate: Set Docker Image Version for api-image'
           failOnStderr: true 
@@ -116,7 +116,7 @@ jobs:
       # This is how we would update the UI image version
       #  - bash: |
       #     echo "Setting ui-image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
-      #     $(System.DefaultWorkingDirectory)/kustomize edit set image ui-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
+      #     $(Build.BinariesDirectory)/kustomize edit set image ui-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
       #    workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
       #    displayName: 'Mutate: Set Docker Image Version for ui-image'
       #    failOnStderr: true 
