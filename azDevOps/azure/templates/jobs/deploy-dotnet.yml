@@ -98,13 +98,21 @@ jobs:
             ${{ if eq(parameters.cosmosdb_secret, true) }}:
               cosmosdb_key: $(CosmosDB.key) # Remember this is pulled from the step above, it's dynamic and not a parameter.
 
-      # This step updates the image definition inside the deployment manifest
         - bash: |
-           echo "Setting image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
-           $(Kubernetes.KustomizeBinaryPath) edit set image $(Docker.ImageName)=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
+           echo "Setting api-image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
+           $(Kubernetes.KustomizeBinaryPath) edit set image api-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
           workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
-          displayName: 'Mutate: Set Docker Image Version'
+          displayName: 'Mutate: Set Docker Image Version for api-image'
           failOnStderr: true 
+
+      # This is how we would update the UI image version
+      #  - bash: |
+      #     echo "Setting ui-image to $(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag)"
+      #     $(Kubernetes.KustomizeBinaryPath) edit set image ui-image=$(Docker.ContainerRegistry)/$(Docker.ImageName):$(Docker.ImageTag);
+      #    workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
+      #    displayName: 'Mutate: Set Docker Image Version for ui-image'
+      #    failOnStderr: true 
+
 
 ## Deployment
         - task: Bash@3
