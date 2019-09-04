@@ -15,4 +15,4 @@ steps:
   inputs:
     targetType: 'filePath'
     filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Bootstrap/install-cicd-prereqs.sh
-    arguments: ${{ parameters.Kubernetes_KustomizeBinaryPath }} ${{ parameters.Kubernetes_KustomizeDownloadPath }}
+    arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
