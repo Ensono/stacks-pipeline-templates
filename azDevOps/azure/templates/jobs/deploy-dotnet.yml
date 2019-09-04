@@ -13,7 +13,7 @@ parameters:
   cosmosdb_secret: ''
   cosmosdb_accountName: ''
   appinsights_enabled: ''
-  appinsights_instrumentationkey: ''
+  appinsights_accountName: ''
   performance_test: ''
   releasenote: ''
   releasenote_artefact: ''
@@ -83,6 +83,14 @@ jobs:
               filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
               arguments: ${{ parameters.cosmosdb_accountName}}
 
+        - ${{ if eq(parameters.appinsights_enabled, true) }}:
+          - task: Bash@3
+            displayName: 'Get: AppInsights Instrumentation Key and Endpoint'
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-appinsights-instrumentationkey.sh
+              arguments: ${{ parameters.appinsights_accountName}}
+
         - task: Bash@3
           displayName:  'Mutate: Secrets from Environment Vars'
           inputs:
@@ -93,7 +101,7 @@ jobs:
           env:
             # Conditionally expose this env-var if appinsights_enabled is true
             ${{ if eq(parameters.appinsights_enabled, true) }}:
-              appinsights_instrumentationkey: ${{ parameters.appinsights_instrumentationkey }}
+              appinsights_instrumentationkey: $(Monitoring.applnsightsInstrumentationKey) # Remember this is pulled from the step above, it's dynamic and not a parameter.
             # Conditionally expose this env-var if cosmosDB_secret is true
             ${{ if eq(parameters.cosmosdb_secret, true) }}:
               cosmosdb_key: $(CosmosDB.key) # Remember this is pulled from the step above, it's dynamic and not a parameter.
