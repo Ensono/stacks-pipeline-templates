@@ -18,6 +18,7 @@ parameters:
   integration_test_project: ''
   integration_test_cosmosdb_secret: false
   integration_test_cosmosdb_account: ''
+  integration_test_cosmosdb_database: ''
   contract_test: false
   contract_test_project: ''
   functional_test: false
@@ -86,11 +87,19 @@ jobs:
 # Integration Test
   - ${{ if eq(parameters.integration_test_cosmosdb_secret, true) }}:
     - task: Bash@3
-      displayName: 'Get: CosmosDB Key and Endpoint'
+      displayName: 'Get: CosmosDB Account Key for Integration Tests'
       inputs:
         targetType: 'filePath'
         filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
         arguments: ${{ parameters.integration_test_cosmosdb_account }}
+
+    - bash: |
+        echo Setting CosmosDB Database Name to ${{ parameters.integration_test_cosmosdb_database }}
+        echo "##vso[task.setvariable variable=CosmosDB__DatabaseName]https://${{ parameters.integration_test_cosmosdb_database }}"
+        echo Setting CosmosDB Account URI to https://${{ parameters.integration_test_cosmosdb_account }}.documents.azure.com:443/
+        echo "##vso[task.setvariable variable=CosmosDB__DatabaseAccountUri]https://${{ parameters.integration_test_cosmosdb_account }}.documents.azure.com:443/"
+      displayName: 'Mutate: Set CosmosDB Database Account for Integration Tests'
+
 
   - ${{ if eq(parameters.integration_test, true) }}:
     - task: DotNetCoreCLI@2
