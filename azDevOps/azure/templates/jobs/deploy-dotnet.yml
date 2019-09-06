@@ -44,7 +44,8 @@ jobs:
             displayName: 'Download: Build Artefacts'
             artifact: '${{ parameters.build_artefact }}'
 
-        - ${{ if eq(parameters.functional_test, true) }}:
+      # Download this artefact if functional or performance tests are enabled for this deployment
+        - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
           - download: current
             displayName: 'Download: Test Artefacts'
             artifact: '${{ parameters.functional_test_artefact }}'
