@@ -1,5 +1,6 @@
 parameters:
   devops_artefact_name: ''
+  dependsOn: ''
   environment: ''
   build_file: false
   build_artefact: ''
@@ -16,14 +17,6 @@ parameters:
   appinsights_enabled: false
   appinsights_accountName: ''
   performance_test: false
-  releasenote: false
-  releasenote_artefact: ''
-  releasenote_storageaccountrg: ''
-  releasenote_storageaccountname: ''
-  releasenote_storageaccountcontainer: ''
-  releasenote_sourcefile: ''
-  releasenote_targetfile: ''
-  dependsOn: ''
 
 jobs:
 - deployment: ${{ parameters.environment }}
@@ -43,12 +36,6 @@ jobs:
           - download: current
             displayName: 'Download: Build Artefacts'
             artifact: '${{ parameters.build_artefact }}'
-
-      # Download this artefact if releasenote generation is enabled for this deployment
-        - ${{ if eq(parameters.releasenote, true) }}:
-          - download: current
-            displayName: 'Download: Release Note Artefacts'
-            artifact: '${{ parameters.releasenote_artefact }}'
 
       # Download this artefact if functional or performance tests are enabled for this deployment
         - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
@@ -174,9 +161,6 @@ jobs:
               arguments: '-v n --filter Category=SmokeTest'
               testRunTitle: 'Smoke Tests'
 
-
-
-
 ## Performance Testing
         - ${{ if eq(parameters.performance_test, true) }}:
           - bash: | 
@@ -184,27 +168,3 @@ jobs:
               mvn clean gatling:test -Denv=${{ parameters.environment }} -Dusers=$(Performance.Testing.Users) -Drampup=$(Performance.Testing.RampUp)
             workingDirectory: '$(Test.PerformanceTestProjectSourcePath)'
             displayName: 'Test: Run Performance Tests'
-
-## Upload Release Notes Artefact
-        - ${{ if eq(parameters.releasenote, true) }}:
-          - download: current
-            displayName: 'Download: Release Notes Artefact'
-            artifact: releasenotes
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
-
-          - task: Bash@3
-            displayName: 'Upload: Release Notes'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-            inputs:
-              targetType: 'filePath'
-              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
-              # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
-              arguments: $(ReleaseNote.StorageAccountRG) $(Pipeline.Workspace)/releasenotes/release.json $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)  
-
-          - task: Bash@3
-            displayName: 'Retrieve URL: Release Notes'
-            condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-            inputs:
-              targetType: 'filePath'
-              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-              arguments: $(ReleaseNote.StorageAccountRG) $(ReleaseNote.StorageAccountName) $(ReleaseNote.StorageContainerName) $(ReleaseNote.TargetName)

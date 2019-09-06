@@ -37,16 +37,6 @@ parameters:
   build_file: false
   build_file_path: ''
   build_file_artefact: ''
-  # Release notes
-  releasenote: false
-  releasenote_artefact: ''
-  releasenote_version: ''
-  releasenote_user: ''
-  releasenote_token: ''
-  releasenote_github_org: ''
-  releasenote_github_project: ''
-  releasenote_output: ''
-  releasenote_failonmissingPR: ''
   
   
 jobs:
@@ -169,21 +159,7 @@ jobs:
       vulnerability_scan: '${{ parameters.vulnerability_scan }}'
       vulnerability_workdir: '${{ parameters.vulnerability_workdir }}'
 
-# Create a ReleaseNote artefact for publication if deployment to Production is successful
-  - ${{ if eq(parameters.releasenote, true) }}:
-    - task: Bash@3
-      displayName: 'Create Release Notes'
-      inputs:
-        targetType: 'filePath'
-        filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
-        # Version, GitHub Username, GitHub Token, Company, Project, Output, FailOnMissingPR
-        arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_failonmissingPR }}
-
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish: Release Notes Artefact'
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: '${{ parameters.releasenote_artefact }}'
+# Publish Artefacts if required
 
   - ${{ if eq(parameters.functional_test, true) }}:
     - task: PublishBuildArtifacts@1
