@@ -31,9 +31,7 @@ jobs:
       targetType: 'filePath'
       filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
       arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }}   
-  
-  - publish: '${{ parameters.releasenote_output }} '
-    artifact: 'releasenotes'
+
 
   - template: ../steps/login-services.yml
     parameters:   
