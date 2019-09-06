@@ -9,7 +9,16 @@ parameters:
   # Vulnerability Scanning
   vulnerability_scan: false
   vulnerability_workdir: ''
-  #  Testing
+  #  Static Code Analysis
+  static_code_analysis: false
+  static_code_analysis_build_path: ''
+  Sonar_serviceConnection: ''
+  Sonar_organization: ''
+  Sonar_scannerMode: ''
+  Sonar_projectKey: ''
+  Sonar_projectName: ''
+  Sonar_projectVersion: ''
+  # Testing
   unit_test: false
   unit_test_project: ''
   component_test: false
@@ -24,6 +33,7 @@ parameters:
   functional_test: false
   functional_test_path: ''
   functional_test_artefact: ''
+  # Build File Output
   build_file: false
   build_file_path: ''
   build_file_artefact: ''
@@ -63,6 +73,23 @@ jobs:
         # aks_rg: ''
         # aks_clustername: '' 
       devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+  
+# SonarCloud Start
+  - ${{ if eq(parameters.static_code_analysis, true) }}:
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: ${{ parameters.Sonar_serviceConnection }}
+        organization: ${{ parameters.Sonar_organization }}
+        scannerMode: ${{ parameters.Sonar_scannerMode }}
+        projectKey: ${{ parameters.Sonar_projectKey }}
+        projectName: ${{ parameters.Sonar_projectName }}
+        projectVersion: ${{ parameters.Sonar_projectVersion }}
+      displayName: 'SonarCloud: Prepare for Analysis'
+
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        workingDirectory: ${{ parameters.static_code_analysis_build_path }}
 
 # Unit Test
   - ${{ if eq(parameters.unit_test, true) }}:
@@ -119,6 +146,15 @@ jobs:
         arguments: '-v n'
         testRunTitle: 'Test: Provider Contracts'
 
+# SonarCloud Results
+  - ${{ if eq(parameters.static_code_analysis, true) }}:
+    - task: SonarCloudAnalyze@1
+      displayName: 'SonarCloud: Analysis'  
+
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+      displayName: 'SonarCloud: Publish'
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
