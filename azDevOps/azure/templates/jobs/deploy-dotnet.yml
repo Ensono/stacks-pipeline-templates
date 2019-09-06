@@ -44,6 +44,12 @@ jobs:
             displayName: 'Download: Build Artefacts'
             artifact: '${{ parameters.build_artefact }}'
 
+      # Download this artefact if releasenote generation is enabled for this deployment
+        - ${{ if eq(parameters.releasenote, true) }}:
+          - download: current
+            displayName: 'Download: Release Note Artefacts'
+            artifact: '${{ parameters.releasenote_artefact }}'
+
       # Download this artefact if functional or performance tests are enabled for this deployment
         - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
           - download: current
