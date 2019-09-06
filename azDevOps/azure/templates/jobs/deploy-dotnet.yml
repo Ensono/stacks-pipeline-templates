@@ -3,9 +3,9 @@ parameters:
   environment: ''
   build_file: false
   build_artefact: ''
+  test_artefact: 'tests'
+  test_baseurl: ''
   functional_test: false
-  functional_test_artefact: ''
-  functional_test_baseurl: ''
   smoke_test: false
   kubernetes_clusterrg: ''
   kubernetes_clustername: ''
@@ -30,7 +30,7 @@ jobs:
   dependsOn: ${{ parameters.dependsOn }}
   variables:
   - name: BaseURL
-    value: ${{ parameters.functional_test_baseurl }}
+    value: ${{ parameters.test_baseurl }}
   pool:
     vmImage: 'ubuntu-latest'
   environment: ${{ parameters.environment }}
@@ -48,7 +48,7 @@ jobs:
         - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
           - download: current
             displayName: 'Download: Test Artefacts'
-            artifact: '${{ parameters.functional_test_artefact }}'
+            artifact: '${{ parameters.test_artefact }}'
         
         - template: ../steps/build-consume-devops.yml
 
