@@ -8,7 +8,6 @@ parameters:
   releasenote_github_org: ''
   releasenote_github_project: ''
   releasenote_output: ''
-  releasenote_failonmissingPR: false
   # ReleaseNote Output
   releasenote_storageaccountrg: ''
   releasenote_storageaccountname: ''
@@ -31,8 +30,7 @@ jobs:
     inputs:
       targetType: 'filePath'
       filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
-      # Version, GitHub Username, GitHub Token, Company, Project, Output, FailOnMissingPR
-      arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_failonmissingPR }}     
+      arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }}   
   
   - task: Bash@3
     displayName: 'Upload: Release Notes'
