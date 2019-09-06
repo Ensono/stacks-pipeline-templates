@@ -1,22 +1,22 @@
 parameters:
   devops_artefact_name: ''
   environment: ''
-  build_file: ''
+  build_file: false
   build_artefact: ''
-  functional_test: ''
+  functional_test: false
   functional_test_artefact: ''
   functional_test_baseurl: ''
-  smoke_test: ''
+  smoke_test: false
   kubernetes_clusterrg: ''
   kubernetes_clustername: ''
   kubernetes_kustomize_filepath: ''
   kubernetes_docker_registry: ''
-  cosmosdb_secret: ''
+  cosmosdb_secret: false
   cosmosdb_accountName: ''
-  appinsights_enabled: ''
+  appinsights_enabled: false
   appinsights_accountName: ''
-  performance_test: ''
-  releasenote: ''
+  performance_test: false
+  releasenote: false
   releasenote_artefact: ''
   releasenote_storageaccountrg: ''
   releasenote_storageaccountname: ''
