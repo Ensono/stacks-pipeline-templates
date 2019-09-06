@@ -7,7 +7,7 @@ parameters:
 
 steps:
 - download: current
-  displayName: 'Download" DevOps Artefacts'
+  displayName: 'Download: DevOps Artefacts'
   artifact: ${{ parameters.devops_artefact_name }}
 
 - task: Bash@3
