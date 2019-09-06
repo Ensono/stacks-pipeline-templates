@@ -1,0 +1,51 @@
+parameters:
+  devops_artefact_name: 'DevOps'
+  dependsOn: ''
+  # Release Creation
+  releasenote_version: ''
+  releasenote_user: ''
+  releasenote_token: ''
+  releasenote_github_org: ''
+  releasenote_github_project: ''
+  releasenote_output: ''
+  releasenote_failonmissingPR: false
+  # ReleaseNote Output
+  releasenote_storageaccountrg: ''
+  releasenote_storageaccountname: ''
+  releasenote_storageaccountcontainer: ''
+  releasenote_targetfile: ''
+
+jobs:
+
+- job: ReleaseNotes
+  dependsOn: ${{ parameters.dependsOn }}
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  pool:
+    vmImage: 'windows-2019'
+  continueOnError: true
+
+  steps:
+  - template: ../steps/build-consume-devops.yml
+
+  - task: Bash@3
+    displayName: 'Generate: Release Notes'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
+      # Version, GitHub Username, GitHub Token, Company, Project, Output, FailOnMissingPR
+      arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_failonmissingPR }}     
+  
+  - task: Bash@3
+    displayName: 'Upload: Release Notes'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+      # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
+      arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}  
+
+  - task: Bash@3
+    displayName: 'Retrieve URL: Release Notes'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+      arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}
