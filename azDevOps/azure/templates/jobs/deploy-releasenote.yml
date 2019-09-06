@@ -36,15 +36,15 @@ jobs:
     artifact: 'releasenotes'
 
   - template: ../steps/login-services.yml
-  parameters:   
-    # Azure
-    login_azure: true
-    azure_tenant_id: '$(azure_tenant_id)'
-    azure_subscription_id: '$(azure_subscription_id)'
-    azure_client_id: '$(azure_client_id)'
-    azure_client_secret: '$(azure_client_secret)'
-    # Kubernetes
-    login_kubernetes: false
+    parameters:   
+      # Azure
+      login_azure: true
+      azure_tenant_id: '$(azure_tenant_id)'
+      azure_subscription_id: '$(azure_subscription_id)'
+      azure_client_id: '$(azure_client_id)'
+      azure_client_secret: '$(azure_client_secret)'
+      # Kubernetes
+      login_kubernetes: false
 
   - task: Bash@3
     displayName: 'Upload: Release Notes'
