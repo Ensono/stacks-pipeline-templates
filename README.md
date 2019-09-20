@@ -49,4 +49,11 @@ To include a step from this repository in your pipeline, refer to them using the
 
 There are two folders in the AzDevOps folder, one for `steps` and one for `jobs`. Please feel free to add as many steps as you feel neccesary to the steps folder, but do not modify existing jobs as they may be consumed by others.
 
-TODO: Find a better way to manage this!
+### Contributing
+
+If you are interested in contributing to this repository, first open an issue to discuss the problems, possible solutions and design decisions.
+Pull Request without an issue and a design decision will likely be rejected.
+
+TODO:
+- Create a CONTRIBUTING.md file with guidelines.
+- Find a better way to manage this!
