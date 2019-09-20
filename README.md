@@ -54,6 +54,7 @@ There are two folders in the AzDevOps folder, one for `steps` and one for `jobs`
 If you are interested in contributing to this repository, first open an issue to discuss the problems, possible solutions and design decisions.
 Pull Request without an issue and a design decision will likely be rejected.
 
+For more details, see [CONTRIBUTING.md](CONTRIBUTING.md)
+
 TODO:
-- Create a CONTRIBUTING.md file with guidelines.
 - Find a better way to manage this!
