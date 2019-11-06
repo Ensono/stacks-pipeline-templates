@@ -13,7 +13,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   steps:
-    - bash: | 
+    - bash: |
         az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
         az account set -s $azure_subscription_id
         ACCOUNT_KEY=$( az storage account keys list -g ${{ parameters.Package_RG }} -n ${{ parameters.Package_storageAccount }} --query '[1].value' )
@@ -32,10 +32,10 @@ jobs:
           azure_subscription_id: $(azure_subscription_id)
           azure_tenant_id: $(azure_tenant_id)
 
-      
+
     - task: ExtractFiles@1
       inputs:
-        archiveFilePatterns: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }}' 
+        archiveFilePatterns: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }}'
         destinationFolder: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_OutputArtefact }}'
       displayName: 'Extract Package: ${{ parameters.Package_OutputArtefact }}'
 
