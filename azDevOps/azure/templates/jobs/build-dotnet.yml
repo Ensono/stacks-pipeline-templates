@@ -56,6 +56,7 @@ jobs:
 # Test
   - bash: |
     'echo $(parameters.collected_code_coverage_full_path)'
+    displayName: 'Test'
 
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
