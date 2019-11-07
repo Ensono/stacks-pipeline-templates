@@ -23,6 +23,7 @@ parameters:
   Sonar_projectKey: ''
   Sonar_projectName: ''
   Sonar_projectVersion: ''
+  Sonar_extraProperties: ''
   # Testing
   unit_test: false
   unit_test_project: ''
@@ -80,6 +81,9 @@ jobs:
         fi
         echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
       displayName: 'Set Sonar Extra Properties variable'
+
+    - bash: |
+        echo "$(Sonar_extraProperties)"
 
     - task: SonarCloudPrepare@1
       inputs:
@@ -176,17 +180,16 @@ jobs:
   - ${{ if eq(parameters.static_code_analysis, true) }}:
     - bash: |
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
-        FILES="$(find . -name "coverage.opencover.xml" -printf '%p;')"
+        FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
         ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
-
 # Publish Cobertura coverage to Azure DevOps
-  - task: PublishCodeCoverageResults@1
-    inputs:
-      summaryFileLocation: ${{ parameters.cobertura_directory }}/Cobertura.xml
-      reportDirectory: ${{ parameters.cobertura_directory }}
-      codecoverageTool: cobertura
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        summaryFileLocation: ${{ parameters.cobertura_directory }}/Cobertura.xml
+        reportDirectory: ${{ parameters.cobertura_directory }}
+        codecoverageTool: cobertura
 
 # Publish trx test results to Azure DevOps
   - task: PublishTestResults@2
