@@ -83,7 +83,7 @@ jobs:
       displayName: 'Set Sonar Extra Properties variable'
 
     - bash: |
-        echo "$(Sonar_extraProperties)"
+        echo '$(Sonar_extraProperties)'
 
     - task: SonarCloudPrepare@1
       inputs:
