@@ -15,7 +15,6 @@ parameters:
   code_coverage_filename: 'coverage.opencover.xml'
   collected_code_coverage_directory: 'reports'
   collected_code_coverage_filename_prefix: 'coverage'
-  collected_code_coverage_full_path: '$( parameters.static_code_analysis_build_path )/$( parameters.collected_code_coverage_directory )/**/$( parameters.code_coverage_filename )'
   static_code_analysis: false
   static_code_analysis_build_path: ''
   Sonar_serviceConnection: ''
@@ -24,7 +23,7 @@ parameters:
   Sonar_projectKey: ''
   Sonar_projectName: ''
   Sonar_projectVersion: ''
-  Sonar_extraProperties: 'sonar.cs.opencover.reportsPaths="$( parameters.collected_code_coverage_full_path )"'
+  Sonar_extraProperties: 'sonar.cs.opencover.reportsPaths="${{ parameters.static_code_analysis_build_path }}/**/"'
   # Testing
   unit_test: false
   unit_test_project: ''
@@ -45,7 +44,6 @@ parameters:
   build_file_path: ''
   build_file_artefact: ''
 
-
 jobs:
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
@@ -53,9 +51,6 @@ jobs:
     vmImage: 'ubuntu-latest'
   continueOnError: false
   steps:
-# Test
-  - bash: |
-      'echo $(collected_code_coverage_full_path)'
 
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
