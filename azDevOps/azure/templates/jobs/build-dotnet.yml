@@ -177,9 +177,9 @@ jobs:
 
 # Publish trx test results to Azure DevOps
   - task: PublishTestResults@2
-      inputs:
-        testRunner: VSTest
-        testResultsFiles: '**/*.trx'
+    inputs:
+      testRunner: VSTest
+      testResultsFiles: '**/*.trx'
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
