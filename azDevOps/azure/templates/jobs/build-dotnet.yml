@@ -92,7 +92,8 @@ jobs:
 
 # Set the code_coverage_arguments variable to make `dotnet test` output coverage
     - bash: |
-      echo "##vso[task.setvariable variable=code_coverage_arguments;isOutput=true]/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./'"
+        echo "##vso[task.setvariable variable=code_coverage_arguments;isOutput=true]/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./'"
+      displayName: 'Set dotnet test arguments for code coverage generation'
 
 # Unit Test
   - ${{ if eq(parameters.unit_test, true) }}:
@@ -161,9 +162,11 @@ jobs:
 # Convert code coverage reports into Cobertura for Azure DevOps
   - ${{ if eq(parameters.static_code_analysis, true) }}:
     - bash: |
-      dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
-      FILES="$(find . -name "coverage.opencover.xml" -printf '%p;')"
-      ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.coberatura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+        dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
+        FILES="$(find . -name "coverage.opencover.xml" -printf '%p;')"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.coberatura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+      displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
+
 
 # Publish Cobertura coverage to Azure DevOps
   - task: PublishCodeCoverageResults@1
