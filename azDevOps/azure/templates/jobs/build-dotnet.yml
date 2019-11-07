@@ -12,7 +12,7 @@ parameters:
   #  Static Code Analysis
   cobertura_directory: 'coverage'
   code_coverage_arguments: ''
-  code_coverage_filename: 'coverage.opencover.xml'
+  code_coverage_filename: '*opencover.xml'
   collected_code_coverage_directory: 'reports'
   collected_code_coverage_filename_prefix: 'coverage'
   static_code_analysis: false
