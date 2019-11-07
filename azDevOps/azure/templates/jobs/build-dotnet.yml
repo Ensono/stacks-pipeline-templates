@@ -12,7 +12,7 @@ parameters:
   #  Static Code Analysis
   cobertura_directory: 'coverage'
   code_coverage_arguments: ''
-  code_coverage_filename: '*opencover.xml'
+  code_coverage_filename: 'coverage.opencover.xml'
   collected_code_coverage_directory: 'reports'
   collected_code_coverage_filename_prefix: 'coverage'
   static_code_analysis: false
@@ -80,6 +80,7 @@ jobs:
           EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"
         fi
         echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
+        echo ":$EXTRA_PROPERTIES:"
       displayName: 'Set Sonar Extra Properties variable'
 
     - task: SonarCloudPrepare@1
@@ -91,7 +92,7 @@ jobs:
         projectName: ${{ parameters.Sonar_projectName }}
         projectVersion: ${{ parameters.Sonar_projectVersion }}
         extraProperties: |
-          $( Sonar_extraProperties )
+          $(Sonar_extraProperties)
       displayName: 'SonarCloud: Prepare for Analysis'
 
 # SonarCloud wants a build to analyse
@@ -103,7 +104,7 @@ jobs:
 # Set the code_coverage_arguments variable to make `dotnet test` output coverage
   - bash: |
       if [ -z "${{ parameters.code_coverage_arguments }}" ]; then
-        CODE_COVERAGE_ARGUMENTS="/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./'"
+        CODE_COVERAGE_ARGUMENTS="/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
       else
         CODE_COVERAGE_ARGUMENTS="${{ parameters.code_coverage_arguments }}"
       fi
@@ -117,7 +118,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.unit_test_project }}'
-        arguments: '--logger trx -v n $(code_coverage_arguments)'
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Unit tests'
 
 # Component Test
@@ -127,7 +128,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.component_test_project }}'
-        arguments: '--logger trx -v n $(code_coverage_arguments)'
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Component tests'
 
 # Integration Test
@@ -152,7 +153,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.integration_test_project }}'
-        arguments: '--logger trx -v n $(code_coverage_arguments)'
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Integration tests'
 
 # Contract tests
@@ -162,7 +163,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.contract_test_project }}'
-        arguments: '--logger trx -v n $(code_coverage_arguments)'
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Provider Contracts'
 
 # SonarCloud Results
@@ -180,7 +181,7 @@ jobs:
         set -x
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
         FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
-        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
 # Publish Cobertura coverage to Azure DevOps
@@ -189,12 +190,6 @@ jobs:
         summaryFileLocation: ${{ parameters.cobertura_directory }}/Cobertura.xml
         reportDirectory: ${{ parameters.cobertura_directory }}
         codecoverageTool: cobertura
-
-# Publish trx test results to Azure DevOps
-  - task: PublishTestResults@2
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*.trx'
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
