@@ -75,7 +75,7 @@ jobs:
 # Set Sonar extra properties based on parameter input
     - bash: |
         if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then
-          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=\"${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}\""
+          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}"
         else
           EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"
         fi
