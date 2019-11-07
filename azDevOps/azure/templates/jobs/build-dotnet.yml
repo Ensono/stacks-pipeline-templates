@@ -23,7 +23,6 @@ parameters:
   Sonar_projectKey: ''
   Sonar_projectName: ''
   Sonar_projectVersion: ''
-  Sonar_extraProperties: 'sonar.cs.opencover.reportsPaths="${{ parameters.static_code_analysis_build_path }}/**/"'
   # Testing
   unit_test: false
   unit_test_project: ''
@@ -52,6 +51,9 @@ jobs:
   continueOnError: false
   steps:
 
+# Default
+  - bash: |
+      '##vso[task.setvariable variable=Sonar_extraProperties]sonar.cs.opencover.reportsPaths="${{ coalesce(${{ parameters.Sonar_extraProperties }}, ${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }})"'
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
 
@@ -80,7 +82,7 @@ jobs:
         projectKey: ${{ parameters.Sonar_projectKey }}
         projectName: ${{ parameters.Sonar_projectName }}
         projectVersion: ${{ parameters.Sonar_projectVersion }}
-        extraProperties: ${{ parameters.Sonar_extraProperties }}
+        extraProperties: $( Sonar_extraProperties )
       displayName: 'SonarCloud: Prepare for Analysis'
 
 # SonarCloud wants a build to analyse
