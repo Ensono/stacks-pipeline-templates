@@ -177,15 +177,15 @@ jobs:
     - bash: |
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
         FILES="$(find . -name "coverage.opencover.xml" -printf '%p;')"
-        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.coberatura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
 
 # Publish Cobertura coverage to Azure DevOps
   - task: PublishCodeCoverageResults@1
     inputs:
-      summaryFileLocation: ${{ parameters.coberatura_directory }}/Cobertura.xml
-      reportDirectory: ${{ parameters.coberatura_directory }}
+      summaryFileLocation: ${{ parameters.cobertura_directory }}/Cobertura.xml
+      reportDirectory: ${{ parameters.cobertura_directory }}
       codecoverageTool: cobertura
 
 # Publish trx test results to Azure DevOps
