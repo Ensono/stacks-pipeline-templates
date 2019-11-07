@@ -82,9 +82,6 @@ jobs:
         echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
       displayName: 'Set Sonar Extra Properties variable'
 
-    - bash: |
-        echo '$(Sonar_extraProperties)'
-
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: ${{ parameters.Sonar_serviceConnection }}
@@ -93,7 +90,8 @@ jobs:
         projectKey: ${{ parameters.Sonar_projectKey }}
         projectName: ${{ parameters.Sonar_projectName }}
         projectVersion: ${{ parameters.Sonar_projectVersion }}
-        extraProperties: $( Sonar_extraProperties )
+        extraProperties: |
+          $( Sonar_extraProperties )
       displayName: 'SonarCloud: Prepare for Analysis'
 
 # SonarCloud wants a build to analyse
@@ -179,9 +177,9 @@ jobs:
 # Convert code coverage reports into Cobertura for Azure DevOps
   - ${{ if eq(parameters.static_code_analysis, true) }}:
     - bash: |
+        set -x
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
         FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
-        echo "$FILES"
         ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
