@@ -51,15 +51,6 @@ jobs:
   continueOnError: false
   steps:
 
-# Default
-  - bash: |
-      if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then
-        EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=\"${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}\""
-      else
-        EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"
-      fi
-      echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
-
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
 
@@ -78,12 +69,18 @@ jobs:
         # aks_clustername: ''
       devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
-# bash
-  - bash: |
-      echo "$(Sonar_extraProperties)"
-
 # SonarCloud Start
   - ${{ if eq(parameters.static_code_analysis, true) }}:
+# Set Sonar extra properties based on parameter input
+    - bash: |
+        if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then
+          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=\\"${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}\\""
+        else
+          EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"
+        fi
+        echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
+      displayName: 'Set Sonar Extra Properties variable'
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: ${{ parameters.Sonar_serviceConnection }}
@@ -102,12 +99,14 @@ jobs:
         workingDirectory: ${{ parameters.static_code_analysis_build_path }}
 
 # Set the code_coverage_arguments variable to make `dotnet test` output coverage
-    - bash: |
-        echo "##vso[task.setvariable variable=code_coverage_arguments;isOutput=true]/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./'"
-      displayName: 'Set dotnet test arguments for code coverage generation'
-
-  - bash:
-      echo "$(code_coverage_arguments)"
+  - bash: |
+      if [ -z "${{ parameters.code_coverage_arguments }}" ]; then
+        CODE_COVERAGE_ARGUMENTS="/p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./'"
+      else
+        CODE_COVERAGE_ARGUMENTS="${{ parameters.code_coverage_arguments }}"
+      fi
+      echo "##vso[task.setvariable variable=code_coverage_arguments]$CODE_COVERAGE_ARGUMENTS"
+    displayName: 'Set dotnet test arguments for code coverage generation'
 
 # Unit Test
   - ${{ if eq(parameters.unit_test, true) }}:
