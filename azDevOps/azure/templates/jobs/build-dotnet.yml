@@ -171,8 +171,8 @@ jobs:
 # Publish Cobertura coverage to Azure DevOps
   - task: PublishCodeCoverageResults@1
     inputs:
-      summaryFileLocation: ${{ parameters.coberatura_directory }/Cobertura.xml
-      reportDirectory: ${{ parameters.coberatura_directory }
+      summaryFileLocation: ${{ parameters.coberatura_directory }}/Cobertura.xml
+      reportDirectory: ${{ parameters.coberatura_directory }}
       codecoverageTool: cobertura
 
 # Publish trx test results to Azure DevOps
