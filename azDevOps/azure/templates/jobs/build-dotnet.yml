@@ -181,6 +181,7 @@ jobs:
     - bash: |
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
         FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
+        echo "$FILES"
         ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura;HTMLInline;HTMLChart"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
