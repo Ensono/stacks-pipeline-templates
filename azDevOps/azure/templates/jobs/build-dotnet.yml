@@ -53,7 +53,12 @@ jobs:
 
 # Default
   - bash: |
-      '##vso[task.setvariable variable=Sonar_extraProperties]sonar.cs.opencover.reportsPaths="${{ coalesce(parameters.Sonar_extraProperties, "${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }"})"'
+      'if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then'
+      '  EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=\"${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}\""'
+      'else'
+      '  EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"'
+      'fi'
+      'echo ##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES'
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
 
