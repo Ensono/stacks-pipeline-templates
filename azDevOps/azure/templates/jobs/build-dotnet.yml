@@ -40,18 +40,17 @@ parameters:
   build_file_path: ''
   build_file_artefact: ''
 
-variables:
-  - name: code_coverage_filename
-    value: coverage.opencover.xml
-  - name: code_coverage_cobertura_directory
-    value: coverage
-
 jobs:
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
   pool:
     vmImage: 'ubuntu-latest'
   continueOnError: false
+  variables:
+    - name: code_coverage_filename
+      value: coverage.opencover.xml
+    - name: code_coverage_cobertura_directory
+      value: coverage
   steps:
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
