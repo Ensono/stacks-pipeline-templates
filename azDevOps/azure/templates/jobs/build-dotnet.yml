@@ -10,13 +10,9 @@ parameters:
   vulnerability_scan: false
   vulnerability_workdir: ''
   #  Static Code Analysis
-  code_coverage_cobertura_directory: 'coverage'
-  code_coverage_arguments: ''
-  code_coverage_filename: 'coverage.opencover.xml'
-  collected_code_coverage_directory: 'reports'
-  collected_code_coverage_filename_prefix: 'coverage'
   static_code_analysis: false
   static_code_analysis_build_path: ''
+  code_coverage_arguments: ''
   Sonar_serviceConnection: ''
   Sonar_organization: ''
   Sonar_scannerMode: ''
@@ -44,6 +40,12 @@ parameters:
   build_file_path: ''
   build_file_artefact: ''
 
+variables:
+  - name: code_coverage_filename
+    value: coverage.opencover.xml
+  - name: code_coverage_cobertura_directory
+    value: coverage
+
 jobs:
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
@@ -51,7 +53,6 @@ jobs:
     vmImage: 'ubuntu-latest'
   continueOnError: false
   steps:
-
 # Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
 
@@ -75,7 +76,7 @@ jobs:
 # Set Sonar extra properties based on parameter input
     - bash: |
         if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then
-          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=${{ parameters.static_code_analysis_build_path }}/**/${{ parameters.code_coverage_filename }}"$'\n'
+          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=${{ parameters.static_code_analysis_build_path }}/**/${{ variables.code_coverage_filename }}"$'\n'
         else
           EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"$'\n'
         fi
@@ -96,6 +97,7 @@ jobs:
 
 # SonarCloud wants a build to analyse
     - task: DotNetCoreCLI@2
+      displayName: 'Build for SonarCloud analysis'
       inputs:
         command: 'build'
         workingDirectory: ${{ parameters.static_code_analysis_build_path }}
@@ -175,18 +177,16 @@ jobs:
       displayName: 'SonarCloud: Publish'
 
 # Convert code coverage reports into Cobertura for Azure DevOps
-  - ${{ if eq(parameters.static_code_analysis, true) }}:
     - bash: |
-        set -x
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
-        FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
-        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.code_coverage_cobertura_directory }}" "-reporttypes:Cobertura"
+        FILES="$(find . -name "${{ variables.code_coverage_filename }}" -printf '%p;')"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ variables.code_coverage_cobertura_directory }}" "-reporttypes:Cobertura"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
 # Publish Cobertura coverage to Azure DevOps
     - task: PublishCodeCoverageResults@1
       inputs:
-        summaryFileLocation: ${{ parameters.code_coverage_cobertura_directory }}/Cobertura.xml
+        summaryFileLocation: ${{ variables.code_coverage_cobertura_directory }}/Cobertura.xml
         codecoverageTool: Cobertura
 
 # Build Docker Image, Scan and Push to Repository
