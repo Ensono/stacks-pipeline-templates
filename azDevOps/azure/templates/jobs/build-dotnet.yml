@@ -12,12 +12,14 @@ parameters:
   #  Static Code Analysis
   static_code_analysis: false
   static_code_analysis_build_path: ''
+  code_coverage_arguments: ''
   Sonar_serviceConnection: ''
   Sonar_organization: ''
   Sonar_scannerMode: ''
   Sonar_projectKey: ''
   Sonar_projectName: ''
   Sonar_projectVersion: ''
+  Sonar_extraProperties: ''
   # Testing
   unit_test: false
   unit_test_project: ''
@@ -37,21 +39,25 @@ parameters:
   build_file: false
   build_file_path: ''
   build_file_artefact: ''
-  
-  
+
 jobs:
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
   pool:
     vmImage: 'ubuntu-latest'
   continueOnError: false
+  variables:
+    - name: code_coverage_filename
+      value: coverage.opencover.xml
+    - name: code_coverage_cobertura_directory
+      value: coverage
   steps:
-# Get DevOps Artefact and Install Prerequisites  
+# Get DevOps Artefact and Install Prerequisites
   - template: ../steps/build-consume-devops.yml
 
 # Login to Azure/AKS
   - template: ../steps/login-services.yml
-    parameters:   
+    parameters:
       # Azure
       login_azure: true
       azure_tenant_id: '$(azure_tenant_id)'
@@ -61,11 +67,21 @@ jobs:
       # Kubernetes
       login_kubernetes: false
         # aks_rg: ''
-        # aks_clustername: '' 
+        # aks_clustername: ''
       devops_artefact_name: '${{ parameters.devops_artefact_name }}'
-  
+
 # SonarCloud Start
   - ${{ if eq(parameters.static_code_analysis, true) }}:
+# Set Sonar extra properties based on parameter input
+    - bash: |
+        if [ -z "${{ parameters.Sonar_extraProperties }}" ]; then
+          EXTRA_PROPERTIES="sonar.cs.opencover.reportsPaths=${{ parameters.static_code_analysis_build_path }}/**/${{ variables.code_coverage_filename }}"$'\n'
+        else
+          EXTRA_PROPERTIES="${{ parameters.Sonar_extraProperties }}"$'\n'
+        fi
+        echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
+      displayName: 'Set Sonar Extra Properties variable'
+
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: ${{ parameters.Sonar_serviceConnection }}
@@ -74,12 +90,26 @@ jobs:
         projectKey: ${{ parameters.Sonar_projectKey }}
         projectName: ${{ parameters.Sonar_projectName }}
         projectVersion: ${{ parameters.Sonar_projectVersion }}
+        extraProperties: |
+          $(Sonar_extraProperties)
       displayName: 'SonarCloud: Prepare for Analysis'
 
+# SonarCloud wants a build to analyse
     - task: DotNetCoreCLI@2
+      displayName: 'Build for SonarCloud analysis'
       inputs:
         command: 'build'
         workingDirectory: ${{ parameters.static_code_analysis_build_path }}
+
+# Set the code_coverage_arguments variable to make `dotnet test` output coverage
+  - bash: |
+      if [ -z "${{ parameters.code_coverage_arguments }}" ]; then
+        CODE_COVERAGE_ARGUMENTS="/p:CollectCoverage=true /p:CoverletOutputFormat=opencover"
+      else
+        CODE_COVERAGE_ARGUMENTS="${{ parameters.code_coverage_arguments }}"
+      fi
+      echo "##vso[task.setvariable variable=code_coverage_arguments]$CODE_COVERAGE_ARGUMENTS"
+    displayName: 'Set dotnet test arguments for code coverage generation'
 
 # Unit Test
   - ${{ if eq(parameters.unit_test, true) }}:
@@ -88,7 +118,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.unit_test_project }}'
-        arguments: '-v n '
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Unit tests'
 
 # Component Test
@@ -98,7 +128,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.component_test_project }}'
-        arguments: '-v n '
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Component tests'
 
 # Integration Test
@@ -123,7 +153,7 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.integration_test_project }}'
-        arguments: '-v n '
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Integration tests'
 
 # Contract tests
@@ -133,27 +163,39 @@ jobs:
       inputs:
         command: test
         projects: '${{ parameters.contract_test_project }}'
-        arguments: '-v n'
+        arguments: '-v n $(code_coverage_arguments)'
         testRunTitle: 'Test: Provider Contracts'
 
 # SonarCloud Results
   - ${{ if eq(parameters.static_code_analysis, true) }}:
     - task: SonarCloudAnalyze@1
-      displayName: 'SonarCloud: Analysis'  
-
+      displayName: 'SonarCloud: Analysis'
     - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
       displayName: 'SonarCloud: Publish'
 
+# Convert code coverage reports into Cobertura for Azure DevOps
+    - bash: |
+        dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
+        FILES="$(find . -name "${{ variables.code_coverage_filename }}" -printf '%p;')"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ variables.code_coverage_cobertura_directory }}" "-reporttypes:Cobertura"
+      displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
+
+# Publish Cobertura coverage to Azure DevOps
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        summaryFileLocation: ${{ variables.code_coverage_cobertura_directory }}/Cobertura.xml
+        codecoverageTool: Cobertura
+
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
     parameters:
-      devops_artefact_name: '{{ parameters.devops_artefact_name }}'  
+      devops_artefact_name: '{{ parameters.devops_artefact_name }}'
       # Docker
       docker_workdir: '${{ parameters.docker_workdir }}'
       docker_imagename: '${{ parameters.docker_imagename }}'
-      docker_imagetag: '${{ parameters.docker_imagetag }}' 
+      docker_imagetag: '${{ parameters.docker_imagetag }}'
       docker_containerregistryname: '${{ parameters.docker_containerregistryname }}'
       # Vulnerability Scanning
       vulnerability_scan: '${{ parameters.vulnerability_scan }}'
@@ -165,12 +207,12 @@ jobs:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish: Functional Tests Artifact'
       inputs:
-        PathtoPublish: '${{ parameters.functional_test_path }}'  
+        PathtoPublish: '${{ parameters.functional_test_path }}'
         ArtifactName: '${{ parameters.functional_test_artefact }}'
 
   - ${{ if eq(parameters.build_file, true) }}:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish: Build Artefacts'
       inputs:
-        PathtoPublish: '${{ parameters.build_file_path }}'  
+        PathtoPublish: '${{ parameters.build_file_path }}'
         ArtifactName: '${{ parameters.build_file_artefact }}'
