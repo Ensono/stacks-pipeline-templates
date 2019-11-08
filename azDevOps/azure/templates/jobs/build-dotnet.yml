@@ -184,9 +184,10 @@ jobs:
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
 # Publish Cobertura coverage to Azure DevOps
-    - task: PublishCodeCoverageResults@2
+    - task: PublishCodeCoverageResults@1
       inputs:
         summaryFileLocation: ${{ parameters.code_coverage_cobertura_directory }}/Cobertura.xml
+        codecoverageTool: Cobertura
 
 # Build Docker Image, Scan and Push to Repository
   - template: ../steps/build-docker-build-and-scan.yml
