@@ -10,7 +10,7 @@ parameters:
   vulnerability_scan: false
   vulnerability_workdir: ''
   #  Static Code Analysis
-  cobertura_directory: 'coverage'
+  code_coverage_cobertura_directory: 'coverage'
   code_coverage_arguments: ''
   code_coverage_filename: 'coverage.opencover.xml'
   collected_code_coverage_directory: 'reports'
@@ -92,7 +92,7 @@ jobs:
         projectName: ${{ parameters.Sonar_projectName }}
         projectVersion: ${{ parameters.Sonar_projectVersion }}
         extraProperties: |
-          $(Sonar_extraProperties)
+          gabbbbs=foo
       displayName: 'SonarCloud: Prepare for Analysis'
 
 # SonarCloud wants a build to analyse
@@ -181,14 +181,14 @@ jobs:
         set -x
         dotnet tool install dotnet-reportgenerator-globaltool --tool-path .
         FILES="$(find . -name "${{ parameters.code_coverage_filename }}" -printf '%p;')"
-        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.cobertura_directory }}" "-reporttypes:Cobertura"
+        ./reportgenerator "-reports:$FILES" "-targetdir:${{ parameters.code_coverage_cobertura_directory }}" "-reporttypes:Cobertura"
       displayName: 'Convert opencover coverage to Cobertura for Azure DevOps'
 
 # Publish Cobertura coverage to Azure DevOps
     - task: PublishCodeCoverageResults@1
       inputs:
-        summaryFileLocation: ${{ parameters.cobertura_directory }}/Cobertura.xml
-        reportDirectory: ${{ parameters.cobertura_directory }}
+        summaryFileLocation: ${{ parameters.code_coverage_cobertura_directory }}/Cobertura.xml
+        reportDirectory: ${{ parameters.code_coverage_cobertura_directory }}
         codecoverageTool: cobertura
 
 # Build Docker Image, Scan and Push to Repository
