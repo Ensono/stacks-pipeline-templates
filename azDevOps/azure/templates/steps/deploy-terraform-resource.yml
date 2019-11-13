@@ -27,13 +27,12 @@ steps:
   parameters:
     #  Terraform Config
     terraform_artefact_path: ${{ parameters.terraform_artefact_path }}
-    terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
     # Terraform State Config (Must already exist!)
     terraform_state_rg: ${{ parameters.location }}
     terraform_state_storage: ${{ parameters.terraform_state_storage }}
     terraform_state_container: ${{ parameters.terraform_state_container }}
     terraform_state_key: ${{ parameters.terraform_state_key }}
-    terraform_state_workspace: ${{ parameters.terraform_state_workspace }
+    terraform_state_workspace: ${{ parameters.terraform_state_workspace }}
 
 - bash: terraform plan -input=false -out=tfplan
   displayName: 'Terraform: Plan'
