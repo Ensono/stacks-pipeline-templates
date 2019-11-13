@@ -12,12 +12,16 @@ parameters:
   # Secret Config
   cosmosdb_secret: false
   cosmosdb_account: ''
+  # .NET Core version variables
+  dotnet_major_version: '2'
+  dotnet_minor_version: '2'
+  dotnet_patch_version: 'x'
 
 jobs:
 - template: ../jobs/publish-blob-as-artefact.yml
-  parameters: 
+  parameters:
     Package_RG: $(DevOps.RG)
-    Package_storageAccount: $(DevOps.storageAccount) 
+    Package_storageAccount: $(DevOps.storageAccount)
     Package_Container: $(DevOps.Container)
     Package_File: $(DevOps.File)
     Package_OutputFolder: $(Build.BinariesDirectory)
@@ -48,6 +52,9 @@ jobs:
       test_path: '${{ parameters.test_path }}'
       package_path: '${{ parameters.package_path }}'
       package_feed: '${{ parameters.package_feed }}'
+      dotnet_major_version: ${{ parameters.dotnet_major_version }}
+      dotnet_minor_version: ${{ parameters.dotnet_minor_version }}
+      dotnet_patch_version: ${{ parameters.dotnet_patch_version }}
 
   - template: ../steps/deploy-push-package-symbols.yml
     parameters:
