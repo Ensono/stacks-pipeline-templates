@@ -15,7 +15,7 @@ steps:
   displayName: 'Display: Package Path Info'
 
 - bash: |
-    echo "##vso[task.setvariable variable=dotnet_sdk_version]${{ dotnet_major_version }}.${{ dotnet_minor_version }}.${{ dotnet_patch_version }}"
+    echo "##vso[task.setvariable variable=dotnet_sdk_version]${{ parameters.dotnet_major_version }}.${{ parameters.dotnet_minor_version }}.${{ parameters.dotnet_patch_version }}"
   displayName: 'Setting .NET Core SDK full version string'
 
 - task: UseDotNet@2
