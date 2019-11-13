@@ -2,6 +2,12 @@ parameters:
   # Terraform Basic Config
   terraform_artefact_path: ''
   terraform_output_artefact: 'tfoutputs'
+  #  Terraform State Config
+  terraform_state_rg: ''
+  terraform_state_storage: ''
+  terraform_state_container: ''
+  terraform_state_key: ''
+  terraform_state_workspace: ''
   # Global Config
   company: 'amido'
   project: 'stacks'
@@ -14,6 +20,20 @@ parameters:
   terraform_output_commands: ''
 
 steps:
+
+- template: ../steps/deploy-terraform-init.yml
+  # Terraform Backend & Azure Credential config comes via Variable Group
+  # that must be inherited into this step!
+  parameters:
+    #  Terraform Config
+    terraform_artefact_path: ${{ parameters.terraform_artefact_path }}
+    terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
+    # Terraform State Config (Must already exist!)
+    terraform_state_rg: ${{ parameters.location }}
+    terraform_state_storage: ${{ parameters.terraform_state_storage }}
+    terraform_state_container: ${{ parameters.terraform_state_container }}
+    terraform_state_key: ${{ parameters.terraform_state_key }}
+    terraform_state_workspace: ${{ parameters.terraform_state_workspace }
 
 - bash: terraform plan -input=false -out=tfplan
   displayName: 'Terraform: Plan'
