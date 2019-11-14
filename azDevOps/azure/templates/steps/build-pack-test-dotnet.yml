@@ -32,7 +32,6 @@ steps:
     projects: '${{ parameters.package_path }}**/*.csproj'
     feedsToUse: 'select'
     vstsFeed: '${{ parameters.package_feed }}'
-    nuGetFeedType: internal
     includeNuGetOrg: true
 
 - task: DotNetCoreCLI@2
