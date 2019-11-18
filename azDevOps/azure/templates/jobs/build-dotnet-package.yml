@@ -15,9 +15,9 @@ parameters:
 
 jobs:
 - template: ../jobs/publish-blob-as-artefact.yml
-  parameters: 
+  parameters:
     Package_RG: $(DevOps.RG)
-    Package_storageAccount: $(DevOps.storageAccount) 
+    Package_storageAccount: $(DevOps.storageAccount)
     Package_Container: $(DevOps.Container)
     Package_File: $(DevOps.File)
     Package_OutputFolder: $(Build.BinariesDirectory)
@@ -26,7 +26,7 @@ jobs:
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'vs2017-win2016'
   continueOnError: false
 
   steps:
