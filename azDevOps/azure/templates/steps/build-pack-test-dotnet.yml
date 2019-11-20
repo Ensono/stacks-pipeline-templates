@@ -3,7 +3,7 @@ parameters:
   package_path: ''
   package_feed: ''
   # .NET Core version variables
-  dotnet_major_version: '2.2.x'
+  dotnet_core_version: '2.2.x'
 
 steps:
 - bash: |
