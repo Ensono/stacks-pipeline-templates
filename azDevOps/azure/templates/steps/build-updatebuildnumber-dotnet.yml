@@ -8,6 +8,6 @@ steps:
     if [[ ${{ parameters.sourcebranch_name }} == 'master' ]]; then
       echo '##vso[build.updatebuildnumber]${{ parameters.raw_version_number }}';
     else
-      echo '##vso[build.updatebuildnumber]${{ parameters.raw_version_number }}-preview-${{ parameters.sourcebranch_name }}-test';
+      echo '##vso[build.updatebuildnumber]${{ parameters.raw_version_number }}-preview-${{ parameters.sourcebranch_name }}';
     fi;
   displayName: 'Update: Build Number'
