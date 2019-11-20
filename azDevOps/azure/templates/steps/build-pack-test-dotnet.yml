@@ -2,7 +2,7 @@ parameters:
   test_path: ''
   package_path: ''
   package_feed: ''
-  # .NET Core version variables
+  # .NET Core version variable
   dotnet_core_version: '2.2.x'
 
 steps:
