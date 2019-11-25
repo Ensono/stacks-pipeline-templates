@@ -1,6 +1,6 @@
 name: $(Build.SourceBranchName)
 
-parameters:
+variables:
   - name: YAML_LINT_VERSION
     value: '1.19.0'
 
@@ -30,6 +30,6 @@ jobs:
 
     steps:
       - bash: |
-          pip install -I 'yamllint==${{ parameters.YAML_LINT_VERSION }}'
+          pip install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
           yamllint -c build/yamllint.conf .
         displayName: 'Validates YAML files in the repo'
