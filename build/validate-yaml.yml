@@ -26,8 +26,8 @@ jobs:
   - job: ValidateYamlFiles
     displayName: 'Validate YAML Files'
     condition: succeeded()
-    pool: 'ubuntu-18.04'
-
+    pool:
+       vmImage: 'ubuntu-18.04'
     steps:
       - bash: |
           pip install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
