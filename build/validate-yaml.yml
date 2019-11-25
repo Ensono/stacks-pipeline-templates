@@ -29,7 +29,7 @@ jobs:
     displayName: 'Validate YAML Files'
     condition: succeeded()
     pool:
-       vmImage: 'ubuntu-18.04'
+      vmImage: 'ubuntu-18.04'
     steps:
       - bash: |
           pip install -I 'wheel==${{ variables.PYTHON_WHEEL_VERSION }}'
