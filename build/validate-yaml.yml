@@ -1,0 +1,35 @@
+name: $(Build.SourceBranchName)
+
+variables:
+  - name: YAML_LINT_VERSION
+    value: '1.19.0'
+
+# Trigger paths specific for this package, change accordingly
+trigger:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - '*.yml'
+
+# Only build PRs into Master
+pr:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - '*.yml'
+
+jobs:
+  - job: ValidateYamlFiles
+    displayName: 'Validate YAML Files'
+    condition: succeeded()
+    pool: 'ubuntu-18.04'
+
+    steps:
+      - bash: |
+          pip install -I 'yamllint==${{ parameters.YAML_LINT_VERSION }}'
+          yamllint -c build/yamllint.conf .
+        displayName: 'Validates YAML files in the repo'
