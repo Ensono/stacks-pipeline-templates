@@ -1,6 +1,6 @@
 name: $(Build.SourceBranchName)
 
-variables:
+parameters:
   - name: YAML_LINT_VERSION
     value: '1.19.0'
 
