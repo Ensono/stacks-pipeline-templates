@@ -2,7 +2,8 @@ parameters:
   test_path: ''
   package_path: ''
   package_feed: ''
-# Test
+  # .NET Core version variable
+  dotnet_core_version: '2.2.x'
 
 steps:
 - bash: |
@@ -10,6 +11,13 @@ steps:
     echo 'Building ${{ parameters.package_path }}'
     echo 'Restoring from ${{ parameters.package_feed }}'
   displayName: 'Display: Package Path Info'
+
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+  inputs:
+    packageType: sdk
+    version: ${{ parameters.dotnet_core_version }}
+    installationPath: $(Agent.ToolsDirectory)/dotnet
 
 - task: DotNetCoreCLI@2
   displayName: 'Build: Restore'
@@ -26,7 +34,7 @@ steps:
     command: 'test'
     projects: '${{ parameters.test_path }}/*.csproj'
     arguments: '--no-restore'
-    failOnStderr: true 
+    failOnStderr: true
 
 # Pack NuGet packages.
 - task: DotNetCoreCLI@2

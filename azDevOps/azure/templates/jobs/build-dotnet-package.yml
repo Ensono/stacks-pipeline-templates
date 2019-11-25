@@ -1,5 +1,4 @@
 parameters:
-  devops_artefact_name: 'DevOps'
   # Version Config
   sourcebranch_name: ''
   raw_version_number: ''
@@ -12,17 +11,10 @@ parameters:
   # Secret Config
   cosmosdb_secret: false
   cosmosdb_account: ''
+  # .NET Core version variable
+  dotnet_core_version: '2.2.x'
 
 jobs:
-- template: ../jobs/publish-blob-as-artefact.yml
-  parameters: 
-    Package_RG: $(DevOps.RG)
-    Package_storageAccount: $(DevOps.storageAccount) 
-    Package_Container: $(DevOps.Container)
-    Package_File: $(DevOps.File)
-    Package_OutputFolder: $(Build.BinariesDirectory)
-    Package_OutputArtefact: '${{ parameters.devops_artefact_name }}'
-
 - job: BuildDotNet
   dependsOn: ${{ parameters.dependsOn }}
   pool:
@@ -48,6 +40,7 @@ jobs:
       test_path: '${{ parameters.test_path }}'
       package_path: '${{ parameters.package_path }}'
       package_feed: '${{ parameters.package_feed }}'
+      dotnet_core_version: ${{ parameters.dotnet_core_version }}
 
   - template: ../steps/deploy-push-package-symbols.yml
     parameters:
