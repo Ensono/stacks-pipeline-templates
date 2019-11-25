@@ -9,9 +9,6 @@ steps:
   inputs:
     command: push
     publishVstsFeed: ${{ parameters.package_feed }}
-    feedsToUse: 'select'
-    vstsFeed: '${{ parameters.package_feed }}'
-    includeNuGetOrg: true
 
 # Publish Symbols
 - task: PublishSymbols@2
