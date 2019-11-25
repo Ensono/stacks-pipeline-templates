@@ -3,16 +3,16 @@ parameters:
   devops_artefact_name: 'DevOps'
   # Kustomize Config
   Kubernetes_KustomizeBinaryPath: '$(System.DefaultWorkingDirectory)/kustomize'
-  Kubernetes_KustomizeDownloadPath: 'https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64' 
+  Kubernetes_KustomizeDownloadPath: 'https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64'
 
 steps:
-- download: current
-  displayName: 'Download: DevOps Artefacts'
-  artifact: ${{ parameters.devops_artefact_name }}
+  - download: current
+    displayName: 'Download: DevOps Artefacts'
+    artifact: ${{ parameters.devops_artefact_name }}
 
-- task: Bash@3
-  displayName:  'Install: DevOps Tools'
-  inputs:
-    targetType: 'filePath'
-    filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Bootstrap/install-cicd-prereqs.sh
-    arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
+  - task: Bash@3
+    displayName: 'Install: DevOps Tools'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Bootstrap/install-cicd-prereqs.sh
+      arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
