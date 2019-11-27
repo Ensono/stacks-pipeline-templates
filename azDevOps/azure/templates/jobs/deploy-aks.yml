@@ -74,7 +74,7 @@ jobs:
             devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
         - template: ../steps/deploy-terraform-resource.yml
-          paramaters:
+          parameters:
             # Terraform Config
             terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
             terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
