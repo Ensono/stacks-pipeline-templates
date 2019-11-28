@@ -18,10 +18,10 @@ parameters:
   DNS_create: ''
   DNS_zone: ''
   # Cluster Config
-  Cluster_version: ''
-  Cluster_nodeCount: ''
-  Cluster_nodeSize: ''
-  Cluster_spn_create: ''
+  Cluster_version: '1.14.8'
+  Cluster_nodeCount: 1
+  Cluster_nodeSize: 'Standard_D2_v2'
+  Cluster_spn_create: false
   # Ingress Config
   IngressNamespace: ''
   # SSL
