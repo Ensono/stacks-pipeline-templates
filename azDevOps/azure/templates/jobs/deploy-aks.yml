@@ -18,8 +18,9 @@ parameters:
   DNS_create: ''
   DNS_zone: ''
   # Cluster Config
-  Cluster_version: 1.14.5
+  Cluster_version: '1.14.8'
   Cluster_nodeCount: 1
+  Cluster_nodeSize: 'Standard_D2_v2'
   Cluster_spn_create: false
   # Ingress Config
   IngressNamespace: ''
@@ -104,6 +105,7 @@ jobs:
               # Cluster Config
               cluster_version: ${{ parameters.Cluster_version }}
               cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
+              cluster_agent_size: ${{ parameters.Cluster_nodeSize }}
             terraform_output_commands: |
               terraform output AKS-Cluster-Name
               AKS_CLUSTER_NAME=$(terraform output AKS-Cluster-Name)

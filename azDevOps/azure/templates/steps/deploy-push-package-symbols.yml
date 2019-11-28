@@ -10,7 +10,7 @@ steps:
     command: push
     publishVstsFeed: ${{ parameters.package_feed }}
 
-# Publish Symbols    
+# Publish Symbols
 - task: PublishSymbols@2
   displayName: 'Publish: Push Symbols'
   inputs:
