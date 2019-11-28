@@ -28,7 +28,7 @@ steps:
     #  Terraform Config
     terraform_artefact_path: ${{ parameters.terraform_artefact_path }}
     # Terraform State Config (Must already exist!)
-    terraform_state_rg: ${{ parameters.location }}
+    terraform_state_rg: ${{ parameters.terraform_state_rg }}
     terraform_state_storage: ${{ parameters.terraform_state_storage }}
     terraform_state_container: ${{ parameters.terraform_state_container }}
     terraform_state_key: ${{ parameters.terraform_state_key }}
