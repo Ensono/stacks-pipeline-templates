@@ -4,7 +4,7 @@ parameters:
   terraform_output_artefact: 'tfoutputs'
   # Global Config
   company: 'amido'
-  project: 'stacks' 
+  project: 'stacks'
   environment: ''
   # Azure config
   location: 'uksouth'
@@ -16,9 +16,10 @@ parameters:
   # SSL
   Cluster_version: 1.14.5
   Cluster_nodeCount: 1
+  Cluster_nodeSize: 'Standard_D2_v2'
   Cluster_spn_create: false
   # Terraform Backend & Azure Credential config comes via Variable Group
-  # that must be inherited into this step! 
+  # that must be inherited into this step!
 
 steps:
 - bash: terraform plan -input=false -out=tfplan
@@ -30,19 +31,20 @@ steps:
     ARM_CLIENT_ID: $(azure_client_id)
     ARM_CLIENT_SECRET: $(azure_client_secret)
     ARM_TENANT_ID: $(azure_tenant_id)
-    # Terraform 
+    # Terraform
     TF_VAR_name_company: ${{ parameters.company }}
-    TF_VAR_name_platform: ${{ parameters.project }}   
+    TF_VAR_name_platform: ${{ parameters.project }}
     TF_VAR_name_environment: ${{ parameters.environment }}
     # DNS
-    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }} 
-    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }} 
+    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }}
+    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }}
     # Resource Group
-    TF_VAR_resource_group_location_env: ${{ parameters.location }} 
+    TF_VAR_resource_group_location_env: ${{ parameters.location }}
     TF_VAR_resource_group_tags: ${{ parameters.tags }}
     # Kubernetes Cluster Tech Info.
     TF_VAR_cluster_version: ${{ parameters.Cluster_version }}
     TF_VAR_cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
+    TF_VAR_cluster_agent_size: ${{ parameters.Cluster_nodeSize }}
     # SPN configuration for Kubernetes Cluster
     TF_VAR_create_aksspn: ${{ parameters.Cluster_spn_create }}
     TF_VAR_cluster_spn_clientid: $(cluster_spn_clientid)
@@ -58,15 +60,15 @@ steps:
     ARM_CLIENT_ID: $(azure_client_id)
     ARM_CLIENT_SECRET: $(azure_client_secret)
     ARM_TENANT_ID: $(azure_tenant_id)
-    # Terraform 
+    # Terraform
     TF_VAR_name_company: ${{ parameters.company }}
-    TF_VAR_name_platform: ${{ parameters.project }}   
+    TF_VAR_name_platform: ${{ parameters.project }}
     TF_VAR_name_environment: ${{ parameters.env }}
     # DNS
-    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }} 
-    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }} 
+    TF_VAR_create_dns_zone: ${{ parameters.DNS_create }}
+    TF_VAR_dns_zone : ${{ parameters.DNS_suffix }}
     # Resource Group
-    TF_VAR_resource_group_location_env: ${{ parameters.location }} 
+    TF_VAR_resource_group_location_env: ${{ parameters.location }}
     TF_VAR_resource_group_tags: ${{ parameters.tags }}
     # Kubernetes Cluster Tech Info.
     TF_VAR_cluster_version: ${{ parameters.Cluster_version }}
@@ -84,9 +86,9 @@ steps:
     echo Setting Cluster Name to $AKS_CLUSTER_NAME
     echo "##vso[task.setvariable variable=AKS_CLUSTER_NAME;isOutput=true]$AKS_CLUSTER_NAME"
     terraform output Resource-Group-Name
-    AKS_CLUSTER_RG=$(terraform output Resource-Group-Name)              
+    AKS_CLUSTER_RG=$(terraform output Resource-Group-Name)
     echo Setting RG to $AKS_CLUSTER_RG
-    echo "##vso[task.setvariable variable=AKS_CLUSTER_RG;isOutput=true]$AKS_CLUSTER_RG"                        
+    echo "##vso[task.setvariable variable=AKS_CLUSTER_RG;isOutput=true]$AKS_CLUSTER_RG"
   displayName: 'Terraform: Write Outputs to Variables'
-  workingDirectory: ${{ parameters.terraform_artefact_path }}    
+  workingDirectory: ${{ parameters.terraform_artefact_path }}
   name: ${{ parameters.terraform_output_artefact }}

@@ -20,6 +20,7 @@ parameters:
   # Cluster Config
   Cluster_version: ''
   Cluster_nodeCount: ''
+  Cluster_nodeSize: ''
   Cluster_spn_create: ''
   # Ingress Config
   IngressNamespace: ''
@@ -62,7 +63,7 @@ jobs:
             arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
 
         - template: ../steps/login-services.yml
-          parameters:   
+          parameters:
             # Azure
             login_azure: true
             azure_tenant_id: '$(azure_tenant_id)'
@@ -72,16 +73,16 @@ jobs:
             # Kubernetes
             login_kubernetes: false
               # aks_rg: ''
-              # aks_clustername: '' 
+              # aks_clustername: ''
             devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
         - template: ../steps/deploy-terraform-init.yml
           # Terraform Backend & Azure Credential config comes via Variable Group
-          # that must be inherited into this step! 
+          # that must be inherited into this step!
           parameters:
             #  Terraform Config
-            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }} 
-            terraform_output_artefact: ${{ parameters.terraform_output_artefact }} 
+            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+            terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
             # Terraform State Config (Must already exist!)
             terraform_state_rg: ${{ parameters.terraform_state_rg }}
             terraform_state_storage: ${{ parameters.terraform_state_storage }}
@@ -91,28 +92,29 @@ jobs:
 
         - template: ../steps/deploy-aks-terraform.yml
           # Terraform Backend & Azure Credential config comes via Variable Group
-          # that must be inherited into this step! 
+          # that must be inherited into this step!
           parameters:
             #  Terraform Config
-            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }} 
-            terraform_output_artefact: ${{ parameters.terraform_output_artefact }} 
+            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+            terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
             # Global Config
             company: ${{ parameters.company }}
             project: ${{ parameters.project }}
             # Azure Config
-            environment: ${{ parameters.environment }} 
-            location: ${{ parameters.location }} 
-            tags: ${{ parameters.tags }} 
+            environment: ${{ parameters.environment }}
+            location: ${{ parameters.location }}
+            tags: ${{ parameters.tags }}
             # DNS Config
-            DNS_create: ${{ parameters.DNS_create }} 
-            DNS_suffix: ${{ parameters.DNS_zone }} 
+            DNS_create: ${{ parameters.DNS_create }}
+            DNS_suffix: ${{ parameters.DNS_zone }}
             # Cluster Config
-            Cluster_version: ${{ parameters.Cluster_version }} 
-            Cluster_nodeCount: ${{ parameters.Cluster_nodeCount }} 
-            Cluster_spn_create: ${{ parameters.Cluster_spn_create }} 
+            Cluster_version: ${{ parameters.Cluster_version }}
+            Cluster_nodeCount: ${{ parameters.Cluster_nodeCount }}
+            Cluster_nodeSize: ${{ parameters.Cluster_nodeSize }}
+            Cluster_spn_create: ${{ parameters.Cluster_spn_create }}
 
         - template: ../steps/login-services.yml
-          parameters:   
+          parameters:
             # Azure
             login_azure: false
               # azure_tenant_id: '$(azure_tenant_id)'
@@ -122,7 +124,7 @@ jobs:
             # Kubernetes
             login_kubernetes: true
             aks_rg: '$(tfoutputs.AKS_CLUSTER_RG)'
-            aks_clustername: '$(tfoutputs.AKS_CLUSTER_NAME)' 
+            aks_clustername: '$(tfoutputs.AKS_CLUSTER_NAME)'
             devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
 
