@@ -39,6 +39,8 @@ parameters:
   build_file: false
   build_file_path: ''
   build_file_artefact: ''
+  # .NET Core version variable
+  dotnet_core_version: '2.2.x'
 
 jobs:
   - job: BuildDotNet
@@ -67,6 +69,13 @@ jobs:
           # Kubernetes
           login_kubernetes: false
           devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+        inputs:
+          packageType: sdk
+          version: ${{ parameters.dotnet_core_version }}
+          installationPath: $(Agent.ToolsDirectory)/dotnet
 
       # SonarCloud Start
       - ${{ if eq(parameters.static_code_analysis, true) }}:
