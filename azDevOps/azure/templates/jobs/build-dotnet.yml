@@ -77,6 +77,9 @@ jobs:
           version: ${{ parameters.dotnet_core_version }}
           installationPath: $(Agent.ToolsDirectory)/dotnet
 
+      - script: dotnet --list-sdks
+        displayName: 'Check dotnet sdks installed'
+
       # SonarCloud Start
       - ${{ if eq(parameters.static_code_analysis, true) }}:
           # Set Sonar extra properties based on parameter input
@@ -88,6 +91,11 @@ jobs:
               fi
               echo "##vso[task.setvariable variable=Sonar_extraProperties]$EXTRA_PROPERTIES"
             displayName: 'Set Sonar Extra Properties variable'
+
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core SDK 2.2.x For SonarCloud'
+            inputs:
+              version: '2.2.x'
 
           - task: SonarCloudPrepare@1
             inputs:
