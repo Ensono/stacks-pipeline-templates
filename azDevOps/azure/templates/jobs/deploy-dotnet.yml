@@ -17,6 +17,7 @@ parameters:
   appinsights_enabled: false
   appinsights_accountName: ''
   performance_test: false
+  dotnet_core_version: '2.2.x'
 
 jobs:
 - deployment: ${{ parameters.environment }}
@@ -126,6 +127,18 @@ jobs:
             arguments: ./${{ parameters.kubernetes_kustomize_filepath }}
             workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}
             failOnStderr: true
+
+## Install dotnet core version based on project dependencies
+        - ${{ if or(eq(parameters.functional_test, true), eq(parameters.smoke_test, true)) }}:
+          - task: UseDotNet@2
+            displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+            inputs:
+              packageType: sdk
+              version: ${{ parameters.dotnet_core_version }}
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+
+          - script: dotnet --list-sdks
+            displayName: 'Check dotnet sdks installed'
 
 ## Functional Testing
         - ${{ if eq(parameters.functional_test, true) }}:

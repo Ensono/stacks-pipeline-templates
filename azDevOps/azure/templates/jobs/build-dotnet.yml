@@ -96,6 +96,7 @@ jobs:
             displayName: 'Use .NET Core SDK 2.2.x For SonarCloud'
             inputs:
               version: '2.2.x'
+              packageType: runtime
 
           - task: SonarCloudPrepare@1
             inputs:
