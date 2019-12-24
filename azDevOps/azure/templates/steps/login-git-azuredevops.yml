@@ -1,0 +1,11 @@
+# Authentication step required for downloading modules
+steps:
+- bash: |
+    git config --global --list | grep url. | awk -F '.instead' '{print $1}' | while read line
+    do
+    echo $line
+    git config --global --remove-section $line
+    done   
+    git config --global url."https://ado:$(System.AccessToken)@dev.azure.com".insteadOf https://dev.azure.com
+    git init
+  displayName: 'Redirect AzDO git URLs to use the Access Token So Modules Can Be Pulled In'

@@ -1,0 +1,36 @@
+parameters:
+  buildConfiguration: 'Release'
+
+steps:
+
+- task: Bash@3
+  displayName: 'Create NugetRestore Folder'
+  inputs:
+    targetType: 'inline'
+    script: 'mkdir NugetPackage -p'
+
+- task: CacheBeta@0
+  inputs:
+    key: nuget
+    path: 'NugetPackage'
+  displayName: Cache NuGet packages
+
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.sln'
+    feedsToUse: 'select'
+    vstsFeed: 'b00a7301-6665-476a-85f7-251b89ed42c2'
+    includeNuGetOrg: false
+    restoreDirectory: 'NugetPackage'
+    verbosityRestore: 'Minimal'
+  displayName: 'Nuget Restore'
+
+- ${{ if eq(variables['System.Debug'], 'true') }}:
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: 'Get-ChildItem -Path $(Pipeline.Workspace) -Recurse'
+    condition : always()
+    displayName: 'List Files (Debug)'

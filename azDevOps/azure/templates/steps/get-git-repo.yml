@@ -1,0 +1,10 @@
+parameters:
+  repoURL: ''
+  
+steps: 
+
+- powershell: |
+   git config user.email "$(Build.RequestedForEmail)"
+   git config user.name "$(Build.RequestedFor)"
+   git -c http.extraheader="AUTHORIZATION: bearer $(System.AccessToken)"  clone  ${{ parameters.repoURL}};
+  displayName: "Get Git Repo"
