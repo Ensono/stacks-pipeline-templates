@@ -1,0 +1,30 @@
+parameters:
+  terraform_filepath: '$(Build.SourcesDirectory)/deploy/terraform/azure'
+  terraform_artefact_name:
+
+jobs:
+- job: build
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - template: ../steps/ado-git-authentication.yml
+          
+  - bash: 'terraform fmt' 
+    displayName: 'Terraform: format'
+    workingDirectory: ${{ parameters.terraform_filepath }}
+
+  - bash: 'terraform init -backend=false' 
+    displayName: 'Terraform: init'
+    workingDirectory: ${{ parameters.terraform_filepath }}
+  
+  - bash: 'terraform validate' 
+    displayName: 'Terraform: validate'
+    workingDirectory: ${{ parameters.terraform_filepath }}
+
+  - publish: ${{ parameters.terraform_filepath }}
+    artifact: ${{ parameters.terraform_artefact_name }}
+
+
+    

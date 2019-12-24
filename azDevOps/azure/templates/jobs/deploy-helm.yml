@@ -1,0 +1,73 @@
+parameters:
+  kubernetes_service_connection : ''
+  registry_name : ''
+  registry_login : ''
+  registry_pass : '' 
+  chart_name : ''
+  namespace : ''
+  overrides : ''
+  helm_version : 3.0.0
+  updatetoken_enabled: false
+  updatetoken_targetfile: ''
+  acr_service_connection: ''
+
+jobs:
+- job: Helm_Deployment
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+    - ${{ if eq(parameters.updatetoken_enabled, true) }}: 
+      - template: ../steps/mutate-tokens.yml
+        parameters:
+          mutate_targetfile: ${{parameters.updatetoken_targetfile}}
+
+    - task: HelmInstaller@0
+      displayName: 'Helm: Install ${{parameters.helm_version}}'
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
+        kubernetesCluster: ${{parameters.cluster_name}}
+        helmVersion: ${{parameters.helm_version}}
+        checkLatestHelmVersion: false
+    - task: AzureCLI@2
+      displayName: 'Helm: Add Registry'
+      inputs:
+        azureSubscription: ${{parameters.acr_service_connection}}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az acr helm repo add --name ${{parameters.registry_name}}
+          helm repo update
+          helm repo list
+
+    - task: HelmDeploy@0
+      displayName: 'Helm: Upgrade-Install'
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
+        namespace: ${{parameters.namespace}}
+        command: upgrade
+        chartName: '${{parameters.registry_name}}/${{parameters.chart_name}}'
+        releaseName: ${{parameters.chart_name}}
+        overrideValues: $${{parameters.overrides}}
+        force: false
+        arguments: '--version $(Build.BuildNumber) --set image.repository=${{parameters.registry_name}}.azurecr.io/${{parameters.chart_name}} --set image.tag=$(Build.BuildNumber)'
+
+## Functional Testing
+    - ${{ if eq(parameters.functional_test, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'Test: Run Functional Tests'
+        inputs:
+          command: test
+          projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+          arguments: '-v n -r $(Common.TestResultsDirectory) --logger trx'
+          testRunTitle: 'Functional Tests'
+    - ${{ if eq(parameters.functional_test, true) }}:
+      - task: PublishTestResults@2
+        displayName : 'Publish To Test Results'
+        inputs:
+          testResultsFormat: 'VSTest'
+          testResultsFiles: '**/*.trx'
+          searchFolder: $(Common.TestResultsDirectory)
+          failTaskOnFailedTests: true
+        condition : always()
