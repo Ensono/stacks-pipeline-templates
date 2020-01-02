@@ -6,7 +6,7 @@ parameters:
   chart_name : ''
   namespace : ''
   overrides : ''
-  helm_version : 3.0.0
+  helm_version : 3.0.2
   updatetoken_enabled: false
   updatetoken_targetfile: ''
   acr_service_connection: ''
