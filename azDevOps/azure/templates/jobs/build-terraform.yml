@@ -9,7 +9,7 @@ jobs:
     vmImage: 'ubuntu-latest'
 
   steps:
-  - template: ../steps/ado-git-authentication.yml
+  - template: ../steps/login-git-azuredevops.yml
           
   - bash: 'terraform fmt' 
     displayName: 'Terraform: format'
