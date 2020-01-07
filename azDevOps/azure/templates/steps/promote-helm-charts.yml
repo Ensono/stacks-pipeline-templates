@@ -5,7 +5,7 @@ parameters:
   source_subscription: ''
   destination_subscription: ''
   tag: ''
-  helm_version: 3.0.0
+  helm_version: 3.0.2
 
 steps:
 - task: HelmInstaller@0
