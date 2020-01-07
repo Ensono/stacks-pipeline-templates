@@ -6,7 +6,7 @@ jobs:
 - job: build
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
   steps:
   - template: ../steps/login-git-azuredevops.yml

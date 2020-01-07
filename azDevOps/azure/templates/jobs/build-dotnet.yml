@@ -46,7 +46,7 @@ jobs:
   - job: BuildDotNet
     dependsOn: ${{ parameters.dependsOn }}
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-18.04'
     continueOnError: false
     variables:
       - name: code_coverage_filename
