@@ -62,7 +62,6 @@ jobs:
           projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
           arguments: '-v n -r $(Common.TestResultsDirectory) --logger trx'
           testRunTitle: 'Functional Tests'
-    - ${{ if eq(parameters.functional_test, true) }}:
       - task: PublishTestResults@2
         displayName : 'Publish To Test Results'
         inputs:
