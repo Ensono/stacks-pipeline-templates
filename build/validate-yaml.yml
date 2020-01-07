@@ -1,4 +1,4 @@
-name: $(Build.SourceBranchName)
+name: $(Date:yyyyMMdd)$(Rev:.r)
 
 variables:
   - name: YAML_LINT_VERSION
@@ -6,7 +6,6 @@ variables:
   - name: PYTHON_WHEEL_VERSION
     value: '0.33.6'
 
-# Trigger paths specific for this package, change accordingly
 trigger:
   branches:
     include:
@@ -16,7 +15,6 @@ trigger:
       - '*.yml'
       - 'build/yamllint.conf'
 
-# Only build PRs into Master
 pr:
   branches:
     include:
@@ -36,5 +34,7 @@ jobs:
       - bash: |
           pip install -I 'wheel==${{ variables.PYTHON_WHEEL_VERSION }}'
           pip install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
+        displayName: 'Install `yamllint`'
+      - bash: |
           python -m yamllint -c build/yamllint.conf .
         displayName: 'Validates YAML files in the repo'
