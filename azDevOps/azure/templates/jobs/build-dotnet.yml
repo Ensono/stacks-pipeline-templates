@@ -40,7 +40,7 @@ parameters:
   build_file_path: ''
   build_file_artefact: ''
   # .NET Core version variable
-  dotnet_core_version: '2.2.x' 
+  dotnet_core_version: '2.2.x'
 
 jobs:
   - job: BuildDotNet
@@ -70,12 +70,12 @@ jobs:
           login_kubernetes: false
           devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
-      - task: UseDotNet@2 
+      - task: UseDotNet@2
         displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
         inputs:
           packageType: sdk
           version: ${{ parameters.dotnet_core_version }}
-          installationPath: $(Agent.ToolsDirectory)/dotnet 
+          installationPath: $(Agent.ToolsDirectory)/dotnet
 
       - script: dotnet --list-sdks
         displayName: 'Check dotnet sdks installed'

@@ -143,34 +143,27 @@ jobs:
 
         # Functional Testing
         - ${{ if eq(parameters.functional_test, true) }}:
-          - task: DotNetCoreCLI@2
-            displayName: 'Test: Run Functional Tests'
-            inputs:
-              command: test
-              projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
-              arguments: '-v n'
-              testRunTitle: 'Functional Tests'
-  
-          - task: Bash@3
-            displayName: 'Upload: Test Results'
-            inputs:
-              targetType: 'filePath'
-              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
-              arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportSourcePath) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
-  
-          - task: Bash@3
-            displayName: 'Retrieve URL: Test Results'
-            inputs:
-              targetType: 'filePath'
-              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-              arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+            - task: DotNetCoreCLI@2
+              displayName: 'Test: Run Functional Tests'
+              inputs:
+                command: test
+                projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+                arguments: '-v n'
+                testRunTitle: 'Functional Tests'
 
-                - task: Bash@3
-                  displayName: 'Retrieve URL: Test Results'
-                  inputs:
-                    targetType: 'filePath'
-                    filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-                    arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+            - task: Bash@3
+              displayName: 'Upload: Test Results'
+              inputs:
+                targetType: 'filePath'
+                filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+                arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportSourcePath) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
+
+            - task: Bash@3
+              displayName: 'Retrieve URL: Test Results'
+              inputs:
+                targetType: 'filePath'
+                filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+                arguments: $(Test.FunctionalTestReportStorageAccountRG) $(Test.FunctionalTestReportStorageAccountName) $(Test.FunctionalTestReportStorageContainerName) $(Test.FunctionalTestReportTargetName)
 
             # Smoke Testing
             - ${{ if eq(parameters.smoke_test, true) }}:
