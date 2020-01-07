@@ -14,15 +14,17 @@ trigger:
   paths:
     include:
       - '*.yml'
+      - 'build/yamllint.conf'
 
 # Only build PRs into Master
 pr:
   branches:
     include:
-      - master
+      - '*'
   paths:
     include:
       - '*.yml'
+      - 'build/yamllint.conf'
 
 jobs:
   - job: ValidateYamlFiles
