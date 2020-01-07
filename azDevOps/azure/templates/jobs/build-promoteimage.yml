@@ -8,7 +8,7 @@ parameters:
 jobs:
 - job: PromoteImage
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
   continueOnError: False
   steps:
 

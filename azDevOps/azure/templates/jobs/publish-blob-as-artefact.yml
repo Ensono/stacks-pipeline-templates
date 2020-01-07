@@ -10,7 +10,7 @@ jobs:
 - job: GetPackage
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
   steps:
     - bash: |

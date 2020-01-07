@@ -5,7 +5,7 @@ jobs:
 - job: UpdateBuildNumber
 
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-18.04'
 
   steps:
   - script: echo '##vso[build.updatebuildnumber]${{ parameters.build_number }}'

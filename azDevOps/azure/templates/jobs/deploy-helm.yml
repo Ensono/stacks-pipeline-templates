@@ -14,7 +14,7 @@ parameters:
 jobs:
 - job: Helm_Deployment
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
     - ${{ if eq(parameters.updatetoken_enabled, true) }}: 
       - template: ../steps/mutate-tokens.yml
