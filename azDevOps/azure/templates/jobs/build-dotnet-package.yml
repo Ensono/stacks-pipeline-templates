@@ -15,34 +15,34 @@ parameters:
   dotnet_core_version: '2.2.x'
 
 jobs:
-- job: BuildDotNet
-  dependsOn: ${{ parameters.dependsOn }}
-  pool:
-    vmImage: 'windows-2019'
-  continueOnError: false
+  - job: BuildDotNet
+    dependsOn: ${{ parameters.dependsOn }}
+    pool:
+      vmImage: 'windows-2019'
+    continueOnError: false
 
-  steps:
-  - template: ../steps/build-updatebuildnumber-dotnet.yml
-    parameters:
-      sourcebranch_name: '${{ parameters.sourcebranch_name }}'
-      raw_version_number: '${{ parameters.raw_version_number }}'
+    steps:
+      - template: ../steps/build-updatebuildnumber-dotnet.yml
+        parameters:
+          sourcebranch_name: '${{ parameters.sourcebranch_name }}'
+          raw_version_number: '${{ parameters.raw_version_number }}'
 
-  - ${{ if eq(parameters.cosmosdb_secret, true) }}:
-    - task: Bash@3
-      displayName: 'Get: CosmosDB Key and Endpoint'
-      inputs:
-        targetType: 'filePath'
-        filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
-        arguments: $(CosmosDB.Account)
+      - ${{ if eq(parameters.cosmosdb_secret, true) }}:
+          - task: Bash@3
+            displayName: 'Get: CosmosDB Key and Endpoint'
+            inputs:
+              targetType: 'filePath'
+              filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-cosmosdb-key-endpoint.sh
+              arguments: $(CosmosDB.Account)
 
-  - template: ../steps/build-pack-test-dotnet.yml
-    parameters:
-      test_path: '${{ parameters.test_path }}'
-      package_path: '${{ parameters.package_path }}'
-      package_feed: '${{ parameters.package_feed }}'
-      dotnet_core_version: ${{ parameters.dotnet_core_version }}
+      - template: ../steps/build-pack-test-dotnet.yml
+        parameters:
+          test_path: '${{ parameters.test_path }}'
+          package_path: '${{ parameters.package_path }}'
+          package_feed: '${{ parameters.package_feed }}'
+          dotnet_core_version: ${{ parameters.dotnet_core_version }}
 
-  - template: ../steps/deploy-push-package-symbols.yml
-    parameters:
-      package_feed: '${{ parameters.package_feed }}'
-      publish_symbols: '${{ parameters.publish_symbols }}'
+      - template: ../steps/deploy-push-package-symbols.yml
+        parameters:
+          package_feed: '${{ parameters.package_feed }}'
+          publish_symbols: '${{ parameters.publish_symbols }}'

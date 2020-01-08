@@ -6,43 +6,43 @@ parameters:
   dotnet_core_version: '2.2.x'
 
 steps:
-- bash: |
-    echo 'Testing ${{ parameters.test_path }}'
-    echo 'Building ${{ parameters.package_path }}'
-    echo 'Restoring from ${{ parameters.package_feed }}'
-  displayName: 'Display: Package Path Info'
+  - bash: |
+      echo 'Testing ${{ parameters.test_path }}'
+      echo 'Building ${{ parameters.package_path }}'
+      echo 'Restoring from ${{ parameters.package_feed }}'
+    displayName: 'Display: Package Path Info'
 
-- task: UseDotNet@2
-  displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
-  inputs:
-    packageType: sdk
-    version: ${{ parameters.dotnet_core_version }}
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+    inputs:
+      packageType: sdk
+      version: ${{ parameters.dotnet_core_version }}
+      installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build: Restore'
-  inputs:
-    command: 'restore'
-    projects: '${{ parameters.package_path }}**/*.csproj'
-    feedsToUse: 'select'
-    vstsFeed: '${{ parameters.package_feed }}'
-    includeNuGetOrg: true
+  - task: DotNetCoreCLI@2
+    displayName: 'Build: Restore'
+    inputs:
+      command: 'restore'
+      projects: '${{ parameters.package_path }}**/*.csproj'
+      feedsToUse: 'select'
+      vstsFeed: '${{ parameters.package_feed }}'
+      includeNuGetOrg: true
 
-- task: DotNetCoreCLI@2
-  displayName: 'Test: Unit Tests'
-  inputs:
-    command: 'test'
-    projects: '${{ parameters.test_path }}/*.csproj'
-    arguments: '--no-restore'
-    failOnStderr: true
+  - task: DotNetCoreCLI@2
+    displayName: 'Test: Unit Tests'
+    inputs:
+      command: 'test'
+      projects: '${{ parameters.test_path }}/*.csproj'
+      arguments: '--no-restore'
+      failOnStderr: true
 
-# Pack NuGet packages.
-- task: DotNetCoreCLI@2
-  displayName: 'Build: Pack'
-  inputs:
-    command: 'pack'
-    configuration: 'release'
-    arguments: '--no-restore'
-    versioningScheme: byEnvVar
-    versionEnvVar: Build.BuildNumber
-    packagesToPack: '${{ parameters.package_path }}/*.csproj'
+  # Pack NuGet packages.
+  - task: DotNetCoreCLI@2
+    displayName: 'Build: Pack'
+    inputs:
+      command: 'pack'
+      configuration: 'release'
+      arguments: '--no-restore'
+      versioningScheme: byEnvVar
+      versionEnvVar: Build.BuildNumber
+      packagesToPack: '${{ parameters.package_path }}/*.csproj'
