@@ -12,8 +12,7 @@ trigger:
       - '*'
   paths:
     include:
-      - '*.yml'
-      - 'build/yamllint.conf'
+      - '*'
 
 pr:
   branches:
@@ -21,8 +20,7 @@ pr:
       - '*'
   paths:
     include:
-      - '*.yml'
-      - 'build/yamllint.conf'
+      - '*'
 
 jobs:
   - job: ValidateYamlFiles
@@ -32,9 +30,10 @@ jobs:
       vmImage: 'ubuntu-18.04'
     steps:
       - bash: |
-          pip install -I 'wheel==${{ variables.PYTHON_WHEEL_VERSION }}'
-          pip install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
+          sudo apt-get install python3-setuptools
+          pip3 install -I 'wheel==${{ variables.PYTHON_WHEEL_VERSION }}'
+          pip3 install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
         displayName: 'Install `yamllint`'
       - bash: |
-          python -m yamllint -c build/yamllint.conf . build/yamllint.conf
+          python3 -m yamllint -c build/validate-yaml.conf . build/validate-yaml.conf
         displayName: 'Validates YAML files in the repo'
