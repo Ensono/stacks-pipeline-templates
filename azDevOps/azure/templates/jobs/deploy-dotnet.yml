@@ -97,9 +97,11 @@ jobs:
                   env:
                     # Conditionally expose this env-var if appinsights_enabled is true
                     ${{ if eq(parameters.appinsights_enabled, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
                       appinsights_instrumentationkey: $(Monitoring.applnsightsInstrumentationKey)
                     # Conditionally expose this env-var if cosmosDB_secret is true
                     ${{ if eq(parameters.cosmosdb_secret, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
                       cosmosdb_key: $(CosmosDB.key)
 
                 - bash: |
@@ -118,16 +120,6 @@ jobs:
                 arguments: ./${{ parameters.kubernetes_kustomize_filepath }}
                 workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}
                 failOnStderr: true
-
-            # Functional Testing
-            - ${{ if eq(parameters.functional_test, true) }}:
-                - task: DotNetCoreCLI@2
-                  displayName: 'Test: Run Functional Tests'
-                  inputs:
-                    command: test
-                    projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
-                    arguments: '-v n'
-                    testRunTitle: 'Functional Tests'
 
             # Install dotnet core version based on project dependencies
             - ${{ if or(eq(parameters.functional_test, true), eq(parameters.smoke_test, true)) }}:
