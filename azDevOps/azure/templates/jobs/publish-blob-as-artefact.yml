@@ -7,37 +7,37 @@ parameters:
   Package_OutputArtefact: ''
 
 jobs:
-- job: GetPackage
+  - job: GetPackage
 
-  pool:
-    vmImage: 'ubuntu-latest'
+    pool:
+      vmImage: 'ubuntu-latest'
 
-  steps:
-    - bash: |
-        az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
-        az account set -s $azure_subscription_id
-        ACCOUNT_KEY=$( az storage account keys list -g ${{ parameters.Package_RG }} -n ${{ parameters.Package_storageAccount }} --query '[1].value' )
-        SAS_KEY_EXPIRY=$( date -d "1 month" '+%Y-%m-%dT%H:%MZ' )
-        SAS_KEY=$( az storage account generate-sas --permissions lr --account-name ${{ parameters.Package_storageAccount }} --account-key $ACCOUNT_KEY --services b --resource-types sco --expiry $SAS_KEY_EXPIRY -otsv )
-        SAS_KEY=$( sed -e 's/^"//' -e 's/"$//' <<<"$SAS_KEY" )
-        BLOB_URL=$( az storage blob url --account-name ${{ parameters.Package_storageAccount }} --account-key $ACCOUNT_KEY --container-name ${{ parameters.Package_Container }} --name ${{ parameters.Package_File }} )
-        BLOB_URL=$( sed -e 's/^"//' -e 's/"$//' <<<"$BLOB_URL" )
-        wget -O ${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }} $BLOB_URL?$SAS_KEY
-        az logout --username $azure_client_id
-      displayName: 'Get Package: ${{ parameters.Package_OutputArtefact }}'
-      workingDirectory: ${{ parameters.Package_OutputFolder }}
-      env:
+    steps:
+      - bash: |
+          az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
+          az account set -s $azure_subscription_id
+          ACCOUNT_KEY=$( az storage account keys list -g ${{ parameters.Package_RG }} -n ${{ parameters.Package_storageAccount }} --query '[1].value' )
+          SAS_KEY_EXPIRY=$( date -d "1 month" '+%Y-%m-%dT%H:%MZ' )
+          SAS_KEY=$( az storage account generate-sas --permissions lr --account-name ${{ parameters.Package_storageAccount }} --account-key $ACCOUNT_KEY --services b --resource-types sco --expiry $SAS_KEY_EXPIRY -otsv )
+          SAS_KEY=$( sed -e 's/^"//' -e 's/"$//' <<<"$SAS_KEY" )
+          BLOB_URL=$( az storage blob url --account-name ${{ parameters.Package_storageAccount }} --account-key $ACCOUNT_KEY --container-name ${{ parameters.Package_Container }} --name ${{ parameters.Package_File }} )
+          BLOB_URL=$( sed -e 's/^"//' -e 's/"$//' <<<"$BLOB_URL" )
+          wget -O ${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }} $BLOB_URL?$SAS_KEY
+          az logout --username $azure_client_id
+        displayName: 'Get Package: ${{ parameters.Package_OutputArtefact }}'
+        workingDirectory: ${{ parameters.Package_OutputFolder }}
+        env:
           azure_client_id: $(azure_client_id)
           azure_client_secret: $(azure_client_secret)
           azure_subscription_id: $(azure_subscription_id)
           azure_tenant_id: $(azure_tenant_id)
 
 
-    - task: ExtractFiles@1
-      inputs:
-        archiveFilePatterns: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }}'
-        destinationFolder: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_OutputArtefact }}'
-      displayName: 'Extract Package: ${{ parameters.Package_OutputArtefact }}'
+      - task: ExtractFiles@1
+        inputs:
+          archiveFilePatterns: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_File }}'
+          destinationFolder: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_OutputArtefact }}'
+        displayName: 'Extract Package: ${{ parameters.Package_OutputArtefact }}'
 
-    - publish: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_OutputArtefact }}'
-      artifact: '${{ parameters.Package_OutputArtefact }}'
+      - publish: '${{ parameters.Package_OutputFolder }}/${{ parameters.Package_OutputArtefact }}'
+        artifact: '${{ parameters.Package_OutputArtefact }}'

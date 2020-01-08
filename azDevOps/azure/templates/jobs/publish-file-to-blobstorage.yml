@@ -1,5 +1,5 @@
 parameters:
-  # Upload Config
+  # Upload Config
   source_file: ''
   target_rg: ''
   target_account: ''
@@ -8,16 +8,16 @@ parameters:
   devops_artefact_name: ''
 
 steps:
-- task: Bash@3
-  displayName: 'Upload: File to Blob Storage'
-  inputs:
-    filePath: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh'
-    arguments: '${{ parameters.target_rg }} ${{ parameters.source_file }} ${{ parameters.target_account }} ${{ parameters.target_container }} ${{ parameters.target_file }}'
+  - task: Bash@3
+    displayName: 'Upload: File to Blob Storage'
+    inputs:
+      filePath: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh'
+      arguments: '${{ parameters.target_rg }} ${{ parameters.source_file }} ${{ parameters.target_account }} ${{ parameters.target_container }} ${{ parameters.target_file }}'
 
-- task: Bash@3
-  displayName: 'Get: SAS URI for File on Blob Storage'
-  inputs:
-    targetType: 'filePath'
-    filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-    arguments: ${{ parameters.target_rg }} ${{ parameters.target_account }} ${{ parameters.target_container }} ${{ parameters.target_file }}
-    failOnStderr: true 
+  - task: Bash@3
+    displayName: 'Get: SAS URI for File on Blob Storage'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+      arguments: ${{ parameters.target_rg }} ${{ parameters.target_account }} ${{ parameters.target_container }} ${{ parameters.target_file }}
+      failOnStderr: true

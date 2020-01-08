@@ -1,0 +1,39 @@
+name: $(Date:yyyyMMdd)$(Rev:.r)
+
+variables:
+  - name: YAML_LINT_VERSION
+    value: '1.19.0'
+  - name: PYTHON_WHEEL_VERSION
+    value: '0.33.6'
+
+trigger:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - '*'
+
+pr:
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+      - '*'
+
+jobs:
+  - job: ValidateYamlFiles
+    displayName: 'Validate YAML Files'
+    condition: succeeded()
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - bash: |
+          sudo apt-get install python3-setuptools
+          pip3 install -I 'wheel==${{ variables.PYTHON_WHEEL_VERSION }}'
+          pip3 install -I 'yamllint==${{ variables.YAML_LINT_VERSION }}'
+        displayName: 'Install `yamllint`'
+      - bash: |
+          python3 -m yamllint -c build/validate-yaml.conf . build/validate-yaml.conf
+        displayName: 'Validates YAML files in the repo'
