@@ -1,33 +1,30 @@
 parameters:
   docker_workdir: ''
   docker_imagename: ''
-  docker_imagetag: '' 
+  docker_imagetag: ''
   docker_containerregistryname: ''
   vulnerability_scan: ''
   vulnerability_workdir: ''
   devops_artefact_name: 'DevOps'
 
 steps:
-- bash: |
-    docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
-  displayName: Build Container Image 
-  workingDirectory: ${{ parameters.docker_workdir }}
+  - bash: |
+      docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
+    displayName: Build Container Image
+    workingDirectory: ${{ parameters.docker_workdir }}
 
-# Vulnerability Scanning
-- ${{ if eq(parameters.vulnerability_scan, true) }}:
-  - task: Bash@3
-    displayName: 'Vulnerability Scan'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(Pipeline.Workspace)/DevOps/Docker/new-image-scan.sh
-      arguments: ${{ parameters.docker_imagename }} ${{ parameters.docker_imagetag }}
-      workingDirectory: ${{ parameters.vulnerability_workdir }}
-    continueOnError: true
+  - ${{ if eq(parameters.vulnerability_scan, true) }}:
+      - task: Bash@3
+        displayName: 'Vulnerability Scan'
+        inputs:
+          targetType: 'filePath'
+          filePath: $(Pipeline.Workspace)/DevOps/Docker/new-image-scan.sh
+          arguments: ${{ parameters.docker_imagename }} ${{ parameters.docker_imagetag }}
+          workingDirectory: ${{ parameters.vulnerability_workdir }}
+        continueOnError: true
 
-# Vulnerability Scanning
-
-- bash: |
-    az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
-    docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}
-  displayName: Push Container Image to Azure Container Registry
-  workingDirectory: ${{ parameters.docker_workdir }}
+      - bash: |
+          az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
+          docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}
+        displayName: Push Container Image to Azure Container Registry
+        workingDirectory: ${{ parameters.docker_workdir }}

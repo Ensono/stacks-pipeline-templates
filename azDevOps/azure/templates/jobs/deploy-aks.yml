@@ -3,7 +3,7 @@ parameters:
   terraform_artefact_name: ''
   devops_artefact_name: ''
   terraform_output_artefact: ''
-  #  State Config
+  # State Config
   terraform_state_rg: ''
   terraform_state_storage: ''
   terraform_state_container: ''
@@ -11,13 +11,13 @@ parameters:
   terraform_state_workspace: ''
   company: 'amido'
   project: 'stacks'
-  # Azure Config
+  # Azure Config
   location: 'uksouth'
   tags: ''
-  #  DNS
+  # DNS
   DNS_create: ''
   DNS_zone: ''
-  # Cluster Config
+  # Cluster Config
   Cluster_version: '1.14.8'
   Cluster_nodeCount: 1
   Cluster_nodeSize: 'Standard_D2_v2'
@@ -36,113 +36,113 @@ parameters:
   BlobCertStorageContainer: ''
 
 jobs:
-- deployment: infrastructure
-  environment: ${{ parameters.environment }}
+  - deployment: infrastructure
+    environment: ${{ parameters.environment }}
 
-  pool:
-    vmImage: 'ubuntu-18.04'
+    pool:
+      vmImage: 'ubuntu-18.04'
 
-  strategy:
-    runOnce:
-      deploy:
-        steps:
+    strategy:
+      runOnce:
+        deploy:
+          steps:
 
-        - download: current
-          displayName: 'Download: Terraform Artefacts'
-          artifact: ${{ parameters.terraform_artefact_name }}
+            - download: current
+              displayName: 'Download: Terraform Artefacts'
+              artifact: ${{ parameters.terraform_artefact_name }}
 
-        - download: current
-          displayName: 'Download: DevOps Artefacts'
-          artifact: ${{ parameters.devops_artefact_name }}
+            - download: current
+              displayName: 'Download: DevOps Artefacts'
+              artifact: ${{ parameters.devops_artefact_name }}
 
-        - task: Bash@3
-          displayName: 'Download: CI/CD Prerequisites'
-          inputs:
-            targetType: 'filePath'
-            filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Bootstrap/install-cicd-prereqs.sh
-            arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
+            - task: Bash@3
+              displayName: 'Download: CI/CD Prerequisites'
+              inputs:
+                targetType: 'filePath'
+                filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Bootstrap/install-cicd-prereqs.sh
+                arguments: $(Build.BinariesDirectory)/kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v2.0.3/kustomize_2.0.3_linux_amd64
 
-        - template: ../steps/login-services.yml
-          parameters:
-            # Azure
-            login_azure: true
-            azure_tenant_id: '$(azure_tenant_id)'
-            azure_subscription_id: '$(azure_subscription_id)'
-            azure_client_id: '$(azure_client_id)'
-            azure_client_secret: '$(azure_client_secret)'
-            # Kubernetes
-            login_kubernetes: false
-            devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+            - template: ../steps/login-services.yml
+              parameters:
+                # Azure
+                login_azure: true
+                azure_tenant_id: '$(azure_tenant_id)'
+                azure_subscription_id: '$(azure_subscription_id)'
+                azure_client_id: '$(azure_client_id)'
+                azure_client_secret: '$(azure_client_secret)'
+                # Kubernetes
+                login_kubernetes: false
+                devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
-        - template: ../steps/deploy-terraform-resource.yml
-          parameters:
-            # Terraform Config
-            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
-            terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
-            # Terraform State Config (Must already exist!)
-            terraform_state_rg: ${{ parameters.terraform_state_rg }}
-            terraform_state_storage: ${{ parameters.terraform_state_storage }}
-            terraform_state_container: ${{ parameters.terraform_state_container }}
-            terraform_state_key: ${{ parameters.terraform_state_key }}
-            terraform_state_workspace: ${{ parameters.terraform_state_workspace }}
-            # Global Config
-            company: ${{ parameters.company }}
-            project: ${{ parameters.project }}
-            environment: ${{ parameters.environment }}
-            # Azure Config
-            location: ${{ parameters.location }}
-            tags: ${{ parameters.tags }}
-            terraform_extra_properties:
-              # DNS Config
-              dns_create_dns_zone: ${{ parameters.DNS_create }}
-              dns_zone: ${{ parameters.DNS_zone }}
-              # SPN Config
-              create_aksspn: ${{ parameters.Cluster_spn_create }}
-              # If the above is set to false, the following vars must be populated!
-              cluster_spn_clientid: $(cluster_spn_clientid)
-              cluster_spn_objectid: $(cluster_spn_objectid)
-              cluster_spn_clientsecret: $(cluster_spn_clientsecret)
-              # Cluster Config
-              cluster_version: ${{ parameters.Cluster_version }}
-              cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
-              cluster_agent_size: ${{ parameters.Cluster_nodeSize }}
-            terraform_output_commands: |
-              terraform output AKS-Cluster-Name
-              AKS_CLUSTER_NAME=$(terraform output AKS-Cluster-Name)
-              echo Setting Cluster Name to $AKS_CLUSTER_NAME
-              echo "##vso[task.setvariable variable=AKS_CLUSTER_NAME;isOutput=true]$AKS_CLUSTER_NAME"
-              terraform output Resource-Group-Name
-              AKS_CLUSTER_RG=$(terraform output Resource-Group-Name)
-              echo Setting RG to $AKS_CLUSTER_RG
-              echo "##vso[task.setvariable variable=AKS_CLUSTER_RG;isOutput=true]$AKS_CLUSTER_RG"
+            - template: ../steps/deploy-terraform-resource.yml
+              parameters:
+                # Terraform Config
+                terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+                terraform_output_artefact: ${{ parameters.terraform_output_artefact }}
+                # Terraform State Config (Must already exist!)
+                terraform_state_rg: ${{ parameters.terraform_state_rg }}
+                terraform_state_storage: ${{ parameters.terraform_state_storage }}
+                terraform_state_container: ${{ parameters.terraform_state_container }}
+                terraform_state_key: ${{ parameters.terraform_state_key }}
+                terraform_state_workspace: ${{ parameters.terraform_state_workspace }}
+                # Global Config
+                company: ${{ parameters.company }}
+                project: ${{ parameters.project }}
+                environment: ${{ parameters.environment }}
+                # Azure Config
+                location: ${{ parameters.location }}
+                tags: ${{ parameters.tags }}
+                terraform_extra_properties:
+                  # DNS Config
+                  dns_create_dns_zone: ${{ parameters.DNS_create }}
+                  dns_zone: ${{ parameters.DNS_zone }}
+                  # SPN Config
+                  create_aksspn: ${{ parameters.Cluster_spn_create }}
+                  # If the above is set to false, the following vars must be populated!
+                  cluster_spn_clientid: $(cluster_spn_clientid)
+                  cluster_spn_objectid: $(cluster_spn_objectid)
+                  cluster_spn_clientsecret: $(cluster_spn_clientsecret)
+                  # Cluster Config
+                  cluster_version: ${{ parameters.Cluster_version }}
+                  cluster_agent_count: ${{ parameters.Cluster_nodeCount }}
+                  cluster_agent_size: ${{ parameters.Cluster_nodeSize }}
+                terraform_output_commands: |
+                  terraform output AKS-Cluster-Name
+                  AKS_CLUSTER_NAME=$(terraform output AKS-Cluster-Name)
+                  echo Setting Cluster Name to $AKS_CLUSTER_NAME
+                  echo "##vso[task.setvariable variable=AKS_CLUSTER_NAME;isOutput=true]$AKS_CLUSTER_NAME"
+                  terraform output Resource-Group-Name
+                  AKS_CLUSTER_RG=$(terraform output Resource-Group-Name)
+                  echo Setting RG to $AKS_CLUSTER_RG
+                  echo "##vso[task.setvariable variable=AKS_CLUSTER_RG;isOutput=true]$AKS_CLUSTER_RG"
 
-        - template: ../steps/login-services.yml
-          parameters:
-            # Azure
-            login_azure: false
-            # Kubernetes
-            login_kubernetes: true
-            aks_rg: '$(tfoutputs.AKS_CLUSTER_RG)'
-            aks_clustername: '$(tfoutputs.AKS_CLUSTER_NAME)'
-            devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+            - template: ../steps/login-services.yml
+              parameters:
+                # Azure
+                login_azure: false
+                # Kubernetes
+                login_kubernetes: true
+                aks_rg: '$(tfoutputs.AKS_CLUSTER_RG)'
+                aks_clustername: '$(tfoutputs.AKS_CLUSTER_NAME)'
+                devops_artefact_name: '${{ parameters.devops_artefact_name }}'
 
-        # Bootstrap Cluster
-        - template: ../steps/deploy-aks-bootstrap.yml
-          parameters:
-            # Basic Config
-            aks_cluster_name: $(tfoutputs.AKS_CLUSTER_NAME)
-            aks_cluster_rg: $(tfoutputs.AKS_CLUSTER_RG)
-            devops_package_path: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}'
-            # Ingress Configuration
-            IngressNamespace: ${{ parameters.IngressNamespace }}
-            DefaultDNSZone: ${{ parameters.DNS_zone }}
-            # SSL
-            DefaultCertImportfromBlob: ${{ parameters.DefaultCertImportfromBlob }}
-            BlobCertTLSkeyfile: ${{ parameters.BlobCertTLSkeyfile }}
-            BlobCertTLScrtfile: ${{ parameters.BlobCertTLScrtfile }}
-            BlobCertCAfile: ${{ parameters.BlobCertCAfile }}
-            DefaultCertSecretNameSpace: ${{ parameters.DefaultCertSecretNameSpace }}
-            DefaultCertSecretName: ${{ parameters.DefaultCertSecretName }}
-            BlobCertRG: ${{ parameters.BlobCertRG }}
-            BlobCertStorageAccount: ${{ parameters.BlobCertStorageAccount }}
-            BlobCertStorageContainer: ${{ parameters.BlobCertStorageContainer }}
+            # Bootstrap Cluster
+            - template: ../steps/deploy-aks-bootstrap.yml
+              parameters:
+                # Basic Config
+                aks_cluster_name: $(tfoutputs.AKS_CLUSTER_NAME)
+                aks_cluster_rg: $(tfoutputs.AKS_CLUSTER_RG)
+                devops_package_path: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}'
+                # Ingress Configuration
+                IngressNamespace: ${{ parameters.IngressNamespace }}
+                DefaultDNSZone: ${{ parameters.DNS_zone }}
+                # SSL
+                DefaultCertImportfromBlob: ${{ parameters.DefaultCertImportfromBlob }}
+                BlobCertTLSkeyfile: ${{ parameters.BlobCertTLSkeyfile }}
+                BlobCertTLScrtfile: ${{ parameters.BlobCertTLScrtfile }}
+                BlobCertCAfile: ${{ parameters.BlobCertCAfile }}
+                DefaultCertSecretNameSpace: ${{ parameters.DefaultCertSecretNameSpace }}
+                DefaultCertSecretName: ${{ parameters.DefaultCertSecretName }}
+                BlobCertRG: ${{ parameters.BlobCertRG }}
+                BlobCertStorageAccount: ${{ parameters.BlobCertStorageAccount }}
+                BlobCertStorageContainer: ${{ parameters.BlobCertStorageContainer }}
