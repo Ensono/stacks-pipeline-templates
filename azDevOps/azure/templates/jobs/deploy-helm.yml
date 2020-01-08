@@ -1,81 +1,81 @@
 parameters:
-  kubernetes_service_connection : ''
-  registry_name : ''
-  registry_login : ''
-  registry_pass : '' 
-  chart_name : ''
-  namespace : ''
-  overrides : ''
-  helm_version : 3.0.2
+  kubernetes_service_connection: ''
+  registry_name: ''
+  registry_login: ''
+  registry_pass: ''
+  chart_name: ''
+  namespace: ''
+  overrides: ''
+  helm_version: 3.0.2
   acr_service_connection: ''
   functional_test: false
   functional_test_artefact_name: ''
-  functional_test_project_file : ''
+  functional_test_project_file: ''
   functional_test_config_override: false
   functional_test_config_overrides: ''
 
 jobs:
-- job: Helm_Deployment
-  pool:
-    vmImage: 'ubuntu-18.04'
-  steps:
-    - task: HelmInstaller@0
-      inputs:
-        connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
-        kubernetesCluster: ${{parameters.cluster_name}}
-        helmVersion: ${{parameters.helm_version}}
-        checkLatestHelmVersion: false
-      displayName: 'Helm: Install ${{parameters.helm_version}}'
-
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: ${{parameters.acr_service_connection}}
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az acr helm repo add --name ${{parameters.registry_name}}
-          helm repo update
-          helm repo list
-      displayName: 'Helm: Add Registry'
-
-    - task: HelmDeploy@0
-      inputs:
-        connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
-        namespace: ${{parameters.namespace}}
-        command: upgrade
-        chartName: '${{parameters.registry_name}}/${{parameters.chart_name}}'
-        releaseName: ${{parameters.chart_name}}
-        overrideValues: $${{parameters.overrides}}
-        force: false
-        arguments: '--version $(Build.BuildNumber) --set image.repository=${{parameters.registry_name}}.azurecr.io/${{parameters.chart_name}} --set image.tag=$(Build.BuildNumber)'
-      displayName: 'Helm: Upgrade-Install'
-
-## Functional Testing
-    - ${{ if eq(parameters.functional_test, true) }}:
-      - ${{ if eq(parameters.functional_test_config_override, true) }}:
-        - ${{ each override in parameters.functional_test_config_overrides }}:
-            - bash: |
-                echo Creating pipeline/env var as ${{ override.key }} with value ${{ override.value }}
-                echo "##vso[task.setvariable variable=${{ override.key }}]${{ override.value }}"                     
-              name: 'createvar_${{ override.key }}'
-              displayName: 'Create: Variable ${{ override.key }}'    
-              
-    - ${{ if eq(parameters.functional_test, true) }}:
-      - task: DotNetCoreCLI@2
+  - job: Helm_Deployment
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - task: HelmInstaller@0
         inputs:
-          command: test
-          projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
-          arguments: '-v n -r $(Common.TestResultsDirectory) --logger trx'
-          testRunTitle: 'Functional Tests'
-        displayName: 'Test: Run Functional Tests'
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
+          kubernetesCluster: ${{parameters.cluster_name}}
+          helmVersion: ${{parameters.helm_version}}
+          checkLatestHelmVersion: false
+        displayName: 'Helm: Install ${{parameters.helm_version}}'
 
-      - task: PublishTestResults@2
+      - task: AzureCLI@2
         inputs:
-          testResultsFormat: 'VSTest'
-          testResultsFiles: '**/*.trx'
-          searchFolder: $(Common.TestResultsDirectory)
-          failTaskOnFailedTests: true
-        condition : always()
-        displayName : 'Publish: Test Results'
+          azureSubscription: ${{parameters.acr_service_connection}}
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az acr helm repo add --name ${{parameters.registry_name}}
+            helm repo update
+            helm repo list
+        displayName: 'Helm: Add Registry'
+
+      - task: HelmDeploy@0
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceConnection: ${{parameters.kubernetes_service_connection}}
+          namespace: ${{parameters.namespace}}
+          command: upgrade
+          chartName: '${{parameters.registry_name}}/${{parameters.chart_name}}'
+          releaseName: ${{parameters.chart_name}}
+          overrideValues: $${{parameters.overrides}}
+          force: false
+          arguments: '--version $(Build.BuildNumber) --set image.repository=${{parameters.registry_name}}.azurecr.io/${{parameters.chart_name}} --set image.tag=$(Build.BuildNumber)'
+        displayName: 'Helm: Upgrade-Install'
+
+      # Functional Testing
+      - ${{ if eq(parameters.functional_test, true) }}:
+          - ${{ if eq(parameters.functional_test_config_override, true) }}:
+              - ${{ each override in parameters.functional_test_config_overrides }}:
+                  - bash: |
+                      echo Creating pipeline/env var as ${{ override.key }} with value ${{ override.value }}
+                      echo "##vso[task.setvariable variable=${{ override.key }}]${{ override.value }}"
+                    name: 'createvar_${{ override.key }}'
+                    displayName: 'Create: Variable ${{ override.key }}'
+
+      - ${{ if eq(parameters.functional_test, true) }}:
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: test
+              projects: '$(Test.FunctionalTestProjectSourcePath)/$(Test.FunctionalTestProjectFile)'
+              arguments: '-v n -r $(Common.TestResultsDirectory) --logger trx'
+              testRunTitle: 'Functional Tests'
+            displayName: 'Test: Run Functional Tests'
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: '**/*.trx'
+              searchFolder: $(Common.TestResultsDirectory)
+              failTaskOnFailedTests: true
+            condition: always()
+            displayName: 'Publish: Test Results'

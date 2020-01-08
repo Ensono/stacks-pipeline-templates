@@ -2,29 +2,27 @@ parameters:
   buildConfiguration: 'Release'
   nugetFeedName: ''
 
-
 steps:
+  - task: Bash@3
+    displayName: 'Create NugetRestore Folder'
+    inputs:
+      targetType: 'inline'
+      script: 'mkdir NugetPackage -p'
 
-- task: Bash@3
-  displayName: 'Create NugetRestore Folder'
-  inputs:
-    targetType: 'inline'
-    script: 'mkdir NugetPackage -p'
-
-- task: CacheBeta@0
-  inputs:
-    key: nuget
-    path: 'NugetPackage'
-  displayName: Cache NuGet packages
+  - task: CacheBeta@0
+    inputs:
+      key: nuget
+      path: 'NugetPackage'
+    displayName: Cache NuGet packages
 
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'restore'
-    projects: '**/*.sln'
-    feedsToUse: 'select'
-    vstsFeed: ${{ parameters.nugetFeedName }}
-    includeNuGetOrg: false
-    restoreDirectory: 'NugetPackage'
-    verbosityRestore: 'Minimal'
-  displayName: 'Nuget Restore'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: 'restore'
+      projects: '**/*.sln'
+      feedsToUse: 'select'
+      vstsFeed: ${{ parameters.nugetFeedName }}
+      includeNuGetOrg: false
+      restoreDirectory: 'NugetPackage'
+      verbosityRestore: 'Minimal'
+    displayName: 'Nuget Restore'

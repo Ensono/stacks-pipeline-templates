@@ -2,10 +2,10 @@ parameters:
   nugetFeedName: ''
 
 steps:
-- task: DotNetCoreCLI@2
-  displayName : Nuget Push
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: ${{ parameters.nugetFeedName }}
+  - task: DotNetCoreCLI@2
+    displayName: Nuget Push
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: ${{ parameters.nugetFeedName }}

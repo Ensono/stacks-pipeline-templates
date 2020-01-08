@@ -1,46 +1,46 @@
-parameters: 
+parameters:
   source_image_name: ''
-  destination_image_name : ''
-  source_acr : ''
-  destination_acr : ''
+  destination_image_name: ''
+  source_acr: ''
+  destination_acr: ''
   source_subscription: ''
   destination_subscription: ''
   tag: ''
 
 steps:
-- task: AzureCLI@2
-  displayName: 'Pull ${{parameters.source_image_name}} From ${{parameters.source_acr}} ACR'
-  inputs:
-    azureSubscription: ${{parameters.source_subscription}}
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |  
-      echo "Logging in to '${{parameters.source_acr}}'"
-      az acr login --name ${{parameters.source_acr}}
-      echo "Pulling image from nonprod repo"
-      docker pull ${{parameters.source_acr}}.azurecr.io/${{parameters.source_image_name}}:${{parameters.tag}}
+  - task: AzureCLI@2
+    displayName: 'Pull ${{parameters.source_image_name}} From ${{parameters.source_acr}} ACR'
+    inputs:
+      azureSubscription: ${{parameters.source_subscription}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "Logging in to '${{parameters.source_acr}}'"
+        az acr login --name ${{parameters.source_acr}}
+        echo "Pulling image from nonprod repo"
+        docker pull ${{parameters.source_acr}}.azurecr.io/${{parameters.source_image_name}}:${{parameters.tag}}
 
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: |
-        docker images -a
-        echo "Tagging Image"
-        docker tag ${{parameters.source_acr}}.azurecr.io/${{parameters.source_image_name}}:${{parameters.tag}} ${{parameters.destination_acr}}.azurecr.io/${{parameters.destination_image_name}}:${{parameters.tag}}
-  displayName: 'Tag ${{parameters.source_image_name}} From ${{parameters.source_acr}} ACR'
-
-- ${{ if eq(variables['system.debug'], 'true') }}:
   - task: Bash@3
     inputs:
       targetType: 'inline'
       script: |
-        docker images -a
-    condition: always()
-    displayName: 'List Images'
+          docker images -a
+          echo "Tagging Image"
+          docker tag ${{parameters.source_acr}}.azurecr.io/${{parameters.source_image_name}}:${{parameters.tag}} ${{parameters.destination_acr}}.azurecr.io/${{parameters.destination_image_name}}:${{parameters.tag}}
+    displayName: 'Tag ${{parameters.source_image_name}} From ${{parameters.source_acr}} ACR'
 
-- template: publish-docker.yml
-  parameters:
-    projectName: ${{parameters.destination_image_name}}
-    registryName : ${{parameters.destination_acr}}
-    Subscription : ${{parameters.destination_subscription}}
-    tag: ${{parameters.tag}}
+  - ${{ if eq(variables['system.debug'], 'true') }}:
+      - task: Bash@3
+        inputs:
+          targetType: 'inline'
+          script: |
+            docker images -a
+        condition: always()
+        displayName: 'List Images'
+
+  - template: publish-docker.yml
+    parameters:
+      projectName: ${{parameters.destination_image_name}}
+      registryName: ${{parameters.destination_acr}}
+      Subscription: ${{parameters.destination_subscription}}
+      tag: ${{parameters.tag}}

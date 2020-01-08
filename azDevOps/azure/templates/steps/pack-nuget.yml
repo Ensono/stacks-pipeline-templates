@@ -2,9 +2,9 @@ parameters:
   packagesToPackPath: "*.nuspec"
 
 steps:
-- task: NuGetCommand@2
-  displayName: 'NuGet pack'
-  inputs:
-    command: pack
-    packagesToPack: ${{ parameters.packagesToPackPath }}
-    buildProperties: 'buildnumber=$(Build.BuildNumber)'
+  - task: NuGetCommand@2
+    displayName: 'NuGet pack'
+    inputs:
+      command: pack
+      packagesToPack: ${{ parameters.packagesToPackPath }}
+      buildProperties: 'buildnumber=$(Build.BuildNumber)'
