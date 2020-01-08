@@ -97,9 +97,11 @@ jobs:
                   env:
                     # Conditionally expose this env-var if appinsights_enabled is true
                     ${{ if eq(parameters.appinsights_enabled, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
                       appinsights_instrumentationkey: $(Monitoring.applnsightsInstrumentationKey)
                     # Conditionally expose this env-var if cosmosDB_secret is true
                     ${{ if eq(parameters.cosmosdb_secret, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
                       cosmosdb_key: $(CosmosDB.key)
 
                 - bash: |
