@@ -2,11 +2,9 @@ parameters:
   build_number: ''
 
 jobs:
-- job: UpdateBuildNumber
-
-  pool:
-    vmImage: 'ubuntu-18.04'
-
-  steps:
-  - script: echo '##vso[build.updatebuildnumber]${{ parameters.build_number }}'
-    displayName: 'Update: Build Number'
+  - job: UpdateBuildNumber
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - script: echo '##vso[build.updatebuildnumber]${{ parameters.build_number }}'
+        displayName: 'Update: Build Number'
