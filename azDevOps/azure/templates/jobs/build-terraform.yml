@@ -3,28 +3,23 @@ parameters:
   terraform_artefact_name:
 
 jobs:
-- job: build
+  - job: build
+    pool:
+      vmImage: 'ubuntu-18.04'
+    steps:
+      - template: ../steps/login-git-azuredevops.yml
 
-  pool:
-    vmImage: 'ubuntu-18.04'
+      - bash: 'terraform fmt'
+        displayName: 'Terraform: format'
+        workingDirectory: ${{ parameters.terraform_filepath }}
 
-  steps:
-  - template: ../steps/login-git-azuredevops.yml
-          
-  - bash: 'terraform fmt' 
-    displayName: 'Terraform: format'
-    workingDirectory: ${{ parameters.terraform_filepath }}
+      - bash: 'terraform init -backend=false'
+        displayName: 'Terraform: init'
+        workingDirectory: ${{ parameters.terraform_filepath }}
 
-  - bash: 'terraform init -backend=false' 
-    displayName: 'Terraform: init'
-    workingDirectory: ${{ parameters.terraform_filepath }}
-  
-  - bash: 'terraform validate' 
-    displayName: 'Terraform: validate'
-    workingDirectory: ${{ parameters.terraform_filepath }}
+      - bash: 'terraform validate'
+        displayName: 'Terraform: validate'
+        workingDirectory: ${{ parameters.terraform_filepath }}
 
-  - publish: ${{ parameters.terraform_filepath }}
-    artifact: ${{ parameters.terraform_artefact_name }}
-
-
-    
+      - publish: ${{ parameters.terraform_filepath }}
+        artifact: ${{ parameters.terraform_artefact_name }}

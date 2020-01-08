@@ -15,46 +15,44 @@ parameters:
   releasenote_targetfile: ''
 
 jobs:
+  - job: ReleaseNotes
+    dependsOn: ${{ parameters.dependsOn }}
+    pool:
+      vmImage: 'ubuntu-18.04'
+    continueOnError: true
+    steps:
+      - template: ../steps/build-consume-devops.yml
 
-- job: ReleaseNotes
-  dependsOn: ${{ parameters.dependsOn }}
-  pool:
-    vmImage: 'ubuntu-18.04'
-  continueOnError: true
-
-  steps:
-  - template: ../steps/build-consume-devops.yml
-
-  - task: Bash@3
-    displayName: 'Generate: Release Notes'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
-      arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }}   
+      - task: Bash@3
+        displayName: 'Generate: Release Notes'
+        inputs:
+          targetType: 'filePath'
+          filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/ReleaseNotes/create-releasenotes-from-github-pr.sh
+          arguments: ${{ parameters.releasenote_version }} ${{ parameters.releasenote_user }} ${{ parameters.releasenote_token }} ${{ parameters.releasenote_github_org }} ${{ parameters.releasenote_github_project }} ${{ parameters.releasenote_output }}
 
 
-  - template: ../steps/login-services.yml
-    parameters:   
-      # Azure
-      login_azure: true
-      azure_tenant_id: '$(azure_tenant_id)'
-      azure_subscription_id: '$(azure_subscription_id)'
-      azure_client_id: '$(azure_client_id)'
-      azure_client_secret: '$(azure_client_secret)'
-      # Kubernetes
-      login_kubernetes: false
+      - template: ../steps/login-services.yml
+        parameters:
+          # Azure
+          login_azure: true
+          azure_tenant_id: '$(azure_tenant_id)'
+          azure_subscription_id: '$(azure_subscription_id)'
+          azure_client_id: '$(azure_client_id)'
+          azure_client_secret: '$(azure_client_secret)'
+          # Kubernetes
+          login_kubernetes: false
 
-  - task: Bash@3
-    displayName: 'Upload: Release Notes'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
-      # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
-      arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}  
+      - task: Bash@3
+        displayName: 'Upload: Release Notes'
+        inputs:
+          targetType: 'filePath'
+          filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/upload-azstorage-blob.sh
+          # Storage Account RG, Path to File, StorageAccountName, ContainerName, TargetFileName
+          arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_output }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}
 
-  - task: Bash@3
-    displayName: 'Retrieve URL: Release Notes'
-    inputs:
-      targetType: 'filePath'
-      filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
-      arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}
+      - task: Bash@3
+        displayName: 'Retrieve URL: Release Notes'
+        inputs:
+          targetType: 'filePath'
+          filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-azstorage-sasurl.sh
+          arguments: ${{ parameters.releasenote_storageaccountrg }} ${{ parameters.releasenote_storageaccountname }} ${{ parameters.releasenote_storageaccountcontainer }} ${{ parameters.releasenote_targetfile }}

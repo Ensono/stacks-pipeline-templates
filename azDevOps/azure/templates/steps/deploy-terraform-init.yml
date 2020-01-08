@@ -1,32 +1,32 @@
 parameters:
-  # Terraform Basic Config
-  terraform_artefact_path: 
-  #  Terraform State Config
-  terraform_state_rg: 
-  terraform_state_storage: 
+  # Terraform Basic Config
+  terraform_artefact_path:
+  # Terraform State Config
+  terraform_state_rg:
+  terraform_state_storage:
   terraform_state_container:
-  terraform_state_key: 
+  terraform_state_key:
   terraform_state_workspace_enabled: true
-  terraform_state_workspace_name: 
-  # WARNING: Terraform Backend & Azure Credential config comes via Variable Group that must be inherited into this step! 
+  terraform_state_workspace_name:
+  # WARNING: Terraform Backend & Azure Credential config comes via Variable Group that must be inherited into this step!
 
 steps:
-- bash: |
-    terraform version
-    terraform init \
-    -backend-config="key=${{ parameters.terraform_state_key }}" \
-    -backend-config="storage_account_name=${{ parameters.terraform_state_storage }}" \
-    -backend-config="resource_group_name=${{ parameters.terraform_state_rg }}" \
-    -backend-config="container_name=${{ parameters.terraform_state_container }}" \
-    -backend-config="subscription_id=$(azure_subscription_id)" \
-    -backend-config="tenant_id=$(azure_tenant_id)" \
-    -backend-config="client_id=$(azure_client_id)" \
-    -backend-config="client_secret=$(azure_client_secret)"
-  displayName: 'Terraform: init'
-  workingDirectory: ${{ parameters.terraform_artefact_path }}
-
-- ${{ if eq(parameters.terraform_state_workspace_enabled, true) }}:
-  - bash: | 
-      terraform workspace select ${{ parameters.terraform_state_workspace_name }} || terraform workspace new ${{ parameters.terraform_state_workspace_name }}
-    displayName: 'Terraform: workspace'
+  - bash: |
+      terraform version
+      terraform init \
+      -backend-config="key=${{ parameters.terraform_state_key }}" \
+      -backend-config="storage_account_name=${{ parameters.terraform_state_storage }}" \
+      -backend-config="resource_group_name=${{ parameters.terraform_state_rg }}" \
+      -backend-config="container_name=${{ parameters.terraform_state_container }}" \
+      -backend-config="subscription_id=$(azure_subscription_id)" \
+      -backend-config="tenant_id=$(azure_tenant_id)" \
+      -backend-config="client_id=$(azure_client_id)" \
+      -backend-config="client_secret=$(azure_client_secret)"
+    displayName: 'Terraform: init'
     workingDirectory: ${{ parameters.terraform_artefact_path }}
+
+  - ${{ if eq(parameters.terraform_state_workspace_enabled, true) }}:
+      - bash: |
+          terraform workspace select ${{ parameters.terraform_state_workspace_name }} || terraform workspace new ${{ parameters.terraform_state_workspace_name }}
+        displayName: 'Terraform: workspace'
+        workingDirectory: ${{ parameters.terraform_artefact_path }}

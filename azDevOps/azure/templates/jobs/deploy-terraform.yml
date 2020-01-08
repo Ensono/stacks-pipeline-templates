@@ -20,80 +20,78 @@ parameters:
   bootstrap_ingress_namespace: 'nginx'
 
 jobs:
-- deployment: deploy
-  environment: ${{ parameters.environment }}
+  - deployment: deploy
+    environment: ${{ parameters.environment }}
+    pool:
+      vmImage: 'ubuntu-18.04'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download: Terraform Artefacts'
+              artifact: ${{ parameters.terraform_artefact_name }}
 
-  pool:
-    vmImage: 'ubuntu-18.04'
+            - download: current
+              displayName: 'Download: DevOps Artefacts'
+              artifact: ${{ parameters.devops_artefact_name }}
 
-  strategy:
-    runOnce:
-      deploy:
-        steps:
-        - download: current
-          displayName: 'Download: Terraform Artefacts'
-          artifact: ${{ parameters.terraform_artefact_name }}
-
-        - download: current
-          displayName: 'Download: DevOps Artefacts'
-          artifact: ${{ parameters.devops_artefact_name }}
-
-        - template: ../steps/deploy-terraform-init.yml
-          # Terraform Backend & Azure Credential config comes via Variable Group
-          # that must be inherited into this step! 
-          parameters:
-            #  Terraform Config
-            terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }} 
-            # Terraform State Config (Must already exist!)
-            terraform_state_rg: ${{ parameters.terraform_state_rg }}
-            terraform_state_storage: ${{ parameters.terraform_state_storage }}
-            terraform_state_container: ${{ parameters.terraform_state_container }}
-            terraform_state_key: ${{ parameters.terraform_state_key }}
-            terraform_state_workspace_enabled: ${{ parameters.terraform_state_workspace_enabled }}
-            terraform_state_workspace_name: ${{ parameters.terraform_state_workspace_name }}
-
-        - ${{ if eq(parameters.tf_destroy_all_resources, true) }}:
-          - template: ../steps/deploy-terraform-destroy.yml
-            # WARNING! THIS WILL DESTROY ALL RESOURCES! 
-            parameters:
-              #  Terraform Config
-              terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }} 
-              environment: ${{ parameters.environment }}
-              # Job specific Config
-              tf_job_input_params: ${{ parameters.tf_job_input_params }}
-
-        - ${{ if eq(parameters.tf_destroy_all_resources, false) }}:
-          - template: ../steps/deploy-terraform-apply.yml
-            parameters:
-              #  Terraform Config
-              terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }} 
-              environment: ${{ parameters.environment }}
-              # Job specific Config
-              tf_job_input_params: ${{ parameters.tf_job_input_params }}
-              tf_job_output_params: ${{ parameters.tf_job_output_params }}
-
-          - ${{ if or(eq(parameters.bootstrap_aks_cluster, true), eq(parameters.require_login, true)) }}:
-            - template: ../steps/login-services.yml
-              parameters:   
-                # Azure
-                login_azure: true
-                azure_tenant_id: '$(azure_tenant_id)'
-                azure_subscription_id: '$(azure_subscription_id)'
-                azure_client_id: '$(azure_client_id)'
-                azure_client_secret: '$(azure_client_secret)'
-                # Kubernetes
-                login_kubernetes: true
-                aks_rg: $(tfoutput_resource_group_name.resource_group_name)
-                aks_clustername: $(tfoutput_aks_cluster_name.aks_cluster_name)
-                devops_artefact_name: '${{ parameters.devops_artefact_name }}'
-
-          - ${{ if eq(parameters.bootstrap_aks_cluster, true) }}:
-            # Bootstrap Cluster
-            - template: ../steps/deploy-aks-bootstrap.yml
+            - template: ../steps/deploy-terraform-init.yml
+              # Terraform Backend & Azure Credential config comes via Variable Group
+              # that must be inherited into this step!
               parameters:
-                # Basic Config
-                aks_cluster_name: $(tfoutput_aks_cluster_name.aks_cluster_name)
-                aks_cluster_rg: $(tfoutput_resource_group_name.resource_group_name)
-                devops_package_path: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}'
-                # Ingress Configuration
-                bootstrap_ingress_namespace: ${{ parameters.bootstrap_ingress_namespace }}
+                #  Terraform Config
+                terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+                # Terraform State Config (Must already exist!)
+                terraform_state_rg: ${{ parameters.terraform_state_rg }}
+                terraform_state_storage: ${{ parameters.terraform_state_storage }}
+                terraform_state_container: ${{ parameters.terraform_state_container }}
+                terraform_state_key: ${{ parameters.terraform_state_key }}
+                terraform_state_workspace_enabled: ${{ parameters.terraform_state_workspace_enabled }}
+                terraform_state_workspace_name: ${{ parameters.terraform_state_workspace_name }}
+
+            - ${{ if eq(parameters.tf_destroy_all_resources, true) }}:
+                - template: ../steps/deploy-terraform-destroy.yml
+                  # WARNING! THIS WILL DESTROY ALL RESOURCES!
+                  parameters:
+                    #  Terraform Config
+                    terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+                    environment: ${{ parameters.environment }}
+                    # Job specific Config
+                    tf_job_input_params: ${{ parameters.tf_job_input_params }}
+
+            - ${{ if eq(parameters.tf_destroy_all_resources, false) }}:
+                - template: ../steps/deploy-terraform-apply.yml
+                  parameters:
+                    # Terraform Config
+                    terraform_artefact_path: $(Pipeline.Workspace)/${{ parameters.terraform_artefact_name }}
+                    environment: ${{ parameters.environment }}
+                    # Job specific Config
+                    tf_job_input_params: ${{ parameters.tf_job_input_params }}
+                    tf_job_output_params: ${{ parameters.tf_job_output_params }}
+
+            - ${{ if or(eq(parameters.bootstrap_aks_cluster, true), eq(parameters.require_login, true)) }}:
+                - template: ../steps/login-services.yml
+                  parameters:
+                    # Azure
+                    login_azure: true
+                    azure_tenant_id: '$(azure_tenant_id)'
+                    azure_subscription_id: '$(azure_subscription_id)'
+                    azure_client_id: '$(azure_client_id)'
+                    azure_client_secret: '$(azure_client_secret)'
+                    # Kubernetes
+                    login_kubernetes: true
+                    aks_rg: $(tfoutput_resource_group_name.resource_group_name)
+                    aks_clustername: $(tfoutput_aks_cluster_name.aks_cluster_name)
+                    devops_artefact_name: '${{ parameters.devops_artefact_name }}'
+
+            - ${{ if eq(parameters.bootstrap_aks_cluster, true) }}:
+                # Bootstrap Cluster
+                - template: ../steps/deploy-aks-bootstrap.yml
+                  parameters:
+                    # Basic Config
+                    aks_cluster_name: $(tfoutput_aks_cluster_name.aks_cluster_name)
+                    aks_cluster_rg: $(tfoutput_resource_group_name.resource_group_name)
+                    devops_package_path: '$(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}'
+                    # Ingress Configuration
+                    bootstrap_ingress_namespace: ${{ parameters.bootstrap_ingress_namespace }}
