@@ -6,7 +6,7 @@ parameters:
 steps:
   - bash: 'terraform fmt'
     displayName: 'Terraform: Validate'
-    workingDirectory: '$(Build.SourcesDirectory)/deploy/terraform/azure'
+    workingDirectory: '${{ parameters.terraform_filepath }}'
 
   - publish: ${{ parameters.terraform_filepath }}
     artifact: ${{ parameters.terraform_artefact_name }}
