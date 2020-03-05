@@ -50,14 +50,14 @@ steps:
       aks_resource_group_name: "${{ parameters.kubernetes_clusterrg }}"
       aks_cluster_name: "${{ parameters.kubernetes_clustername }}"
 
-  - bash: | 
+  - bash: |
       ./inject-secrets-from-env-var.sh $(Pipeline.Workspace)/${{ parameters.deploy_artifact_name }}/${{ parameters.kubernetes_kustomize_filepath }}/secrets
     displayName: "Mutate: Secrets from Environment Vars"
     workingDirectory: ${{ parameters.scripts_dir}}
     failOnStderr: true
 
   ## Mutation
-  - bash: | 
+  - bash: |
       kustomize edit add annotation version:${{ parameters.docker_imagetag }};
       kustomize edit add annotation app.kubernetes.io/version:${{ parameters.docker_imagetag }};
     displayName: "Mutate: Annotate Version Information"

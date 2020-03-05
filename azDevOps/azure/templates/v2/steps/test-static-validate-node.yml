@@ -6,28 +6,28 @@
 ############################################################################################################
 
 parameters:
-  versionSpec: ''
-  workingDirectory: ''
-  lintingSharedConfigPackage: ''
+  versionSpec: ""
+  workingDirectory: ""
+  lintingSharedConfigPackage: ""
 
 steps:
   # Ensure Node.js 12 is actives
   - task: NodeTool@0
     inputs:
-      versionSpec:  ${{ parameters.versionSpec }}
-      customRegistry: 'useNpmrc'
-    displayName: 'Use Node.js ${{ parameters.versionSpec }}'
+      versionSpec: ${{ parameters.versionSpec }}
+      customRegistry: "useNpmrc"
+    displayName: "Use Node.js ${{ parameters.versionSpec }}"
 
   - task: Npm@1
-    displayName: 'Build: Install Peer Dependencies'
+    displayName: "Build: Install Peer Dependencies"
     inputs:
-      command: 'custom' # Options: install, publish, custom
-      customCommand: 'npx install-peerdeps --save-dev ${{ parameters.workingDirectory }}'
+      command: "custom" # Options: install, publish, custom
+      customCommand: "npx install-peerdeps --save-dev ${{ parameters.workingDirectory }}"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: true
-      customRegistry: 'useNpmrc'
+      customRegistry: "useNpmrc"
 
   # Run tests with Jest
   - script: npm run validate
-    displayName: 'Run linting'
+    displayName: "Run linting"
     workingDirectory: ${{ parameters.workingDirectory }}

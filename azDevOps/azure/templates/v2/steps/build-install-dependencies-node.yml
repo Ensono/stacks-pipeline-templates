@@ -6,16 +6,16 @@
 ############################################################################################################
 
 parameters:
-  versionSpec: ''
-  workingDirectory: ''
+  versionSpec: ""
+  workingDirectory: ""
 
 steps:
   # Ensure Node.js 12 is active
   - task: NodeTool@0
     inputs:
-      versionSpec:  ${{ parameters.versionSpec }}
-      customRegistry: 'useNpmrc'
-    displayName: 'Use Node.js ${{ parameters.versionSpec }}'
+      versionSpec: ${{ parameters.versionSpec }}
+      customRegistry: "useNpmrc"
+    displayName: "Use Node.js ${{ parameters.versionSpec }}"
 
   # If we are using a private or custom npm registry, then we must authenticate to embellish the .npmrc file with the credentials
   # This is required for task runners, e.g. building docker images in bash.
@@ -25,14 +25,14 @@ steps:
       workingFile: ${{ parameters.workingDirectory }}/.npmrc
 
   - task: Npm@1
-    displayName: 'Build: Install Dev Dependencies'
+    displayName: "Build: Install Dev Dependencies"
     inputs:
-      command: 'install' # Options: install, publish, custom
+      command: "install" # Options: install, publish, custom
       workingDir: ${{ parameters.workingDirectory }}
       verbose: false
-      customRegistry: 'useNpmrc'
+      customRegistry: "useNpmrc"
 
   - script: |
       npm run build
-    displayName: 'Build: Run Transpile'
+    displayName: "Build: Run Transpile"
     workingDirectory: ${{ parameters.workingDirectory }}
