@@ -1,17 +1,17 @@
 parameters:
   # Terraform Basic Config
-  terraform_working_dir: ''
+  terraform_working_dir: ""
   # Terraform State Config
-  terraform_state_rg: ''
-  terraform_state_storage: ''
-  terraform_state_container: ''
-  terraform_state_key: ''
-  terraform_state_workspace: ''
+  terraform_state_rg: ""
+  terraform_state_storage: ""
+  terraform_state_container: ""
+  terraform_state_key: ""
+  terraform_state_workspace: ""
   # override runtime creds for cases where state is kept in a different account/subscription
-  terraform_backend_client_id: ''
-  terraform_backend_client_secret: ''
-  terraform_backend_tenant_id: ''
-  terraform_backend_subscription_id: ''
+  terraform_backend_client_id: ""
+  terraform_backend_client_secret: ""
+  terraform_backend_tenant_id: ""
+  terraform_backend_subscription_id: ""
 
 steps:
   - bash: |
@@ -25,14 +25,14 @@ steps:
       -backend-config="tenant_id=${{ parameters.terraform_backend_tenant_id }}" \
       -backend-config="client_id=${{ parameters.terraform_backend_client_id }}" \
       -backend-config="client_secret=${{ parameters.terraform_backend_client_secret }}"
-    displayName: 'Terraform: Initialise'
-    target: 
+    displayName: "Terraform: Initialise"
+    target:
       container: terraform_custom
     workingDirectory: ${{ parameters.terraform_working_dir }}
 
   - bash: |
       terraform workspace select ${{ parameters.terraform_state_workspace }} || terraform workspace new ${{ parameters.terraform_state_workspace }}
-    displayName: 'Terraform: Select Workspace'
-    target: 
+    displayName: "Terraform: Select Workspace"
+    target:
       container: terraform_custom
     workingDirectory: ${{ parameters.terraform_working_dir }}

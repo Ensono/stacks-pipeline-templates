@@ -1,33 +1,33 @@
 parameters:
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: "ubuntu-latest"
   versionSpec: 12.x
-  project_root_dir: ''
-  dependsOn: 'GetPackage'
+  project_root_dir: ""
+  dependsOn: "GetPackage"
   download_devops: true
   # Docker Config
   docker_build: true
-  docker_build_additional_args: ''
-  docker_workdir: ''
-  docker_imagename: ''
-  docker_imagetag: ''
-  docker_containerregistryname: ''
+  docker_build_additional_args: ""
+  docker_workdir: ""
+  docker_imagename: ""
+  docker_imagetag: ""
+  docker_containerregistryname: ""
   # Vulnerability Scanning
   vulnerability_scan: false
-  vulnerability_workdir: ''
+  vulnerability_workdir: ""
   #  Static Code Analysis
   build_audit: false
   static_code_analysis: false
-  static_code_analysis_build_path: ''
-  Sonar_serviceConnection: ''
-  Sonar_organization: ''
-  Sonar_scannerMode: ''
-  Sonar_projectKey: ''
-  Sonar_projectName: ''
-  Sonar_projectVersion: ''
+  static_code_analysis_build_path: ""
+  Sonar_serviceConnection: ""
+  Sonar_organization: ""
+  Sonar_scannerMode: ""
+  Sonar_projectKey: ""
+  Sonar_projectName: ""
+  Sonar_projectVersion: ""
   #Linting and formatting validation
-  lint_formatting: ''
-  shared_eslint_config: ''
+  lint_formatting: ""
+  shared_eslint_config: ""
   # Testing
   unit_test: true
   contract_test: true
@@ -37,28 +37,28 @@ parameters:
   # Build File Output
   build_file: false
   build_on_server: false
-  build_file_path: ''
-  build_file_artefact: ''
-  # build output defaults 
+  build_file_path: ""
+  build_file_artefact: ""
+  # build output defaults
   git_do_tag_release: false
-  git_release_tag: ''
+  git_release_tag: ""
 
 steps:
   # Login to Azure/AKS
   - template: ./login-services.yml
     parameters:
-      azure_tenant_id: '$(azure_tenant_id)'
-      azure_subscription_id: '$(azure_subscription_id)'
-      azure_client_id: '$(azure_client_id)'
-      azure_client_secret: '$(azure_client_secret)'
+      azure_tenant_id: "$(azure_tenant_id)"
+      azure_subscription_id: "$(azure_subscription_id)"
+      azure_client_id: "$(azure_client_id)"
+      azure_client_secret: "$(azure_client_secret)"
       login_azure: true
 
   # Audit dependencies
   - ${{ if eq(parameters.build_audit, true) }}:
-    - template: ./build-audit-dependencies-node.yml
-      parameters:
-        versionSpec: ${{ parameters.versionSpec }}
-        workingDirectory: ${{ parameters.project_root_dir }}
+      - template: ./build-audit-dependencies-node.yml
+        parameters:
+          versionSpec: ${{ parameters.versionSpec }}
+          workingDirectory: ${{ parameters.project_root_dir }}
 
   # Install dependencies
   - template: ./build-install-dependencies-node.yml
@@ -87,7 +87,7 @@ steps:
         parameters:
           env_vars: ${{ parameters.e2e_env_vars}}
           workingDirectory: ${{ parameters.project_root_dir }}
-  
+
   # SonarCloud
   - ${{ if eq(parameters.static_code_analysis, true) }}:
       - template: ./test-static-code-sonar.yml
@@ -103,8 +103,8 @@ steps:
           workingDirectory: ${{ parameters.project_root_dir }}
 
   # Check with Pact broker if safe to proceed with deployment (breaking contract changes)
-  - ${{ if and(eq(parameters.contract_test, true), eq(parameters.contract_check_can_deploy, true)) }}:
-      - template: ./deploy-contract-pact-can-deploy.yml
+  - ? ${{ if and(eq(parameters.contract_test, true), eq(parameters.contract_check_can_deploy, true)) }}
+    : - template: ./deploy-contract-pact-can-deploy.yml
         parameters:
           workingDirectory: ${{ parameters.project_root_dir }}
 
@@ -113,10 +113,10 @@ steps:
       - task: Npm@1
         displayName: Build on ADO using custom feeds
         inputs:
-          command: 'custom' # Options: install, publish, custom
-          customCommand: 'ci --only=prod'
+          command: "custom" # Options: install, publish, custom
+          customCommand: "ci --only=prod"
           workingDirectory: ${{ parameters.project_root_dir }}
-          customRegistry: 'useNpmrc'
+          customRegistry: "useNpmrc"
 
   # Build Docker Image, Scan and Push to Repository
   - ${{ if eq(parameters.docker_build, true) }}:
@@ -148,14 +148,14 @@ steps:
   # Publish Artefacts if required
   - ${{ if eq(parameters.functional_test, true) }}:
       - task: PublishPipelineArtifact@1
-        displayName: 'Publish: Functional Tests Artifact'
+        displayName: "Publish: Functional Tests Artifact"
         inputs:
-          path: '${{ parameters.functional_test_path }}'
-          artifact: '${{ parameters.functional_test_artefact }}'
+          path: "${{ parameters.functional_test_path }}"
+          artifact: "${{ parameters.functional_test_artefact }}"
 
   - ${{ if eq(parameters.build_file, true) }}:
       - task: PublishPipelineArtifact@1
-        displayName: 'Publish: Build Artefacts'
+        displayName: "Publish: Build Artefacts"
         inputs:
-          path: '${{ parameters.build_file_path }}'
-          artifact: '${{ parameters.build_file_artefact }}'
+          path: "${{ parameters.build_file_path }}"
+          artifact: "${{ parameters.build_file_artefact }}"

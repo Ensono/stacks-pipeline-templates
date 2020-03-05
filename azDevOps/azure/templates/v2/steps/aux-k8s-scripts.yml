@@ -1,12 +1,12 @@
 parameters:
-  scripts_dir: ''
+  scripts_dir: ""
 
 steps:
   # Do Login
   - bash: |
       ls -Rat .
       chmod -R +x ./scripts
-    displayName: 'K8s: Set AKS Scripts to eXecutable'
+    displayName: "K8s: Set AKS Scripts to eXecutable"
     workingDirectory: ${{ parameters.scripts_dir }}
     env:
       AZURE_CLOUD_NAME: AzureCloud
@@ -14,4 +14,3 @@ steps:
       ARM_CLIENT_ID: $(azure_client_id)
       ARM_CLIENT_SECRET: $(azure_client_secret)
       ARM_TENANT_ID: $(azure_tenant_id)
-    
