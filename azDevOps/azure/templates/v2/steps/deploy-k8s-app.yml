@@ -16,7 +16,7 @@ parameters:
   kubernetes_clustername: ""
   kubernetes_kustomize_filepath: ""
   kubernetes_docker_registry: ""
-  kubernetes_image: stacks-webapp-app-image
+  kubernetes_image: ""
   appinsights_enabled: false
   appinsights_accountName: ""
   performance_test: false
