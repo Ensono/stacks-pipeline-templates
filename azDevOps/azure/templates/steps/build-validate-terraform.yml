@@ -1,7 +1,7 @@
 parameters:
   # Basic Config
   terraform_artefact_name: ''
-  terraform_filepath: ''
+  terraform_filepath: '$(Build.SourcesDirectory)/deploy/terraform/azure'
 
 steps:
   - bash: 'terraform fmt'
