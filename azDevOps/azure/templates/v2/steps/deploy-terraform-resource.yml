@@ -27,7 +27,7 @@ parameters:
   azure_cli_providers: []
 
 steps:
-  - template: ../steps/deploy-terraform-init.yml
+  - template: ./deploy-terraform-init.yml
     # Terraform Backend & Azure Credential config comes via Variable Group
     # that must be inherited into this step!
     parameters:
