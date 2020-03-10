@@ -94,7 +94,7 @@ jobs:
                 tags: ${{ parameters.tags }}
                 terraform_extra_properties:
                   # DNS Config
-                  dns_create_dns_zone: ${{ parameters.DNS_create }}
+                  create_dns_zone: ${{ parameters.DNS_create }}
                   dns_zone: ${{ parameters.DNS_zone }}
                   # SPN Config
                   create_aksspn: ${{ parameters.Cluster_spn_create }}

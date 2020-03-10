@@ -87,29 +87,22 @@ jobs:
                     filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Azure/get-appinsights-instrumentationkey.sh
                     arguments: ${{ parameters.appinsights_accountName}}
 
-            - task: Bash@3
-              displayName: 'Mutate: Secrets from Environment Vars'
-              inputs:
-                targetType: 'filePath'
-                filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kubectl/inject-secrets-from-env-var.sh
-                arguments: $(Pipeline.Workspace)/build/${{ parameters.kubernetes_kustomize_filepath }}/secrets
-                failOnStderr: true
-              env:
-                # Conditionally expose this env-var if appinsights_enabled is true
-                ${{ if eq(parameters.appinsights_enabled, true) }}:
-                  # Remember this is pulled from the step above, it's dynamic and not a parameter.
-                  appinsights_instrumentationkey: $(Monitoring.applnsightsInstrumentationKey)
-                # Conditionally expose this env-var if cosmosDB_secret is true
-                ${{ if eq(parameters.cosmosdb_secret, true) }}:
-                  # Remember this is pulled from the step above, it's dynamic and not a parameter.
-                  cosmosdb_key: $(CosmosDB.key)
-
-            - bash: |
-                echo "Setting api-image to '${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag)"
-                $(Build.BinariesDirectory)/kustomize edit set image api-image='${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag);
-                workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
-                displayName: 'Mutate: Set Docker Image Version for api-image'
-                failOnStderr: true
+                - task: Bash@3
+                  displayName: 'Mutate: Secrets from Environment Vars'
+                  inputs:
+                    targetType: 'filePath'
+                    filePath: $(Pipeline.Workspace)/${{ parameters.devops_artefact_name }}/Kubectl/inject-secrets-from-env-var.sh
+                    arguments: $(Pipeline.Workspace)/build/${{ parameters.kubernetes_kustomize_filepath }}/secrets
+                    failOnStderr: true
+                  env:
+                    # Conditionally expose this env-var if appinsights_enabled is true
+                    ${{ if eq(parameters.appinsights_enabled, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
+                      appinsights_instrumentationkey: $(Monitoring.applnsightsInstrumentationKey)
+                    # Conditionally expose this env-var if cosmosDB_secret is true
+                    ${{ if eq(parameters.cosmosdb_secret, true) }}:
+                      # Remember this is pulled from the step above, it's dynamic and not a parameter.
+                      cosmosdb_key: $(CosmosDB.key)
 
             # This is how we would update the UI image version
             #  - bash: |
