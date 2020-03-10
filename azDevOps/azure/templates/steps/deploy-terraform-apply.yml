@@ -6,10 +6,6 @@ parameters:
   tf_job_output_params: ''
 
 steps:
-  - bash: pwd; ls -la ; sudo chmod -R 777 ./ ; sudo ls -la; env
-    displayName: 'Environment'
-    workingDirectory: ${{ parameters.terraform_artefact_path }}
-
   - bash: terraform plan -input=false -out=tfplan
     displayName: 'Terraform: plan'
     workingDirectory: ${{ parameters.terraform_artefact_path }}
