@@ -1,0 +1,26 @@
+parameters:
+  projectName: ''
+  registryName: ''
+  context: ''
+  Subscription: ''
+  helm_version: 3.0.2
+
+steps:
+  - task: HelmInstaller@0
+    displayName: 'Helm: Install ${{parameters.helm_version}}'
+    inputs:
+      helmVersion: ${{parameters.helm_version}}
+      checkLatestHelmVersion: false
+
+  - bash: helm lint ${{ parameters.context }}
+    displayName: 'Helm: Lint'
+
+  - bash: helm package --version $(build.BuildNumber) --app-version $(build.BuildNumber) --destination $(build.artifactStagingDirectory) ${{ parameters.context }}
+    displayName: 'Helm: Package'
+
+  - task: AzureCLI@1
+    displayName: 'Helm: Push to Registry'
+    inputs:
+      azureSubscription: ${{ parameters.Subscription }}
+      scriptLocation: 'inlineScript'
+      inlineScript: 'az acr helm push -n ${{ parameters.registryName }} $(build.artifactStagingDirectory)/${{ parameters.projectName }}-$(build.BuildNumber).tgz'

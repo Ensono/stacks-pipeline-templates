@@ -1,0 +1,42 @@
+parameters:
+  source_chart_name: ''
+  source_acr: ''
+  destination_acr: ''
+  source_subscription: ''
+  destination_subscription: ''
+  tag: ''
+  helm_version: 3.0.2
+
+steps:
+  - task: HelmInstaller@0
+    displayName: 'Helm: Install ${{parameters.helm_version}}'
+    inputs:
+      helmVersion: ${{parameters.helm_version}}
+      checkLatestHelmVersion: false
+
+  - task: AzureCLI@2
+    displayName: 'Helm: Fetch ${{parameters.source_chart_name}}:${{parameters.tag}} From Registry ${{parameters.source_acr}}'
+    inputs:
+      azureSubscription: ${{parameters.source_subscription}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+          echo 'Adding Repo ${{parameters.source_acr}}'
+          az acr helm repo add --name ${{parameters.source_acr}}
+          helm repo update
+          helm repo list
+          echo "Fetching Chart ${{parameters.source_acr}}/${{parameters.source_chart_name}}:${{parameters.tag}}..."
+          helm fetch ${{parameters.source_acr}}/${{parameters.source_chart_name}} --version ${{parameters.tag}}
+
+  - task: AzureCLI@2
+    displayName: 'Helm: Push ${{ parameters.source_chart_name }}-${{parameters.tag}} To Registry ${{parameters.destination_acr}}'
+    inputs:
+      azureSubscription: ${{parameters.destination_subscription}}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+          az acr helm repo add --name ${{parameters.destination_acr}}
+          helm repo update
+          helm repo list
+          echo 'az acr helm push -n ${{ parameters.destination_acr }} ${{ parameters.source_chart_name }}-${{parameters.tag}}.tgz'
+          az acr helm push -n ${{ parameters.destination_acr }} --force ${{ parameters.source_chart_name }}-${{parameters.tag}}.tgz

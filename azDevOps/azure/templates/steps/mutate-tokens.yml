@@ -1,0 +1,31 @@
+parameters:
+  actionOnMissing: 'warn'
+  encoding: 'auto'
+  tokenPrefix: 'QQQ_'
+  tokenSuffix: '_QQQ'
+  mutate_rootdirectory: '$(System.DefaultWorkingDirectory)'
+  mutate_targetfile: ''
+
+steps:
+  - ${{ if eq(variables['system.debug'], 'true') }}:
+      - bash: |
+          cat ${{ parameters.mutate_rootdirectory }}/${{ parameters.mutate_targetfile }}
+        displayName: 'Mutate: Before'
+
+  # See https://github.com/qetza/vsts-replacetokens-task#readm
+  - task: replacetokens@3
+    inputs:
+      rootDirectory: ${{ parameters.mutate_rootdirectory }}
+      targetFiles: ${{ parameters.mutate_targetfile }}
+      encoding: ${{ parameters.encoding }}
+      writeBOM: true
+      actionOnMissing: ${{ parameters.actionOnMissing }}
+      keepToken: false
+      tokenPrefix: ${{ parameters.tokenPrefix }}
+      tokenSuffix: ${{ parameters.tokenSuffix }}
+    displayName: 'Mutate: Update ${{ parameters.mutate_targetfile }}'
+
+  - ${{ if eq(variables['system.debug'], 'true') }}:
+      - bash: |
+          cat ${{ parameters.mutate_rootdirectory }}/${{ parameters.mutate_targetfile }}
+        displayName: 'Mutate: After'

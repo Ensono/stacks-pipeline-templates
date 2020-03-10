@@ -40,7 +40,7 @@ jobs:
     environment: ${{ parameters.environment }}
 
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-18.04'
 
     strategy:
       runOnce:

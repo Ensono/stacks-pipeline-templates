@@ -26,7 +26,7 @@ jobs:
       - name: BaseURL
         value: ${{ parameters.test_baseurl }}
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-18.04'
     environment: ${{ parameters.environment }}
     strategy:
       runOnce:
@@ -104,12 +104,13 @@ jobs:
                       # Remember this is pulled from the step above, it's dynamic and not a parameter.
                       cosmosdb_key: $(CosmosDB.key)
 
-                - bash: |
-                    echo "Setting api-image to '${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag)"
-                    $(Build.BinariesDirectory)/kustomize edit set image api-image='${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag);
-                  workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
-                  displayName: 'Mutate: Set Docker Image Version for api-image'
-                  failOnStderr: true
+            # This is how we would update the UI image version
+            #  - bash: |
+            #     echo "Setting ui-image to '${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag)"
+            #     $(Build.BinariesDirectory)/kustomize edit set image ui-image='${{ parameters.kubernetes_docker_registry }}'/$(Docker.ImageName):$(Docker.ImageTag);
+            #    workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artefact }}/base
+            #    displayName: 'Mutate: Set Docker Image Version for ui-image'
+            #    failOnStderr: true
 
             # Deployment
             - task: Bash@3

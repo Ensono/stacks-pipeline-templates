@@ -15,13 +15,11 @@ parameters:
   releasenote_targetfile: ''
 
 jobs:
-
   - job: ReleaseNotes
     dependsOn: ${{ parameters.dependsOn }}
     pool:
-      vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-18.04'
     continueOnError: true
-
     steps:
       - template: ../steps/build-consume-devops.yml
 

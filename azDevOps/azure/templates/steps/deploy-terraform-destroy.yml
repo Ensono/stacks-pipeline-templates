@@ -1,0 +1,20 @@
+parameters:
+  environment: ''
+  terraform_artefact_path: ''
+  # Parameters specific to terraform as a map
+  tf_job_input_params: ''
+
+steps:
+  - bash: terraform destroy -auto-approve
+    displayName: 'Terraform: destroy'
+    workingDirectory: ${{ parameters.terraform_artefact_path }}
+    env:
+      # Authentication (this comes from the AzureDevOps library as secured variables)
+      ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
+      ARM_CLIENT_ID: $(azure_client_id)
+      ARM_CLIENT_SECRET: "$(azure_client_secret)"
+      ARM_TENANT_ID: $(azure_tenant_id)
+      # Terraform
+      TF_VAR_name_environment: ${{ parameters.environment }}
+      ${{ each input in parameters.tf_job_input_params }}:
+        TF_VAR_${{ input.key }}: ${{ input.value }}

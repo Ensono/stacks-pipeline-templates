@@ -8,10 +8,8 @@ parameters:
 
 jobs:
   - job: GetPackage
-
     pool:
-      vmImage: 'ubuntu-latest'
-
+      vmImage: 'ubuntu-18.04'
     steps:
       - bash: |
           az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
