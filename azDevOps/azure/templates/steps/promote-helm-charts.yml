@@ -25,7 +25,7 @@ steps:
           az acr helm repo add --name ${{parameters.source_acr}}
           helm repo update
           helm repo list
-          echo "Fetching Chart ${{parameters.source_chart_name}}:${{parameters.tag}}..."
+          echo "Fetching Chart ${{parameters.source_acr}}/${{parameters.source_chart_name}}:${{parameters.tag}}..."
           helm fetch ${{parameters.source_acr}}/${{parameters.source_chart_name}} --version ${{parameters.tag}}
 
   - task: AzureCLI@2

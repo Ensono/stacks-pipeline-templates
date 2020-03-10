@@ -5,10 +5,6 @@ parameters:
   tf_job_input_params: ''
 
 steps:
-  - bash: pwd; ls -la ; sudo chmod -R 777 ./ ; sudo ls -la; env
-    displayName: 'Environment'
-    workingDirectory: ${{ parameters.terraform_artefact_path }}
-
   - bash: terraform destroy -auto-approve
     displayName: 'Terraform: destroy'
     workingDirectory: ${{ parameters.terraform_artefact_path }}
