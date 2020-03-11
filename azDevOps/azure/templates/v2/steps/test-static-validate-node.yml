@@ -22,7 +22,8 @@ steps:
   - task: Npm@1
     displayName: "Build: Install Peer Dependencies"
     inputs:
-      command: "custom" # Options: install, publish, custom
+      # Options: install, publish, custom
+      command: "custom"
       customCommand: "npx install-peerdeps --save-dev ${{ parameters.workingDirectory }}"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: true

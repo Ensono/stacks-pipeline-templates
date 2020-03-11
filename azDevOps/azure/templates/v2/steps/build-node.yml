@@ -26,7 +26,7 @@ parameters:
   Sonar_projectKey: ""
   Sonar_projectName: ""
   Sonar_projectVersion: ""
-  #Linting and formatting validation
+  # Linting and formatting validation
   lint_formatting: ""
   shared_eslint_config: ""
   # Testing
@@ -118,7 +118,8 @@ steps:
       - task: Npm@1
         displayName: Build on ADO using custom feeds
         inputs:
-          command: "custom" # Options: install, publish, custom
+          # Options: install, publish, custom
+          command: "custom"
           customCommand: "ci --only=prod"
           workingDirectory: ${{ parameters.project_root_dir }}
           customRegistry: ${{ parameters.customRegistry }}

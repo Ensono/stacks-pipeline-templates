@@ -22,15 +22,16 @@ steps:
   # This is required for task runners, e.g. building docker images in bash.
   # See https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/package/npm-authenticate for more information
   - ${{ if eq(parameters.customRegistry, "useNpmrc") }}:
-    - task: npmAuthenticate@0
-      displayName: "Registry: Authenticate to custom registry"
-      inputs:
-        workingFile: ${{ parameters.workingDirectory }}/.npmrc
+      - task: npmAuthenticate@0
+        displayName: "Registry: Authenticate to custom registry"
+        inputs:
+          workingFile: ${{ parameters.workingDirectory }}/.npmrc
 
   - task: Npm@1
     displayName: "Build: Install Dev Dependencies"
     inputs:
-      command: "install" # Options: install, publish, custom
+      # Options: install, publish, custom
+      command: "install"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: false
       customRegistry: ${{ parameters.customRegistry }}
