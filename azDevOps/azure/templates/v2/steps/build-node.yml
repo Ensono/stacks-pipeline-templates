@@ -56,7 +56,7 @@ steps:
 
   # Audit dependencies
   # Important: can only audit public packages in Azure Pipelines
-  - ${{ if ne(parameters.customRegistry, "useNpmrc") }}:
+  - ${{ if ne(parameters.customRegistry, 'useNpmrc') }}:
       - template: ./build-audit-dependencies-node.yml
         parameters:
           versionSpec: ${{ parameters.versionSpec }}
@@ -143,13 +143,6 @@ steps:
           git push origin v${{ parameters.git_release_tag }}
         displayName: Git Tag release
         workingDirectory: ${{ parameters.project_root_dir }}
-
-  # Do Lerna release
-  - ${{ if eq(parameters.publish_packages_lerna, true) }}:
-      - bash: |
-          ${{ parameters.lerna_command }}
-        displayName: Lerna Publish
-        workingDirectory: ${{ parameters.lerna_rootDir }}
 
   # Publish Artefacts if required
   - ${{ if eq(parameters.functional_test, true) }}:

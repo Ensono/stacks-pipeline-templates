@@ -21,7 +21,7 @@ steps:
   # If we are using a private or custom npm registry, then we must authenticate to embellish the .npmrc file with the credentials
   # This is required for task runners, e.g. building docker images in bash.
   # See https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/package/npm-authenticate for more information
-  - ${{ if eq(parameters.customRegistry, "useNpmrc") }}:
+  - ${{ if eq(parameters.customRegistry, 'useNpmrc') }}:
       - task: npmAuthenticate@0
         displayName: "Registry: Authenticate to custom registry"
         inputs:
