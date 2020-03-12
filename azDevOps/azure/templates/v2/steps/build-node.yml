@@ -32,6 +32,7 @@ parameters:
   # Testing
   unit_test: true
   contract_test: true
+  audit_test: false
   contract_check_can_deploy: false
   e2e_test: true
   e2e_env_vars: {}
@@ -55,13 +56,14 @@ steps:
       login_azure: true
 
   # Audit dependencies
-  # Important: can only audit public packages in Azure Pipelines
-  - ${{ if ne(parameters.customRegistry, 'useNpmrc') }}:
+  # Important: Down to the user to ensure that the registry they are using
+  # can support `npm audit`
+  - ${{ if eq(parameters.audit_test, true) }}:
       - template: ./build-audit-dependencies-node.yml
         parameters:
           versionSpec: ${{ parameters.versionSpec }}
           workingDirectory: ${{ parameters.project_root_dir }}
-          customRegistry: ${{ parameters.project_root_dir }}
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Install dependencies
   - template: ./build-install-dependencies-node.yml
