@@ -11,7 +11,7 @@ parameters:
   customRegistry: ""
 
 steps:
-  # Ensure Correct version of Node.js is actives
+  # Ensure Correct version of Node.js is set
   - task: NodeTool@0
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
