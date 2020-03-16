@@ -5,6 +5,8 @@ parameters:
   project_root_dir: ""
   dependsOn: "GetPackage"
   download_devops: true
+  # Custom registry (eg. private)
+  customRegistry: ""
   # Docker Config
   docker_build: true
   docker_build_additional_args: ""
@@ -16,7 +18,6 @@ parameters:
   vulnerability_scan: false
   vulnerability_workdir: ""
   #  Static Code Analysis
-  build_audit: false
   static_code_analysis: false
   static_code_analysis_build_path: ""
   Sonar_serviceConnection: ""
@@ -25,12 +26,13 @@ parameters:
   Sonar_projectKey: ""
   Sonar_projectName: ""
   Sonar_projectVersion: ""
-  #Linting and formatting validation
+  # Linting and formatting validation
   lint_formatting: ""
   shared_eslint_config: ""
   # Testing
   unit_test: true
   contract_test: true
+  audit_test: false
   contract_check_can_deploy: false
   e2e_test: true
   e2e_env_vars: {}
@@ -54,17 +56,21 @@ steps:
       login_azure: true
 
   # Audit dependencies
-  - ${{ if eq(parameters.build_audit, true) }}:
+  # Important: Down to the user to ensure that the registry they are using
+  # can support `npm audit`
+  - ${{ if eq(parameters.audit_test, true) }}:
       - template: ./build-audit-dependencies-node.yml
         parameters:
           versionSpec: ${{ parameters.versionSpec }}
           workingDirectory: ${{ parameters.project_root_dir }}
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Install dependencies
   - template: ./build-install-dependencies-node.yml
     parameters:
       versionSpec: ${{ parameters.versionSpec }}
       workingDirectory: ${{ parameters.project_root_dir }}
+      customRegistry: ${{ parameters.customRegistry }}
 
   # Linting and formatting validation
   - ${{ if eq(parameters.lint_formatting, true) }}:
@@ -73,6 +79,7 @@ steps:
           versionSpec: ${{ parameters.versionSpec }}
           workingDirectory: ${{ parameters.project_root_dir }}
           lintingSharedConfigPackage: ${{ parameters.shared_eslint_config }}
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Linting and unit tests
   - ${{ if eq(parameters.unit_test, true) }}:
@@ -113,10 +120,11 @@ steps:
       - task: Npm@1
         displayName: Build on ADO using custom feeds
         inputs:
-          command: "custom" # Options: install, publish, custom
+          # Options: install, publish, custom
+          command: "custom"
           customCommand: "ci --only=prod"
           workingDirectory: ${{ parameters.project_root_dir }}
-          customRegistry: "useNpmrc"
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Build Docker Image, Scan and Push to Repository
   - ${{ if eq(parameters.docker_build, true) }}:
@@ -137,13 +145,6 @@ steps:
           git push origin v${{ parameters.git_release_tag }}
         displayName: Git Tag release
         workingDirectory: ${{ parameters.project_root_dir }}
-
-  # Do Lerna release
-  - ${{ if eq(parameters.publish_packages_lerna, true) }}:
-      - bash: |
-          ${{ parameters.lerna_command }}
-        displayName: Lerna Publish
-        workingDirectory: ${{ parameters.lerna_rootDir }}
 
   # Publish Artefacts if required
   - ${{ if eq(parameters.functional_test, true) }}:

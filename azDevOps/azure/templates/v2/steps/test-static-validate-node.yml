@@ -9,23 +9,25 @@ parameters:
   versionSpec: ""
   workingDirectory: ""
   lintingSharedConfigPackage: ""
+  customRegistry: ""
 
 steps:
   # Ensure Node.js 12 is actives
   - task: NodeTool@0
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
-      customRegistry: "useNpmrc"
+      customRegistry: ${{ parameters.customRegistry }}
     displayName: "Use Node.js ${{ parameters.versionSpec }}"
 
   - task: Npm@1
     displayName: "Build: Install Peer Dependencies"
     inputs:
-      command: "custom" # Options: install, publish, custom
+      # Options: install, publish, custom
+      command: "custom"
       customCommand: "npx install-peerdeps --save-dev ${{ parameters.workingDirectory }}"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: true
-      customRegistry: "useNpmrc"
+      customRegistry: ${{ parameters.customRegistry }}
 
   # Run tests with Jest
   - script: npm run validate
