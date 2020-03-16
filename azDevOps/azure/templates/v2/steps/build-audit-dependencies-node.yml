@@ -8,15 +8,25 @@
 parameters:
   versionSpec: ""
   workingDirectory: ""
+  customRegistry: ""
 
 steps:
-  # Ensure Node.js 12 is actives
+  # Ensure Correct version of Node.js is set
   - task: NodeTool@0
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
-      customRegistry: "useNpmrc"
+      # this parameter does nothing for this task - can be removed
+      customRegistry: ${{ parameters.customRegistry }}
     displayName: "Use Node.js ${{ parameters.versionSpec }}"
 
-  - script: npm audit
+  # npm
+  # Install and publish npm packages, or run an npm command. Supports npmjs.com and authenticated registries like Azure Artifacts.
+  - task: Npm@1
     displayName: "Build: Run audit"
-    workingDirectory: ${{ parameters.workingDirectory }}
+    inputs:
+      command: 'custom'
+      workingDir: ${{ parameters.workingDirectory }}
+      customCommand: 'audit'
+      # if undefined will default to npmjs
+      ${{ if ne(parameters.customRegistry, '') }}:
+        customRegistry: ${{ parameters.customRegistry }}
