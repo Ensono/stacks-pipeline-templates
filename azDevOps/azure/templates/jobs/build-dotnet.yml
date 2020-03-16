@@ -207,7 +207,7 @@ jobs:
       # Build Docker Image, Scan and Push to Repository
       - template: ../steps/build-docker-build-and-scan.yml
         parameters:
-          devops_artefact_name: '{{ parameters.devops_artefact_name }}'
+          devops_artefact_name: '${{ parameters.devops_artefact_name }}'
           # Docker
           docker_workdir: '${{ parameters.docker_workdir }}'
           docker_imagename: '${{ parameters.docker_imagename }}'

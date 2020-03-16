@@ -33,7 +33,7 @@ steps:
       targetType: 'filePath'
       filePath: ${{ parameters.devops_package_path }}/Bootstrap/ingress/helm-install-ingress.sh
       # context dns_zone namespace default_ssl_secret_namespace default_ssl_secret_name
-      arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.SSL_DefaultDNSZone }} ${{ parameters.IngressNamespace }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
+      arguments: ${{ parameters.aks_cluster_name }} ${{ parameters.DefaultDNSZone }} ${{ parameters.IngressNamespace }} ${{ parameters.DefaultCertSecretNameSpace }} ${{ parameters.DefaultCertSecretName }}
       workingDirectory: ${{ parameters.devops_package_path }}/Bootstrap/ingress
 
   - task: Bash@3
