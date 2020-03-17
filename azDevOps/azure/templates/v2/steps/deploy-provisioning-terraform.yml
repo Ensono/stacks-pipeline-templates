@@ -1,7 +1,7 @@
 parameters:
   # Terraform Basic Config
   terraform_artefact_name: "terraform"
-  #  Terraform State Config
+  # Terraform State Config
   terraform_state_rg: ""
   terraform_state_storage: ""
   terraform_state_container: ""

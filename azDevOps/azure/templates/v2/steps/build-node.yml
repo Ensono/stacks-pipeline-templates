@@ -5,6 +5,8 @@ parameters:
   project_root_dir: ""
   dependsOn: "GetPackage"
   download_devops: true
+  # Custom registry (eg. private)
+  customRegistry: ""
   # Docker Config
   docker_build: true
   docker_build_additional_args: ""
@@ -16,7 +18,6 @@ parameters:
   vulnerability_scan: false
   vulnerability_workdir: ""
   #  Static Code Analysis
-  build_audit: false
   static_code_analysis: false
   static_code_analysis_build_path: ""
   Sonar_serviceConnection: ""
@@ -31,6 +32,7 @@ parameters:
   # Testing
   unit_test: true
   contract_test: true
+  audit_test: false
   contract_check_can_deploy: false
   cypress_e2e_test: true
   cypress_e2e_env_vars: {}
@@ -54,17 +56,21 @@ steps:
       login_azure: true
 
   # Audit dependencies
-  - ${{ if eq(parameters.build_audit, true) }}:
+  # Important: Down to the user to ensure that the registry they are using
+  # can support `npm audit`
+  - ${{ if eq(parameters.audit_test, true) }}:
       - template: ./build-audit-dependencies-node.yml
         parameters:
           versionSpec: ${{ parameters.versionSpec }}
           workingDirectory: ${{ parameters.project_root_dir }}
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Install dependencies
   - template: ./build-install-dependencies-node.yml
     parameters:
       versionSpec: ${{ parameters.versionSpec }}
       workingDirectory: ${{ parameters.project_root_dir }}
+      customRegistry: ${{ parameters.customRegistry }}
 
   # Linting and formatting validation
   - ${{ if eq(parameters.lint_formatting, true) }}:
@@ -75,17 +81,17 @@ steps:
           lintingSharedConfigPackage: ${{ parameters.shared_eslint_config }}
           customRegistry: ${{ parameters.customRegistry }}
 
-  # SonarCloud
-  - ${{ if eq(parameters.static_code_analysis, true) }}:
-      - template: ./test-static-code-sonar.yml
-        parameters:
-          workingDirectory: ${{ parameters.project_root_dir }}
-
   # Linting and unit tests
   - ${{ if eq(parameters.unit_test, true) }}:
       - template: ./test-unit-node.yml
         parameters:
           versionSpec: ${{ parameters.versionSpec }}
+          workingDirectory: ${{ parameters.project_root_dir }}
+
+  # SonarCloud
+  - ${{ if eq(parameters.static_code_analysis, true) }}:
+      - template: ./test-static-code-sonar.yml
+        parameters:
           workingDirectory: ${{ parameters.project_root_dir }}
 
   # Consumer driven contract tests
@@ -118,7 +124,7 @@ steps:
           command: "custom"
           customCommand: "ci --only=prod"
           workingDirectory: ${{ parameters.project_root_dir }}
-          customRegistry: "useNpmrc"
+          customRegistry: ${{ parameters.customRegistry }}
 
   # Build Docker Image, Scan and Push to Repository
   - ${{ if eq(parameters.docker_build, true) }}:
@@ -139,13 +145,6 @@ steps:
           git push origin v${{ parameters.git_release_tag }}
         displayName: Git Tag release
         workingDirectory: ${{ parameters.project_root_dir }}
-
-  # Do Lerna release
-  - ${{ if eq(parameters.publish_packages_lerna, true) }}:
-      - bash: |
-          ${{ parameters.lerna_command }}
-        displayName: Lerna Publish
-        workingDirectory: ${{ parameters.lerna_rootDir }}
 
   # Publish Artefacts if required
   - ${{ if eq(parameters.functional_test, true) }}:
