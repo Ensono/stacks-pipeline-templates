@@ -36,7 +36,7 @@ steps:
   - task: PublishTestResults@2
     inputs:
       testRunner: xUnit
-      testResultsFiles: '**/*-xunit-test-report.xml'
+      testResultsFiles: 'testcafe-xunit-test-report.xml'
       testRunTitle: 'TestCafe Tests'
     displayName: 'Publish test results'
     condition: succeededOrFailed()

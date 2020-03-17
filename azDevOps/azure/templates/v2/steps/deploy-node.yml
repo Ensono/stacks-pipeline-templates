@@ -91,10 +91,3 @@ steps:
       arguments: ./${{ parameters.kubernetes_kustomize_filepath }}
       workingDirectory: $(Pipeline.Workspace)/${{ parameters.deploy_artifact_name }}
       failOnStderr: true
-
-  # Functional tests running on env specific webapp (deployed)
-  - ${{ if eq(parameters.testcafe_e2e_test, true) }}:
-      - template: ./test-functional-testcafe.yml
-        parameters:
-          env_vars: ${{ parameters.testcafe_e2e_env_vars}}
-          workingDirectory: ${{ parameters.testcafe_work_directory }}
