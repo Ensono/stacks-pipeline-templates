@@ -1,5 +1,5 @@
 ############################################################################################################
-# desc: Runs the function (e2e) tests with Cypress
+# desc: Runs the functional (e2e) tests on a deployed webapp with Testcafe
 # params: Env vars, Node version, workingDirectory, build_number
 # return: Publishes test results, screenshots and video recordings
 # pre-reqs: dependency installation, build webapp
@@ -10,9 +10,15 @@ parameters:
   workingDirectory: ''
 
 steps:
-  # Run tests with Cypress
-  - script: npm run test:cypress
-    displayName: 'Start webapp server and run Cypress tests'
+  # Install test runtime dependencies (not installing modules listed in devDependencies)
+  - script: npm install --production
+    displayName: 'Install test dependencies'
+    workingDirectory: ${{ parameters.workingDirectory }}
+
+  # Run the tests in a Testcafe Docker container that has installed browsers
+  - bash: |
+      docker run -e APP_BASE_URL=$APP_BASE_URL -e APP_BASE_PATH=$APP_BASE_PATH -e MENU_API_URL=$MENU_API_URL -e NODE_ENV=$NODE_ENV -it -v $(pwd):/tests testcafe/testcafe all /tests/**/*.test.cf.ts
+    displayName: 'Test: Run Testcafe tests against all browsers in container'
     workingDirectory: ${{ parameters.workingDirectory }}
     env:
       ${{ each var in parameters.env_vars }}:
@@ -22,24 +28,15 @@ steps:
   - task: PublishPipelineArtifact@1
     inputs:
       artifactName: 'screenshots'
-      targetPath: '${{ parameters.workingDirectory }}/__tests__/cypress/screenshots'
-    displayName: 'Publish Screenshots (Cypress)'
-    condition: failed()
-
-  # Publish Artifacts: Cypress records a video for each spec file when running tests
-  # Note: Video recording is not currently supported in Electron with the --headed flag
-  - task: PublishPipelineArtifact@1
-    inputs:
-      artifactName: 'videos'
-      targetPath: '${{ parameters.workingDirectory }}/__tests__/cypress/videos'
-    displayName: 'Publish Videos (Cypress)'
+      targetPath: '${{ parameters.workingDirectory }}/screenshots'
+    displayName: 'Publish Screenshots (TestCafe)'
     condition: failed()
 
   # Publish CI test results
   - task: PublishTestResults@2
     inputs:
-      testRunner: JUnit
-      testResultsFiles: 'cypress-junit-test-report.xml'
-      testRunTitle: 'Cypress Tests'
+      testRunner: xUnit
+      testResultsFiles: 'testcafe-xunit-test-report.xml'
+      testRunTitle: 'TestCafe Tests'
     displayName: 'Publish test results'
     condition: succeededOrFailed()
