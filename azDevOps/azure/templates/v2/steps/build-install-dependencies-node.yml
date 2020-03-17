@@ -27,7 +27,8 @@ steps:
   - task: Npm@1
     displayName: "Build: Install Dev Dependencies"
     inputs:
-      command: "install" # Options: install, publish, custom
+      # Options: install, publish, custom
+      command: "install"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: false
       customRegistry: "useNpmrc"

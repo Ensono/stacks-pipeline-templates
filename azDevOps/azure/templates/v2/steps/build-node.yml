@@ -25,7 +25,7 @@ parameters:
   Sonar_projectKey: ""
   Sonar_projectName: ""
   Sonar_projectVersion: ""
-  #Linting and formatting validation
+  # Linting and formatting validation
   lint_formatting: ""
   shared_eslint_config: ""
   # Testing
@@ -74,7 +74,7 @@ steps:
           workingDirectory: ${{ parameters.project_root_dir }}
           lintingSharedConfigPackage: ${{ parameters.shared_eslint_config }}
           customRegistry: ${{ parameters.customRegistry }}
-  
+
   # SonarCloud
   - ${{ if eq(parameters.static_code_analysis, true) }}:
       - template: ./test-static-code-sonar.yml
@@ -95,12 +95,12 @@ steps:
           versionSpec: ${{ parameters.versionSpec }}
           build_number: ${{ parameters.docker_imagetag }}
           workingDirectory: ${{ parameters.project_root_dir }}
-  
+
   # Check with Pact broker if safe to proceed with deployment (breaking contract changes)
   - ${{ if and(eq(parameters.contract_test, true), eq(parameters.contract_check_can_deploy, true)) }}:
-    - template: ./deploy-contract-pact-can-deploy.yml
-      parameters:
-        workingDirectory: ${{ parameters.project_root_dir }}
+      - template: ./deploy-contract-pact-can-deploy.yml
+        parameters:
+          workingDirectory: ${{ parameters.project_root_dir }}
 
   # Functional tests running on locally built and hosted (undeployed)
   - ${{ if eq(parameters.cypress_e2e_test, true) }}:
@@ -114,7 +114,8 @@ steps:
       - task: Npm@1
         displayName: Build on ADO using custom feeds
         inputs:
-          command: "custom" # Options: install, publish, custom
+          # Options: install, publish, custom
+          command: "custom"
           customCommand: "ci --only=prod"
           workingDirectory: ${{ parameters.project_root_dir }}
           customRegistry: "useNpmrc"

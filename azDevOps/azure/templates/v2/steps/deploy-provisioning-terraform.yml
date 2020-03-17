@@ -1,5 +1,5 @@
 parameters:
-  # Terraform Basic Config
+  # Terraform Basic Config
   terraform_artefact_name: "terraform"
   #  Terraform State Config
   terraform_state_rg: ""
@@ -7,7 +7,7 @@ parameters:
   terraform_state_container: ""
   terraform_state_key: ""
   terraform_state_workspace: ""
-  # Global Config
+  # Global Config
   company: "amido"
   project: "stacks"
   domain: ""

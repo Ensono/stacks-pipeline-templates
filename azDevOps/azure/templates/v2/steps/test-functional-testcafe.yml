@@ -23,7 +23,7 @@ steps:
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
-  
+
   # Publish Artifacts: Cypress will automatically capture screenshots when a failure happens
   - task: PublishPipelineArtifact@1
     inputs:
