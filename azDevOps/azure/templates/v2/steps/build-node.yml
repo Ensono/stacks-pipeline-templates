@@ -106,7 +106,7 @@ steps:
   - ${{ if eq(parameters.cypress_e2e_test, true) }}:
       - template: ./test-functional-cypress.yml
         parameters:
-          env_vars: ${{ parameters.e2e_env_vars}}
+          env_vars: ${{ parameters.cypress_e2e_env_vars}}
           workingDirectory: ${{ parameters.project_root_dir }}
 
   # STEP build NPM for Azure registry
