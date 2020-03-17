@@ -34,8 +34,8 @@ parameters:
   contract_test: true
   audit_test: false
   contract_check_can_deploy: false
-  e2e_test: true
-  e2e_env_vars: {}
+  cypress_e2e_test: true
+  cypress_e2e_env_vars: {}
   # Build File Output
   build_file: false
   build_on_server: false
@@ -88,13 +88,6 @@ steps:
           versionSpec: ${{ parameters.versionSpec }}
           workingDirectory: ${{ parameters.project_root_dir }}
 
-  # Functional tests (e2e)
-  - ${{ if eq(parameters.e2e_test, true) }}:
-      - template: ./test-functional-cypress.yml
-        parameters:
-          env_vars: ${{ parameters.e2e_env_vars}}
-          workingDirectory: ${{ parameters.project_root_dir }}
-
   # SonarCloud
   - ${{ if eq(parameters.static_code_analysis, true) }}:
       - template: ./test-static-code-sonar.yml
@@ -110,9 +103,16 @@ steps:
           workingDirectory: ${{ parameters.project_root_dir }}
 
   # Check with Pact broker if safe to proceed with deployment (breaking contract changes)
-  - ? ${{ if and(eq(parameters.contract_test, true), eq(parameters.contract_check_can_deploy, true)) }}
-    : - template: ./deploy-contract-pact-can-deploy.yml
+  - ${{ if and(eq(parameters.contract_test, true), eq(parameters.contract_check_can_deploy, true)) }}:
+      - template: ./deploy-contract-pact-can-deploy.yml
         parameters:
+          workingDirectory: ${{ parameters.project_root_dir }}
+
+  # Functional tests running on locally built and hosted (undeployed)
+  - ${{ if eq(parameters.cypress_e2e_test, true) }}:
+      - template: ./test-functional-cypress.yml
+        parameters:
+          env_vars: ${{ parameters.cypress_e2e_env_vars}}
           workingDirectory: ${{ parameters.project_root_dir }}
 
   # STEP build NPM for Azure registry
