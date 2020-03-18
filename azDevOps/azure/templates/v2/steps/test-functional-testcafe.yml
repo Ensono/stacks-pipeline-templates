@@ -6,20 +6,20 @@
 ############################################################################################################
 
 parameters:
-  testcafe_e2e_env_vars: {}
-  testcafe_workdir: ''
+  env_vars: {}
+  workingDirectory: ''
   testcafe_browser_list: 'all'
 
 steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
   - script: npm install --production
     displayName: 'Install test dependencies'
-    workingDirectory: ${{ parameters.testcafe_workdir }}
+    workingDirectory: ${{ parameters.workingDirectory }}
 
   # Run tests with Testcafe
   - script: npm run test:e2e -- ${{ parameters.testcafe_browser_list }}
     displayName: 'Test: Run Testcafe tests against specified browsers'
-    workingDirectory: ${{ parameters.testcafe_workdir }}
+    workingDirectory: ${{ parameters.workingDirectory }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
@@ -28,7 +28,7 @@ steps:
   - task: PublishPipelineArtifact@1
     inputs:
       artifactName: 'screenshots'
-      targetPath: '${{ parameters.testcafe_workdir }}/screenshots'
+      targetPath: '${{ parameters.workingDirectory }}/screenshots'
     displayName: 'Publish Screenshots (TestCafe)'
     condition: failed()
 
