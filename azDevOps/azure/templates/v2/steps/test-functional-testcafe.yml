@@ -6,20 +6,20 @@
 ############################################################################################################
 
 parameters:
-  env_vars: {}
-  workingDirectory: ''
+  testcafe_e2e_env_vars: {}
+  testcafe_workdir: ''
   testcafe_browser_list: 'all'
 
 steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
   - script: npm install --production
     displayName: 'Install test dependencies'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    workingDirectory: ${{ parameters.testcafe_workdir }}
 
   # Run tests with Testcafe
   - script: npm run test:e2e -- ${{ parameters.testcafe_browser_list }}
     displayName: 'Test: Run Testcafe tests against specified browsers'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    workingDirectory: ${{ parameters.testcafe_workdir }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
@@ -28,7 +28,7 @@ steps:
   - task: PublishPipelineArtifact@1
     inputs:
       artifactName: 'screenshots'
-      targetPath: '${{ parameters.workingDirectory }}/screenshots'
+      targetPath: '${{ parameters.testcafe_workdir }}/screenshots'
     displayName: 'Publish Screenshots (TestCafe)'
     condition: failed()
 
@@ -36,7 +36,7 @@ steps:
   - task: PublishTestResults@2
     inputs:
       testRunner: xUnit
-      testResultsFiles: 'testcafe-xunit-test-report.xml'
+      testResultsFiles: '**/testcafe-xunit-test-report.xml'
       testRunTitle: 'TestCafe Tests'
     displayName: 'Publish test results'
     condition: succeededOrFailed()
