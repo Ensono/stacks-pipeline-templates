@@ -12,7 +12,7 @@ parameters:
 
 steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
-  - script: npm install --production
+  - script: npm install
     displayName: 'Install test dependencies'
     workingDirectory: ${{ parameters.workingDirectory }}
 
