@@ -2,6 +2,9 @@ parameters:
   aks_cluster_name: ""
   aks_resource_group_name: ""
   aks_dns_resource_group_name: ""
+  aks_set_acr_perms: false
+  acr_name:
+  acr_resource_group_name:
   ingress_definition: []
   scripts_dir: ""
   external_dns_yml: ""
@@ -14,6 +17,7 @@ steps:
       az login --service-principal --username $(azure_client_id) --password $(azure_client_secret) --tenant $(azure_tenant_id)
       az account set -s $(azure_subscription_id)
       az aks get-credentials --overwrite-existing --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }}
+
     displayName: "K8s: Login AKS"
     env:
       AZURE_CLOUD_NAME: AzureCloud
@@ -21,6 +25,23 @@ steps:
       # ARM_CLIENT_ID: $(azure_client_id)
       # ARM_CLIENT_SECRET: $(azure_client_secret)
       # ARM_TENANT_ID: $(azure_tenant_id)
+
+  - template: ./login-services.yml
+    parameters:
+      # Azure
+      login_azure: true
+      azure_tenant_id: "$(azure_tenant_id)"
+      azure_subscription_id: "$(azure_subscription_id)"
+      azure_client_id: "$(azure_client_id)"
+      azure_client_secret: "$(azure_client_secret)"
+      # Kubernetes
+      login_kubernetes: true
+      aks_resource_group_name: "${{ parameters.aks_resource_group_name }}"
+      aks_cluster_name: "${{ parameters.aks_cluster_name }}"
+      aks_set_acr_perms: ${{ parameters.aks_set_acr_perms }}
+      acr_name: ${{ parameters.acr_name }}
+      acr_resource_group_name: ${{ parameters.acr_resource_group_name }}
+
 
   - ${{ each ingress in parameters.ingress_definition }}:
       - bash: |

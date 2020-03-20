@@ -7,6 +7,9 @@ parameters:
   azure_client_secret: ''
   login_azure: false
   login_kubernetes: false
+  aks_set_acr_perms: false
+  acr_name: ''
+  acr_resource_group_name: ''
 
 steps:
   - ${{ if eq(parameters.login_azure, true) }}:
@@ -23,6 +26,17 @@ steps:
       - bash: |
           az aks get-credentials --overwrite-existing --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }}
         displayName: 'Login: AKS Kubernetes'
+        failOnStderr: true
+        env:
+          AZURE_CLOUD_NAME: AzureCloud
+
+  - ${{ if eq(parameters.aks_set_acr_perms, true) }}:
+      - bash: |
+          CLIENT_ID=$(az aks show --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }} --query "servicePrincipalProfile.clientId" --output tsv)
+          ACR_ID=$(az acr show --name ${{ parameters.acr_name }} --resource-group ${{ parameters.acr_resource_group_name }} --query "id" --output tsv)
+          az role assignment create --assignee ${{ parameters.azure_client_id }} --role acrpull --scope $ACR_ID
+          az aks update -n ${{ parameters.aks_cluster_name }} -g ${{ parameters.aks_resource_group_name }} --attach-acr $ACR_ID
+        displayName: 'AAD Perms: Set AcrPull policy on Cluster SPN'
         failOnStderr: true
         env:
           AZURE_CLOUD_NAME: AzureCloud
