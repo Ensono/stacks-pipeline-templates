@@ -37,6 +37,6 @@ steps:
           az role assignment create --assignee ${{ parameters.azure_client_id }} --role acrpull --scope $ACR_ID
           az aks update -n ${{ parameters.aks_cluster_name }} -g ${{ parameters.aks_resource_group_name }} --attach-acr $ACR_ID
         displayName: 'AAD Perms: Set AcrPull policy on Cluster SPN'
-        failOnStderr: true
+        failOnStderr: false
         env:
           AZURE_CLOUD_NAME: AzureCloud
