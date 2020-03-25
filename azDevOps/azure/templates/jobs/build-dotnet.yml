@@ -116,7 +116,9 @@ jobs:
             inputs:
               command: 'build'
               workingDirectory: ${{ parameters.static_code_analysis_build_path }}
-
+            env:
+              STACKS_NUGET: $(STACKS_NUGET)
+              STACKS_NUGET_TOKEN: $(STACKS_NUGET_TOKEN)
       # Set the code_coverage_arguments variable to make `dotnet test` output coverage
       - bash: |
           if [ -z "${{ parameters.code_coverage_arguments }}" ]; then
