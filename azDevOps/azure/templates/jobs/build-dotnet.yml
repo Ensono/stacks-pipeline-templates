@@ -183,6 +183,9 @@ jobs:
               projects: '${{ parameters.contract_test_project }}'
               arguments: '-v n $(code_coverage_arguments)'
               testRunTitle: 'Test: Provider Contracts'
+            env:
+              STACKS_NUGET: $(STACKS_NUGET)
+              STACKS_NUGET_TOKEN: $(STACKS_NUGET_TOKEN)
 
       # SonarCloud Results
       - ${{ if eq(parameters.static_code_analysis, true) }}:
