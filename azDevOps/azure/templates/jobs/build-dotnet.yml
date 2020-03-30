@@ -3,6 +3,7 @@ parameters:
   dependsOn: 'GetPackage'
   # Docker Config
   docker_workdir: ''
+  docker_build_args: ''
   docker_imagename: ''
   docker_imagetag: ''
   docker_containerregistryname: ''
@@ -214,6 +215,7 @@ jobs:
         parameters:
           devops_artefact_name: '${{ parameters.devops_artefact_name }}'
           # Docker
+          docker_build_args: ${{ parameters.docker_build_args }}
           docker_workdir: '${{ parameters.docker_workdir }}'
           docker_imagename: '${{ parameters.docker_imagename }}'
           docker_imagetag: '${{ parameters.docker_imagetag }}'
