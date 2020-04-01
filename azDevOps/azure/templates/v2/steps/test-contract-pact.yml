@@ -19,6 +19,15 @@ steps:
       PACT_CONSUMER: $(PACT_CONSUMER)
       PACT_PROVIDER: $(PACT_PROVIDER)
 
+  # Publish Pact test results
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: JUnit
+      testResultsFiles: '**/pact-junit-test-report.xml'
+      testRunTitle: 'Pact Tests'
+    displayName: 'Publish test results'
+    condition: succeededOrFailed()
+
   # Publish contracts to Pact broker
   - script: npm run test:pact-publish
     displayName: 'Publish pact tests'
