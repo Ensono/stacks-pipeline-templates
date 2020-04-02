@@ -3,12 +3,13 @@ parameters:
   aks_resource_group_name: ""
   aks_dns_resource_group_name: ""
   aks_set_acr_perms: false
-  acr_name:
-  acr_resource_group_name:
+  acr_name: ""
+  acr_resource_group_name: ""
   ingress_definition: []
   scripts_dir: ""
   external_dns_yml: ""
   base_external_dns_yml: ""
+  domain_filter: ""
 
 steps:
   # Do Login
@@ -58,8 +59,8 @@ steps:
       ls -lat ${{ parameters.base_external_dns_yml }}
       ./yaml-templating.sh ${{ parameters.base_external_dns_yml }} ${{ parameters.external_dns_yml }}
     env:
-      domain_filter: nonprod.amidostacks.com
-      aks_resource_group: amido-stacks-dev-cycle2
+      domain_filter: ${{ parameters.domain_filter }}
+      aks_resource_group: ${{ parameters.aks_resource_group_name }}
     displayName: "K8s: template external dns"
     workingDirectory: ${{ parameters.scripts_dir }}
 
