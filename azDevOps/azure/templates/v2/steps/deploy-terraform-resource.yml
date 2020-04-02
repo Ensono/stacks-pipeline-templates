@@ -50,6 +50,7 @@ steps:
       az feature register --name PodSecurityPolicyPreview --namespace Microsoft.ContainerService
       az provider register -n Microsoft.ContainerService
       echo $ARM_SUBSCRIPTION_ID
+      terraform -v
       terraform plan -input=false -out=tfplan
     displayName: 'Terraform: Plan'
     workingDirectory: ${{ parameters.terraform_working_dir }}
