@@ -14,6 +14,7 @@ steps:
       sonar-scanner -v
       sonar-scanner
     displayName: "Static Analysis: SonarScanner Run"
+    # TOD: remove this! all target/container definitions should be handled at a job/caller level
     target:
       container: sonar_scanner
     env:
