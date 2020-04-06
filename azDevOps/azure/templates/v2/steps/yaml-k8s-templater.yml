@@ -1,0 +1,14 @@
+parameters:
+  # template_input: [{base: "", out: "", env_vars: {}}]
+  template_input: []
+
+steps:
+  # Do Login
+  - ${{ each tpl in parameters.template_input }}:
+      - bash: |
+          ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }}
+        displayName: "K8s: Yaml templating"
+        workingDirectory: ${{ parameters.scripts_dir }}
+        env:
+          ${{ each var in tpl.env_vars }}:
+            ${{ var.key }}: ${{ var.value }}
