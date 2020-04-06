@@ -1,6 +1,7 @@
 parameters:
   # template_input: [{base: "", out: "", env_vars: {}}]
   template_input: []
+  scripts_dir: ""
 
 steps:
   # Do Login
