@@ -4,10 +4,32 @@ parameters:
   scripts_dir: ""
 
 steps:
-  # Do Login
+  #####################
+  ## Templating task ##
+  ## :inputs: Array(base: string, out: string, env_vars: map) -
+  ## :inputs.base: string - file path to base yaml template with shell style variables as place holders
+  ## :inputs.out: string - file path to outputted yaml with replaced variables inside the template
+  ## ==> if empty will default to base file and stripping out the `base_` from name
+  ## if convention is followed no need to specify out and only pass
+  ##
+  ## :inputs.env_vars: map - key/value string pairs to replace per file
+  #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }}
+          out="${{ tpl.out }}"
+          base="${{ tpl.base }}"
+          if [ -z "$out" ]; then
+            echo "out not supplied - defaulting to stripping base_ from base"
+            tmp=${file_out//"\/"}
+            IFS=$'\/' read -a arr <<< "$tmp"
+            arr[-1]="${arr[-1]:5}"
+            out_template=$( IFS=$'/'; echo "${arr[*]}" )
+            echo "templated out file will be $out_template"
+          else
+            out_template="$base"
+            echo "supplied template file $out_template"
+          fi
+          ./yaml-templating.sh $base $out_template
         displayName: "K8s: Yaml templating"
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
