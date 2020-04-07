@@ -16,7 +16,7 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          out="${{ tpl.out }}"
+          file_out="${{ tpl.out }}"
           base="${{ tpl.base }}"
           if [ -z "$out" ]; then
             echo "out not supplied - defaulting to stripping base_ from base"
