@@ -16,21 +16,8 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          file_out="${{ tpl.out }}"
-          base="${{ tpl.base }}"
-          if [ -z "$out" ]; then
-            echo "out not supplied - defaulting to stripping base_ from base"
-            tmp=${file_out//"\/"}
-            IFS=$'\/' read -a arr <<< "$tmp"
-            arr[-1]="${arr[-1]:5}"
-            out_template=$( IFS=$'/'; echo "${arr[*]}" )
-            echo "templated out file will be $out_template"
-          else
-            out_template="$base"
-            echo "supplied template file $out_template"
-          fi
-          ./yaml-templating.sh $base $out_template
-        displayName: "K8s: Yaml templating"
+          ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }}
+        displayName: "K8s: Yaml ${{ tpl.displayName }}"
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
           ${{ each var in tpl.env_vars }}:
