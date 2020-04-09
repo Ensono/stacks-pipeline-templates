@@ -24,9 +24,6 @@ steps:
     inputs:
       command: 'restore'
       projects: '${{ parameters.package_path }}**/*.csproj'
-      feedsToUse: 'select'
-      vstsFeed: '${{ parameters.package_feed }}'
-      includeNuGetOrg: true
 
   - task: DotNetCoreCLI@2
     displayName: 'Test: Unit Tests'

@@ -8,7 +8,8 @@ steps:
     displayName: 'Publish: Push Packages'
     inputs:
       command: push
-      publishVstsFeed: ${{ parameters.package_feed }}
+      nugetFeedType: 'external'
+      externalEndPoint: 'NuGetAmidoStacksServiceConnection'
 
   # Publish Symbols
   - task: PublishSymbols@2
