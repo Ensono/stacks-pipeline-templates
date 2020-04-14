@@ -13,7 +13,9 @@ steps:
       ${{ if eq(parameters.publish_public, true) }}:
         nugetFeedType: 'external'
         publishFeedCredentials: ${{ parameters.nuget_service_connection }}
+        externalFeedCredentials: ${{ parameters.nuget_service_connection }}
       ${{ if ne(parameters.publish_public, true) }}:
+        nugetFeedType: 'internal'
         publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
