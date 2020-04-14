@@ -8,6 +8,8 @@ parameters:
   # Deploy Config
   package_feed: ''
   publish_symbols: ''
+  publish_public: ''
+  nuget_service_connection: ''
   # Secret Config
   cosmosdb_secret: false
   cosmosdb_account: ''
@@ -46,3 +48,5 @@ jobs:
         parameters:
           package_feed: '${{ parameters.package_feed }}'
           publish_symbols: '${{ parameters.publish_symbols }}'
+          publish_public: '${{ parameters.publish_public }}'
+          nuget_service_connection: '${{ parameters.nuget_service_connection }}'
