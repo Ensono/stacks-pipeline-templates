@@ -8,6 +8,8 @@ parameters:
   # Deploy Config
   package_feed: ''
   publish_symbols: ''
+  publish_pulic: ''
+  nuget_service_connection: ''
   # Secret Config
   cosmosdb_secret: false
   cosmosdb_account: ''
