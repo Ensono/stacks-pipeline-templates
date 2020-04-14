@@ -26,7 +26,7 @@ steps:
       projects: '${{ parameters.package_path }}**/*.csproj'
       # TEMP: Remove once published to nuget.org
       feedsToUse: 'select'
-      vstsFeed: 'Stacks'
+      vstsFeed: '${{ parameters.package_feed }}'
       includeNuGetOrg: true
 
   - task: DotNetCoreCLI@2
