@@ -6,33 +6,15 @@ parameters:
 
 steps:
   # Publish Nuget packages
-  - script: echo "${{ parameters.publish_public }}"
-  - script: echo "${{ parameters.nuget_service_connection }}"
-
-  - ${{ if eq(parameters.publish_public, true) }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish: Push Packages'
-      inputs:
-        command: push
+  - task: DotNetCoreCLI@2
+    displayName: 'Publish: Push Packages'
+    inputs:
+      command: push
+      ${{ if eq(parameters.publish_public, true) }}:
         nugetFeedType: 'external'
-        externalEndPoint: ${{ parameters.nuget_service_connection }}
-
-  - ${{ if ne(parameters.publish_public, true) }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish: Push Packages'
-      inputs:
-        command: push
+        publishFeedCredentials: ${{ parameters.nuget_service_connection }}
+      ${{ if ne(parameters.publish_public, true) }}:
         publishVstsFeed: ${{ parameters.package_feed }}
-  
-  # - task: DotNetCoreCLI@2
-  #   displayName: 'Publish: Push Packages'
-  #   inputs:
-  #     command: push
-  #     ${{ if eq(parameters.publish_public, true) }}:
-  #       nugetFeedType: 'external'
-  #       externalEndPoint: ${{ parameters.nuget_service_connection }}
-  #     ${{ if ne(parameters.publish_public, true) }}:
-  #       publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
   - task: PublishSymbols@2
