@@ -46,3 +46,5 @@ jobs:
         parameters:
           package_feed: '${{ parameters.package_feed }}'
           publish_symbols: '${{ parameters.publish_symbols }}'
+          publish_public: '${{ parameters.publish_pulic }}'
+          nuget_service_connection: '${{ parameters.nuget_service_connection }}'
