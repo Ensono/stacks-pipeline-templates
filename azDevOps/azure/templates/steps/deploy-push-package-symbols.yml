@@ -1,6 +1,8 @@
 parameters:
   package_feed: ''
+  nuget_service_connection: ''
   publish_symbols: true
+  publish_public: false
 
 steps:
   # Publish Nuget packages
@@ -8,7 +10,11 @@ steps:
     displayName: 'Publish: Push Packages'
     inputs:
       command: push
-      publishVstsFeed: ${{ parameters.package_feed }}
+      ${{ if eq(variables.publish_public, true) }}:
+        nugetFeedType: 'external'
+        externalEndPoint: ${{ parameters.nuget_service_connection }}
+      ${{ if ne(variables.publish_public, true) }}:
+        publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
   - task: PublishSymbols@2
