@@ -11,6 +11,8 @@ steps:
     inputs:
       command: push
       ${{ if eq(parameters.publish_public, true) }}:
+        feedsToUse: 'select'
+        includeNuGetOrg: true
         nugetFeedType: 'external'
         publishFeedCredentials: ${{ parameters.nuget_service_connection }}
         externalFeedCredentials: ${{ parameters.nuget_service_connection }}
