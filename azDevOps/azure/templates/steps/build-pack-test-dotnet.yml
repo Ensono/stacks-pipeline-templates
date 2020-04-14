@@ -24,7 +24,6 @@ steps:
     inputs:
       command: 'restore'
       projects: '${{ parameters.package_path }}**/*.csproj'
-      # TEMP: Remove once published to nuget.org
       feedsToUse: 'select'
       vstsFeed: '${{ parameters.package_feed }}'
       includeNuGetOrg: true
