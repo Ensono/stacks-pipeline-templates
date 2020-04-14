@@ -10,10 +10,10 @@ steps:
     displayName: 'Publish: Push Packages'
     inputs:
       command: push
-      ${{ if eq(variables.publish_public, true) }}:
+      ${{ if eq(parameters.publish_public, true) }}:
         nugetFeedType: 'external'
         externalEndPoint: ${{ parameters.nuget_service_connection }}
-      ${{ if ne(variables.publish_public, true) }}:
+      ${{ if ne(parameters.publish_public, true) }}:
         publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
