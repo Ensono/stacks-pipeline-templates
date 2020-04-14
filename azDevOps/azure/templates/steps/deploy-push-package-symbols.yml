@@ -6,6 +6,9 @@ parameters:
 
 steps:
   # Publish Nuget packages
+  - script: echo "${{ parameters.publish_public }}"
+  - script: echo "${{ parameters.nuget_service_connection }}"
+
   - task: DotNetCoreCLI@2
     displayName: 'Publish: Push Packages'
     inputs:
