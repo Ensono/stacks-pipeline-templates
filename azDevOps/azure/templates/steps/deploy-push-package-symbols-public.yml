@@ -7,14 +7,8 @@ parameters:
 
 steps:
   # Publish Nuget packages to nuget.org
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
-    inputs:
-      packageType: sdk
-      version: ${{ parameters.dotnet_core_version }}
-
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/*.nupkg
-    workingDirectory: ${{ parameters.package_path }}
+  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/bin/**/*.pdb
+    workingDirectory: '$(Package.Path)'
     displayName: 'Publish: Push Packages Public'
 
   # Publish Symbols
