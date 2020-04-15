@@ -51,4 +51,4 @@ jobs:
           publish_public: '${{ parameters.publish_public }}'
           nuget_service_connection: '${{ parameters.nuget_service_connection }}'
           dotnet_core_version: ${{ parameters.dotnet_core_version }}
-          package_path: '${{ parameters.package_path }}'
+          package_path: $(System.DefaultWorkingDirectory)/${{ parameters.package_path }}
