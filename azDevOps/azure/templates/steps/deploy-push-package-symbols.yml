@@ -3,20 +3,30 @@ parameters:
   nuget_service_connection: ''
   publish_symbols: true
   publish_public: false
+  dotnet_core_version: ''
+  package_path: ''
 
 steps:
-  # Publish Nuget packages
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish: Push Packages'
-    inputs:
-      command: push
-      ${{ if eq(parameters.publish_public, true) }}:
-        nugetFeedType: 'external'
-        publishVstsFeed: 'https://api.nuget.org/v3/index.json'
-        publishFeedCredentials: ${{ parameters.nuget_service_connection }}
-        externalFeedCredentials: ${{ parameters.nuget_service_connection }}
-      ${{ if ne(parameters.publish_public, true) }}:
-        nugetFeedType: 'internal'
+  # Publish Nuget packages to nuget.org
+  - ${{ if eq(parameters.publish_public, true) }}:
+      - task: NuGetAuthenticate@0
+        inputs:
+          nuGetServiceConnections: ${{ parameters.nuget_service_connection }}
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+        inputs:
+          packageType: sdk
+          version: ${{ parameters.dotnet_core_version }}
+
+      - script: dotnet nuget push --api-key AzureArtifacts --source https://api.nuget.org/v3/index.json  ${{ parameters.package_path }}
+
+  # Publish Nuget packages using nuget.config
+  - ${{ if ne(parameters.publish_public, true) }}:
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish: Push Packages'
+      inputs:
+        command: push
         publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
