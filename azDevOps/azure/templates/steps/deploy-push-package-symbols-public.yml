@@ -10,12 +10,12 @@ steps:
   - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  *.nupkg
     workingDirectory: $(Build.ArtifactStagingDirectory)
     displayName: 'Publish: Push Packages Public Trial 1'
-    failOnStandardError: false
+    failOnStderr: false
 
   - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **\bin\Release\*.nupkg
     workingDirectory: '$(Package.Path)'
     displayName: 'Publish: Push Packages Public Trial 2'
-    failOnStandardError: false
+    failOnStderr: false
 
   - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **\bin\Release\*.nupkg
     workingDirectory: '$(Package.Path)'
