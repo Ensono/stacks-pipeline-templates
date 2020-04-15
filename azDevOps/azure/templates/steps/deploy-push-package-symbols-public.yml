@@ -7,7 +7,7 @@ parameters:
 
 steps:
   # Publish Nuget packages to nuget.org
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/bin/**/*.pdb
+  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/bin/**/*.nupkg
     workingDirectory: '$(Package.Path)'
     displayName: 'Publish: Push Packages Public'
 
