@@ -7,25 +7,6 @@ parameters:
 
 steps:
   # Publish Nuget packages to nuget.org
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  *.nupkg
+  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  *.nupkg --skip-duplicate
     workingDirectory: $(Build.ArtifactStagingDirectory)
-    displayName: 'Publish: Push Packages Public Trial 1'
-    failOnStderr: false
-
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **\bin\Release\*.nupkg
-    workingDirectory: '$(Package.Path)'
-    displayName: 'Publish: Push Packages Public Trial 2'
-    failOnStderr: false
-
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **\bin\Release\*.nupkg
-    workingDirectory: '$(Package.Path)'
-    displayName: 'Publish: Push Packages Public Trial 3'
-
-  # Publish Symbols
-  - task: PublishSymbols@2
-    displayName: 'Publish: Push Symbols'
-    inputs:
-      searchPattern: '**/bin/**/*.pdb'
-      publishSymbols: ${{ parameters.publish_symbols }}
-      symbolServerType: teamServices
-      workingDirectory: '$(Package.Path)'
+    displayName: 'Publish: Push Packages Public'
