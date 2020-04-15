@@ -13,7 +13,9 @@ steps:
       packageType: sdk
       version: ${{ parameters.dotnet_core_version }}
 
-  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  ${{ parameters.package_path }}
+  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/*.nupkg
+    workingDirectory: ${{ parameters.package_path }}
+    displayName: 'Publish: Push Packages Public'
 
   # Publish Symbols
   - task: PublishSymbols@2

@@ -1,6 +1,5 @@
 parameters:
   package_feed: ''
-  nuget_service_connection: ''
   publish_symbols: true
   publish_public: false
   dotnet_core_version: ''
