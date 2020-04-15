@@ -44,7 +44,7 @@ jobs:
           package_feed: '${{ parameters.package_feed }}'
           dotnet_core_version: ${{ parameters.dotnet_core_version }}
 
-      - template: ../steps/deploy-push-package-symbols.yml
+      - template: ../steps/deploy-push-package-symbols-public.yml
         parameters:
           package_feed: '${{ parameters.package_feed }}'
           publish_symbols: '${{ parameters.publish_symbols }}'
