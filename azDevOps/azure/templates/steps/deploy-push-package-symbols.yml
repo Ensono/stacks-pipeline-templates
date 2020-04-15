@@ -23,11 +23,11 @@ steps:
 
   # Publish Nuget packages using nuget.config
   - ${{ if ne(parameters.publish_public, true) }}:
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish: Push Packages'
-      inputs:
-        command: push
-        publishVstsFeed: ${{ parameters.package_feed }}
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish: Push Packages'
+        inputs:
+          command: push
+          publishVstsFeed: ${{ parameters.package_feed }}
 
   # Publish Symbols
   - task: PublishSymbols@2
