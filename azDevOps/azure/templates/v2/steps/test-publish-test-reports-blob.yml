@@ -1,0 +1,31 @@
+############################################################################################################
+# desc: Publishes test artifacts and reports
+# params: Env vars, Node version, workingDirectory, build_number
+# return: Publishes test results, screenshots and video recordings
+# pre-reqs: dependency installation, build webapp
+############################################################################################################
+
+parameters:
+  test_tool_name: '' # e.g. cypress
+  artifacts: {} # name: target path, # e.g. videos: '${{ parameters.workingDirectory }}/__tests__/cypress/videos'
+  workingDirectory: ''
+
+steps:
+  # Publish artifacts
+  - ${{ each var in parameters.artifacts }}:
+    - task: PublishPipelineArtifact@1
+      inputs:
+        artifactName: ${{ var.key }}
+        targetPath: ${{ var.value }}
+      displayName: 'Test Artifact: ${{ var.key }}'
+      condition: failed()
+
+  # Publish CI test results
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: xUnit
+      testResultsFiles: '*-xunit-test-report.xml'
+      searchFolder: ${{ parameters.workingDirectory }}
+      testRunTitle: '${{ parameters.test_tool_name }} Tests'
+    displayName: 'Publish: ${{ parameters.test_tool_name }} results'
+    condition: succeededOrFailed()
