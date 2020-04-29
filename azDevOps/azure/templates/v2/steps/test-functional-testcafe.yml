@@ -14,12 +14,12 @@ steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
   - script: npm install
     displayName: 'Install test dependencies'
-    working_directory: ${{ parameters.working_directory }}
+    workingDirectory: ${{ parameters.working_directory }}
 
   # Run tests with Testcafe
   - script: npm run test:e2e -- ${{ parameters.testcafe_browser_list }}
     displayName: 'Test: Run Testcafe tests against specified browsers'
-    working_directory: ${{ parameters.working_directory }}
+    workingDirectory: ${{ parameters.working_directory }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
