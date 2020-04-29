@@ -14,10 +14,10 @@ steps:
   - ${{ each var in parameters.artifacts }}:
       - bash: |
           echo "##vso[task.setVariable variable='${{ var.key }}']false"
-          if [ -f ${{ var.value }} ]; then
-            echo "##vso[task.setVariable variable='${{ var.key }}']${{ var.value }}"
+          if [ -d ${{ var.value }} ]; then
+            echo "##vso[task.setVariable variable='${{ var.key }}']${{ var.value }}" && echo "Directory ${{ var.key }} exists"
           fi
-        displayName: 'artifact_exists'
+        displayName: 'artifacts_exists'
         workingDirectory:  ${{ parameters.working_directory }}
       - bash: echo $(artifact_exists.screenshots)
       - bash: echo $(artifact_exists.${{ var.key }})
