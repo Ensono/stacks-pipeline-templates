@@ -1,14 +1,14 @@
 ############################################################################################################
 # desc: Publishes test artifacts and reports
-# params: Env vars, Node version, workingDirectory, build_number
+# params: Env vars, Node version, working_directory, build_number
 # return: Publishes test results, screenshots and video recordings
 # pre-reqs: dependency installation, build webapp
 ############################################################################################################
 
 parameters:
   test_tool_name: ''  # e.g. testcafe
-  artifacts: {}  # name: target path, # e.g. videos: '${{ parameters.workingDirectory }}/screenshots'
-  workingDirectory: ''
+  artifacts: {}  # name: target path, # e.g. videos: '${{ parameters.working_directory }}/screenshots'
+  working_directory: ''
 
 steps:
   # Publish artifacts
@@ -25,7 +25,7 @@ steps:
     inputs:
       testRunner: xUnit
       testResultsFiles: '*-xunit-test-report.xml'
-      searchFolder: ${{ parameters.workingDirectory }}
+      searchFolder: ${{ parameters.working_directory }}
       testRunTitle: '${{ parameters.test_tool_name }} Tests'
     displayName: 'Publish: ${{ parameters.test_tool_name }} results'
     condition: succeededOrFailed()
