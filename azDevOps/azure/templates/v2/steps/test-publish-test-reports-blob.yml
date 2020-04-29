@@ -13,19 +13,24 @@ parameters:
 steps:
   - ${{ each var in parameters.artifacts }}:
       - bash: |
-          echo "##vso[task.setVariable variable='${{ var.key }}_exists']false"
+          echo "##vso[task.setVariable variable='${{ var.key }}']false"
           if [ -f ${{ var.value }} ]; then
-            echo "##vso[task.setVariable variable='${{ var.key }}_exists']true"
+            echo "##vso[task.setVariable variable='${{ var.key }}']${{ var.value }}"
           fi
-        displayName: 'Test Artifact: Files exist for ${{ var.key }}'
+        displayName: 'artifact_exists'
         workingDirectory:  ${{ parameters.working_directory }}
-      - ${{ if eq(variables['${{ var.key }}_exists'], true) }}:
-          task: PublishPipelineArtifact@1
-          inputs:
-            artifactName: ${{ var.key }}
-            targetPath: ${{ var.value }}
-          displayName: 'Test Artifact: ${{ var.key }}'
-          condition: failed()
+      - bash: echo $(artifact_exists.screenshots)
+      - bash: echo $(artifact_exists.${{ var.key }})
+      - bash: echo ${{ var.key }}
+
+
+      # - ${{ if eq(variables['${{ var.key }}_exists'], true) }}:
+      #     task: PublishPipelineArtifact@1
+      #     inputs:
+      #       artifactName: ${{ var.key }}
+      #       targetPath: ${{ var.value }}
+      #     displayName: 'Test Artifact: ${{ var.key }}'
+      #     condition: failed()
 
   # Publish artifacts
   # - ${{ each var in parameters.artifacts }}:
