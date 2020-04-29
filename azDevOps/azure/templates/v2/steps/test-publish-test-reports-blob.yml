@@ -17,7 +17,7 @@ steps:
           echo "##vso[task.setVariable variable='${{ var.key }}_exists']true"
         fi
       displayName: 'Test Artifact: Files exist for ${{ var.key }}'
-      working_directory:  ${{ parameters.working_directory }}
+      workingDirectory:  ${{ parameters.working_directory }}
 
   # Publish artifacts
   - ${{ each var in parameters.artifacts }}:
