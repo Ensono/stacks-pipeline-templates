@@ -1,25 +1,25 @@
 ############################################################################################################
 # desc: Runs the functional (e2e) tests on a deployed webapp with Testcafe
-# params: Env vars, workingDirectory, testcafe_browser_list (default to all)
+# params: Env vars, working_directory, testcafe_browser_list (default to all)
 # return: Publishes test results, screenshots
 # pre-reqs: deployed webapp
 ############################################################################################################
 
 parameters:
   env_vars: {}
-  workingDirectory: ''
+  working_directory: ''
   testcafe_browser_list: 'all'
 
 steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
   - script: npm install
     displayName: 'Install test dependencies'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    working_directory: ${{ parameters.working_directory }}
 
   # Run tests with Testcafe
   - script: npm run test:e2e -- ${{ parameters.testcafe_browser_list }}
     displayName: 'Test: Run Testcafe tests against specified browsers'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    working_directory: ${{ parameters.working_directory }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
@@ -28,7 +28,7 @@ steps:
   - task: PublishPipelineArtifact@1
     inputs:
       artifactName: 'screenshots'
-      targetPath: '${{ parameters.workingDirectory }}/screenshots'
+      targetPath: '${{ parameters.working_directory }}/screenshots'
     displayName: 'Publish Screenshots (TestCafe)'
     condition: failed()
 
