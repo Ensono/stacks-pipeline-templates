@@ -6,14 +6,14 @@
 ############################################################################################################
 
 parameters:
-  test_tool_name: '' # e.g. cypress
-  artifacts: {} # name: target path, # e.g. videos: '${{ parameters.workingDirectory }}/__tests__/cypress/videos'
+  test_tool_name: ''  # e.g. testcafe
+  artifacts: {}  # name: target path, # e.g. videos: '${{ parameters.workingDirectory }}/screenshots'
   workingDirectory: ''
 
 steps:
   # Publish artifacts
   - ${{ each var in parameters.artifacts }}:
-    - task: PublishPipelineArtifact@1
+      task: PublishPipelineArtifact@1
       inputs:
         artifactName: ${{ var.key }}
         targetPath: ${{ var.value }}
