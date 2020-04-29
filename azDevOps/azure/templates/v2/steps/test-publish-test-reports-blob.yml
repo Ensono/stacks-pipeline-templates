@@ -11,14 +11,23 @@ parameters:
   working_directory: ''
 
 steps:
+  - ${{ each var in parameters.artifacts }}:
+      bash: |
+        if [ -f ${{ var.value }} ]; then
+          echo "##vso[task.setVariable variable='${{ var.key }}_exists']true"
+        fi
+      displayName: 'Test Artifact: Files exist for ${{ var.key }}'
+      working_directory:  ${{ parameters.working_directory }}
+
   # Publish artifacts
   - ${{ each var in parameters.artifacts }}:
-      task: PublishPipelineArtifact@1
-      inputs:
-        artifactName: ${{ var.key }}
-        targetPath: ${{ var.value }}
-      displayName: 'Test Artifact: ${{ var.key }}'
-      condition: failed()
+      ${{ if eq(variables['${{ var.key }}_exists'], true) }}:
+        task: PublishPipelineArtifact@1
+        inputs:
+          artifactName: ${{ var.key }}
+          targetPath: ${{ var.value }}
+        displayName: 'Test Artifact: ${{ var.key }}'
+        condition: failed()
 
   # Publish CI test results
   - task: PublishTestResults@2
