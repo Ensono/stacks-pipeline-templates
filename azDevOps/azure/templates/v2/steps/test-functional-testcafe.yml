@@ -23,20 +23,3 @@ steps:
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
-
-  # Publish Artifacts: Cypress will automatically capture screenshots when a failure happens
-  - task: PublishPipelineArtifact@1
-    inputs:
-      artifactName: 'screenshots'
-      targetPath: '${{ parameters.working_directory }}/screenshots'
-    displayName: 'Publish Screenshots (TestCafe)'
-    condition: failed()
-
-  # Publish CI test results
-  - task: PublishTestResults@2
-    inputs:
-      testRunner: xUnit
-      testResultsFiles: '**/testcafe-xunit-test-report.xml'
-      testRunTitle: 'TestCafe Tests'
-    displayName: 'Publish test results'
-    condition: succeededOrFailed()
