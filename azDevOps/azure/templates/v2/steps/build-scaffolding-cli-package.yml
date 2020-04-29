@@ -1,0 +1,27 @@
+############################################################################################################
+# desc: 
+# params: 
+# return: 
+# pre-reqs: 
+############################################################################################################
+
+parameters:
+  working_directory: ''
+  version_spec: ''
+  sample_config: ''
+  sample_config_path: ''
+
+steps:
+  # Ensure Node.js 12 is active
+  - task: NodeTool@0
+    inputs:
+      versionSpec: ${{ parameters.version_spec }}
+    displayName: 'Use Node.js ${{ parameters.version_spec }}'
+
+  - task: Npm@1
+    displayName: 'Build: Scaffold project from sample config'
+    inputs:
+      command: 'custom'
+      customCommand: 'npx @amidostacks/scaffolding-cli -run -c ${{ parameters.sample_config}}'
+      workingDir: ${{ parameters.sample_config_path }}
+
