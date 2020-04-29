@@ -10,12 +10,14 @@ parameters:
   version_spec: ''
   sample_config: ''
   sample_config_path: ''
+  customRegistry: ''
 
 steps:
   # Ensure Node.js 12 is active
   - task: NodeTool@0
     inputs:
       versionSpec: ${{ parameters.version_spec }}
+      customRegistry: ${{ parameters.customRegistry }}
     displayName: 'Use Node.js ${{ parameters.version_spec }}'
 
   - task: Npm@1
@@ -24,4 +26,6 @@ steps:
       command: 'custom'
       customCommand: 'npx @amidostacks/scaffolding-cli -run -c ${{ parameters.sample_config}}'
       workingDir: ${{ parameters.sample_config_path }}
+      verbose: true
+      customRegistry: ${{ parameters.customRegistry }}
 
