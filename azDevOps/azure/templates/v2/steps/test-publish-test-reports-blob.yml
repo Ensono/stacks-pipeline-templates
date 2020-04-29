@@ -46,7 +46,7 @@ steps:
   - task: PublishTestResults@2
     inputs:
       testRunner: xUnit
-      testResultsFiles: '*-xunit-test-report.xml'
+      testResultsFiles: '${{ parameters.test_tool_name }}-xunit-test-report.xml'
       searchFolder: ${{ parameters.working_directory }}
       testRunTitle: '${{ parameters.test_tool_name }} Tests'
     displayName: 'Publish: ${{ parameters.test_tool_name }} results'
