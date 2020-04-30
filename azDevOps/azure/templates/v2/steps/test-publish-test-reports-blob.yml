@@ -1,14 +1,18 @@
 ############################################################################################################
-# desc: Publishes test artifacts and reports
-# params: Env vars, Node version, working_directory, build_number
-# return: Publishes test results, screenshots and video recordings
-# pre-reqs: dependency installation, build webapp
+# desc: 
+# params: 
+# return: 
+# pre-reqs: 
 ############################################################################################################
 
 parameters:
   test_tool_name: ''  # e.g. testcafe
   artifacts: {}  # name: target path, # e.g. videos: '${{ parameters.working_directory }}/screenshots'
   working_directory: ''
+  test_results_storage: ''
+  test_results_container: 'testresults'
+  test_results_blob_service_connection: ''
+  test_results_path: ${{ parameters.working_directory }} # default to current working directory
 
 steps:
   - ${{ each var in parameters.artifacts }}:
@@ -22,9 +26,22 @@ steps:
   # Publish CI test results
   - task: PublishTestResults@2
     inputs:
-      testRunner: xUnit
+      testRunner: jUnit
       testResultsFiles: '${{ parameters.test_tool_name }}-xunit-test-report.xml'
       searchFolder: ${{ parameters.working_directory }}
       testRunTitle: '${{ parameters.test_tool_name }} Tests'
     displayName: 'Publish: ${{ parameters.test_tool_name }} results'
     condition: succeededOrFailed()
+
+  - bash: |
+      npx xunit-viewer -r ${{ parameters.test_results_path }} -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
+      workingDirectory: ${{ parameters.working_directory }}
+    displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
+
+  - task: AzureFileCopy@4
+    inputs:
+      sourcePath: ${{ parameters.test_results_path }}
+      azureSubscription: ${{ parameters.test_results_blob_service_connection }}
+      destination: azureBlob
+      storage: ${{ parameters.test_results_storage }}
+      containerName: ${{ parameters.test_results_container }}
