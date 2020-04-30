@@ -35,7 +35,7 @@ steps:
     condition: succeededOrFailed()
 
   - bash: |
-      npx xunit-viewer -r ${{ parameters.test_results_path }} -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
+      npx xunit-viewer -r ${{ parameters.test_tool_name }}-xunit-test-report.xml -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
     workingDirectory: ${{ parameters.working_directory }}
     displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
 
