@@ -12,7 +12,7 @@ parameters:
   test_results_storage: ''
   test_results_container: 'testresults'
   test_results_blob_service_connection: ''
-  test_results_path: ${{ parameters.working_directory }} # default to current working directory
+  test_results_path: $(working_directory) # default to current working directory
   test_results_blob_prefix: ''
 
 steps:
