@@ -36,11 +36,11 @@ steps:
 
   - bash: |
       npx xunit-viewer -r ${{ parameters.test_results_path }} -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
-      workingDirectory: ${{ parameters.working_directory }}
+    workingDirectory: ${{ parameters.working_directory }}
     displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
 
   - task: AzureFileCopy@4
-    displayName: 'Copy: {{ parameters.test_tool_name }} HTML Report Blob Storge '
+    displayName: 'Copy: ${{ parameters.test_tool_name }} HTML Report Blob Storge '
     inputs:
       sourcePath: ${{ parameters.test_results_path }}
       azureSubscription: ${{ parameters.test_results_blob_service_connection }}
