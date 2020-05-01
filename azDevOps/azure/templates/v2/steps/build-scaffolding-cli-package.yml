@@ -1,8 +1,8 @@
 ############################################################################################################
-# desc: 
-# params: 
-# return: 
-# pre-reqs: 
+# desc: Boostrap a template using the scaffolding-cli
+# params: working dir, version spec, sample config file, sample config path (eg. tests), custom registry
+# return: templated solution
+# pre-reqs: published packages and templates, example config file
 ############################################################################################################
 
 parameters:
@@ -28,4 +28,3 @@ steps:
       workingDir: ${{ parameters.sample_config_path }}
       verbose: true
       customRegistry: ${{ parameters.customRegistry }}
-
