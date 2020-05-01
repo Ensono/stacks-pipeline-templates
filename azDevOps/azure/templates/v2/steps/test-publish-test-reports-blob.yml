@@ -11,7 +11,6 @@ parameters:
   working_directory: ''
   test_results_storage: ''
   test_results_container: 'testresults'
-  test_results_blob_service_connection: ''
   test_results_path: $(working_directory) # default to current working directory
   test_results_blob_prefix: ''
 
@@ -39,12 +38,25 @@ steps:
     workingDirectory: ${{ parameters.working_directory }}
     displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
 
-  - task: AzureFileCopy@4
+  - bash: |
+      az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
+      az account set -s $azure_subscription_id
+      az storage copy -s ${{ parameters.test_tool_name }}-xunit-test-results.html -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }} --recursive
+      az logout --username $azure_client_id
     displayName: 'Copy: ${{ parameters.test_tool_name }} HTML Report Blob Storge '
-    inputs:
-      sourcePath: '${{ parameters.test_results_path }}/${{ parameters.test_tool_name }}-xunit-test-results.html'
-      azureSubscription: ${{ parameters.test_results_blob_service_connection }}
-      destination: azureBlob
-      storage: ${{ parameters.test_results_storage }}
-      containerName: ${{ parameters.test_results_container }}
-      BlobPrefix: ${{ parameters.test_results_blob_prefix }}
+    workingDirectory: ${{ parameters.working_directory }}
+    env:
+      azure_client_id: $(azure_client_id)
+      azure_client_secret: $(azure_client_secret)
+      azure_subscription_id: $(azure_subscription_id)
+      azure_tenant_id: $(azure_tenant_id)
+
+  # - task: AzureFileCopy@4
+  #   displayName: 'Copy: ${{ parameters.test_tool_name }} HTML Report Blob Storge '
+  #   inputs:
+  #     sourcePath: '${{ parameters.test_results_path }}/${{ parameters.test_tool_name }}-xunit-test-results.html'
+  #     azureSubscription: ${{ parameters.test_results_blob_service_connection }}
+  #     destination: azureBlob
+  #     storage: ${{ parameters.test_results_storage }}
+  #     containerName: ${{ parameters.test_results_container }}
+  #     BlobPrefix: ${{ parameters.test_results_blob_prefix }}
