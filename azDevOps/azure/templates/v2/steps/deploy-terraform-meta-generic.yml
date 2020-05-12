@@ -1,0 +1,64 @@
+parameters:
+  # Terraform Basic Config
+  working_dir: ''
+  terraform_output_artefact: 'tfoutputs'
+  # Terraform State Config
+  # DEFAULTING to globally available library
+  terraform_state_workspace: ''
+  # SAMPLE BackendConfig to use as CLI switch
+  # -backend-config="key=${{ parameters.terraform_state_key }}" -backend-config="storage_account_name=${{ parameters.terraform_state_storage }}" \
+  # -backend-config="resource_group_name=${{ parameters.terraform_state_rg }}" -backend-config="container_name=${{ parameters.terraform_state_container }}"
+  # You could equally pass in the Env vars for the equivalent inside the `terraform_auth_properties` k/v map
+  terraform_init_backend_config: ''
+  # Global Config
+  terraform_auth_properties: {}
+  tags: ''
+  # Terraform Resource Specific Config
+  terraform_extra_properties: {}
+  terraform_output_commands: ''
+
+steps:
+  - template: ./deploy-terraform-init-generic.yml
+    parameters:
+      #  Terraform Config
+      working_dir: ${{ parameters.terraform_working_dir }}
+      terraform_state_workspace: ""
+      terraform_init_backend_config: ""
+      terraform_auth_properties: ${{ parameters.terraform_auth_properties }}
+
+  - bash: |
+      terraform -v
+      terraform plan -input=false -out=tfplan
+    displayName: 'Terraform: Plan'
+    workingDirectory: ${{ parameters.terraform_working_dir }}
+    env:
+      # AUTH PARAMS
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}
+      # Extra Parameters
+      # Business specific vars passed from pipeline
+      ${{ each var in parameters.terraform_extra_properties }}:
+        ${{ var.key }}: ${{ var.value }}
+
+  # TODO: figure out how to do this...
+  # - task: ManualIntervention@8
+  #   inputs:
+  #     instructions: 'reject or resume'
+  #     onTimeout: 'reject'
+
+  - bash: terraform apply tfplan
+    displayName: 'Terraform: Apply'
+    workingDirectory: ${{ parameters.terraform_working_dir }}
+    env:
+      # AUTH PARAMS
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}
+      # Extra Parameters
+      # Business specific vars passed from pipeline
+      ${{ each var in parameters.terraform_extra_properties }}:
+        ${{ var.key }}: ${{ var.value }}
+
+  - bash: ${{ parameters.terraform_output_commands }}
+    displayName: 'Terraform: Write Outputs to Variables'
+    workingDirectory: ${{ parameters.terraform_working_dir }}
+    name: ${{ parameters.terraform_output_artefact }}
