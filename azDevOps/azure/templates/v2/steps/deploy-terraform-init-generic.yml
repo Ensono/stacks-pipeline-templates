@@ -8,8 +8,9 @@ parameters:
 steps:
   - bash: |
       terraform version
-      terraform init \
-      ${{ parameters.terraform_init_backend_config }}
+      env
+      echo ${{ parameters.terraform_init_backend_config }}
+      terraform init ${{ parameters.terraform_init_backend_config }}
     displayName: "Terraform: Initialise"
     # target:
     #   container: terraform_custom
