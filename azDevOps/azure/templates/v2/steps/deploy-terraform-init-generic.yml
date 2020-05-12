@@ -8,8 +8,6 @@ parameters:
 steps:
   - bash: |
       terraform version
-      env
-      echo ${{ parameters.terraform_init_backend_config }}
       terraform init ${{ parameters.terraform_init_backend_config }}
     displayName: "Terraform: Initialise"
     # target:
@@ -25,3 +23,6 @@ steps:
     # target:
     #   container: terraform_custom
     workingDirectory: ${{ parameters.working_dir }}
+    env:
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}
