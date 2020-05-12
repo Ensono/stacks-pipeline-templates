@@ -21,16 +21,16 @@ steps:
   - template: ./deploy-terraform-init-generic.yml
     parameters:
       #  Terraform Config
-      working_dir: ${{ parameters.terraform_working_dir }}
-      terraform_state_workspace: ""
-      terraform_init_backend_config: ""
+      working_dir: ${{ parameters.working_dir }}
+      terraform_state_workspace: ${{ parameters.terraform_state_workspace }}
+      terraform_init_backend_config: ${{ parameters.terraform_init_backend_config }}
       terraform_auth_properties: ${{ parameters.terraform_auth_properties }}
 
   - bash: |
       terraform -v
       terraform plan -input=false -out=tfplan
     displayName: 'Terraform: Plan'
-    workingDirectory: ${{ parameters.terraform_working_dir }}
+    workingDirectory: ${{ parameters.working_dir }}
     env:
       # AUTH PARAMS
       ${{ each var in parameters.terraform_auth_properties }}:
@@ -48,7 +48,7 @@ steps:
 
   - bash: terraform apply tfplan
     displayName: 'Terraform: Apply'
-    workingDirectory: ${{ parameters.terraform_working_dir }}
+    workingDirectory: ${{ parameters.working_dir }}
     env:
       # AUTH PARAMS
       ${{ each var in parameters.terraform_auth_properties }}:
@@ -60,5 +60,5 @@ steps:
 
   - bash: ${{ parameters.terraform_output_commands }}
     displayName: 'Terraform: Write Outputs to Variables'
-    workingDirectory: ${{ parameters.terraform_working_dir }}
+    workingDirectory: ${{ parameters.working_dir }}
     name: ${{ parameters.terraform_output_artefact }}
