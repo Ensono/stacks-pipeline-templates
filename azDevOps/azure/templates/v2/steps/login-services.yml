@@ -8,6 +8,9 @@ parameters:
   login_azure: false
   login_kubernetes: false
   aks_set_acr_perms: false
+  login_gke: false
+  login_gcp: false
+  gcp_auth: {}
   acr_name: ''
   acr_resource_group_name: ''
 
@@ -40,3 +43,25 @@ steps:
         failOnStderr: false
         env:
           AZURE_CLOUD_NAME: AzureCloud
+
+  - ${{ if eq(parameters.login_gcp, true) }}:
+      - bash: |
+          echo "$GOOGLE_CREDENTIALS" > /tmp/gkey.json
+          gcloud auth activate-service-account --key-file=/tmp/gkey.json
+        displayName: 'Login: GCP Service Account'
+        failOnStderr: true
+        env:
+          # AUTH PARAMS
+          GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)
+
+  - ${{ if eq(parameters.login_gke, true) }}:
+      - bash: |
+          gcloud container clusters get-credentials amido-stacks-nonprod-gke-infra --region europe-west2 --project amido-stacks
+          gcloud container get-server-config --format=json
+        displayName: 'Login: GKE'
+        failOnStderr: true
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}
+          # GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)

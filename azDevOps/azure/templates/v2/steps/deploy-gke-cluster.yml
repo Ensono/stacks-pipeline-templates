@@ -1,0 +1,35 @@
+parameters:
+  cluster_name: ""
+  working_dir: ""
+  gcp_auth: {}
+
+steps:
+  # Do Login
+  - template: ./login-services.yml
+    parameters:
+      # GCP
+      login_gcp: true
+      # Kubernetes
+      login_gke: true
+      gcp_auth: ${{ parameters.gcp_auth }}
+
+  - ${{ each ingress in parameters.ingress_definition }}:
+      - bash: |
+          kubectl apply -f ${{ ingress }} --context ${{ parameters.cluster_name }}
+
+        displayName: "K8s: Deploy Ingress-Nginx"
+        workingDirectory: ${{ parameters.working_dir }}
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}
+
+
+# TODO: make an all encompassing kubectly apply task
+# kubectl rollout status -n $NAMESPACE deploy/$DEPLOYMENT  -w --timeout=30s
+# if [ $? -eq 0 ]; then
+#   echo "Deployment succeeded";
+# else
+#   echo "Deployment failed. Rolling back";
+#   kubectl rollout undo -n $NAMESPACE deploy/$DEPLOYMENT
+# fi;
