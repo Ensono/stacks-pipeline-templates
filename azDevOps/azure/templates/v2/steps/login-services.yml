@@ -11,6 +11,9 @@ parameters:
   login_gke: false
   login_gcp: false
   gcp_auth: {}
+  # Can be a comma separated
+  # "eu.gcr.io,us.gcr.io"
+  gcp_registries: "eu.gcr.io"
   acr_name: ''
   acr_resource_group_name: ''
 
@@ -57,7 +60,7 @@ steps:
   - ${{ if eq(parameters.login_gke, true) }}:
       - bash: |
           gcloud container clusters get-credentials ${CLOUDSDK_CONTAINER_CLUSTER} --region ${CLOUDSDK_COMPUTE_REGION}
-          gcloud auth configure-docker
+          gcloud auth configure-docker ${{ parameters.gcp_registries }}
         displayName: 'Login: GKE'
         failOnStderr: false
         env:
