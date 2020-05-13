@@ -62,3 +62,7 @@ steps:
     displayName: 'Terraform: Write Outputs to Variables'
     workingDirectory: ${{ parameters.working_dir }}
     name: ${{ parameters.terraform_output_artefact }}
+    env:
+      # AUTH PARAMS
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}
