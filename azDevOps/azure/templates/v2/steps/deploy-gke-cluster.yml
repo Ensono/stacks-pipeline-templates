@@ -7,10 +7,9 @@ steps:
   # Do Login
   - template: ./login-services.yml
     parameters:
-      # GCP
       login_gcp: true
-      # Kubernetes
       login_gke: true
+      login_gcr: true
       gcp_auth: ${{ parameters.gcp_auth }}
 
   - ${{ each ingress in parameters.ingress_definition }}:
