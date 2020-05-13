@@ -15,8 +15,8 @@ steps:
 
   - ${{ each ingress in parameters.ingress_definition }}:
       - bash: |
-          kubectl apply -f ${{ ingress }} --context ${{ parameters.cluster_name }}
-
+          env
+          kubectl apply -f ${{ ingress }}
         displayName: "K8s: Deploy Ingress-Nginx"
         workingDirectory: ${{ parameters.working_dir }}
         env:

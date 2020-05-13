@@ -56,8 +56,8 @@ steps:
 
   - ${{ if eq(parameters.login_gke, true) }}:
       - bash: |
-          gcloud container clusters get-credentials amido-stacks-nonprod-gke-infra --region europe-west2 --project amido-stacks
-          gcloud container get-server-config --format=json
+          gcloud container clusters get-credentials ${CLOUDSDK_CONTAINER_CLUSTER} --region ${CLOUDSDK_COMPUTE_REGION}
+          gcloud auth configure-docker
         displayName: 'Login: GKE'
         failOnStderr: false
         env:
