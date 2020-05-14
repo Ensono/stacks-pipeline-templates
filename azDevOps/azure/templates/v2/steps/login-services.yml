@@ -67,7 +67,6 @@ steps:
           # AUTH PARAMS
           ${{ each var in parameters.gcp_auth }}:
             ${{ var.key }}: ${{ var.value }}
-          # GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)
 
   - ${{ if eq(parameters.login_gcr, true) }}:
       - bash: |
@@ -79,4 +78,3 @@ steps:
           # AUTH PARAMS
           ${{ each var in parameters.gcp_auth }}:
             ${{ var.key }}: ${{ var.value }}
-          # GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)

@@ -1,0 +1,26 @@
+############################################################################################################
+# desc: Builds the Docker image and pushes it to the Azure registry
+# params: workingDirectory, docker build arguments, docker image naming, registry name
+# return: Publishes the image to Azure registry
+# pre-reqs: If pulling from a private registry, please ensure that the npmAuthenticate task is run to
+# embellish the project .npmrc with the token
+############################################################################################################
+
+parameters:
+  working_directory: ''
+  docker_build_additional_args: ''
+  docker_tag_args: ''
+  docker_imagename: ''
+  docker_imagetag: ''
+  docker_containerregistryname: ''
+
+steps:
+  - bash: |
+      docker build ${{ parameters.docker_build_additional_args}} ${{ parameters.docker_tag_args }}
+    displayName: Build Container Image
+    workingDirectory: ${{ parameters.working_directory }}
+
+  - bash: |
+      docker push ${{ parameters.docker_containerregistryname }}/${{ parameters.docker_imagename }}
+    displayName: Push Container Image to Container Registry
+    workingDirectory: ${{ parameters.working_directory }}
