@@ -1,0 +1,56 @@
+############################################################################################################
+# desc: Publishes test reports and converts xunit/junit xml into html and uploads to specified blob container
+# params: test tool (eg, cypress, testcafe, selenium), working dir, blob storage account, storage container
+# tests results path, blob prefix
+# return:
+# pre-reqs:
+############################################################################################################
+
+parameters:
+  test_tool_name: ''
+  artifacts: {}
+  working_directory: ''
+  test_results_storage: ''
+  test_results_blob_prefix: ''
+  test_results_container: 'testresults'
+  test_results_path: $(working_directory)
+
+steps:
+  # Takes a number of artifacts to publish (like screenshots, videos) and publishes them
+  - ${{ each var in parameters.artifacts }}:
+      task: PublishPipelineArtifact@1
+      inputs:
+        artifactName: ${{ var.key }}
+        targetPath: ${{ var.value }}
+      displayName: 'Test Artifact: ${{ var.key }}'
+      condition: failed()
+
+  # Publish CI test results to Azure Devops artifacts
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: jUnit
+      testResultsFiles: '${{ parameters.test_tool_name }}-xunit-test-report.xml'
+      searchFolder: ${{ parameters.working_directory }}
+      testRunTitle: '${{ parameters.test_tool_name }} Tests'
+    displayName: 'Publish: ${{ parameters.test_tool_name }} results'
+    condition: succeededOrFailed()
+
+  # Coverets the xml output into a standalone html report
+  - bash: |
+      npx xunit-viewer -r ${{ parameters.test_tool_name }}-xunit-test-report.xml -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
+    workingDirectory: ${{ parameters.working_directory }}
+    displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
+
+  # Upload html report to blob storage
+  - bash: |
+      az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
+      az account set -s $azure_subscription_id
+      az storage copy -s ${{ parameters.test_tool_name }}-xunit-test-results.html -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }} --recursive
+      az logout --username $azure_client_id
+    displayName: 'Copy: ${{ parameters.test_tool_name }} HTML Report Blob Storge '
+    workingDirectory: ${{ parameters.working_directory }}
+    env:
+      azure_client_id: $(azure_client_id)
+      azure_client_secret: $(azure_client_secret)
+      azure_subscription_id: $(azure_subscription_id)
+      azure_tenant_id: $(azure_tenant_id)
