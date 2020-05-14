@@ -1,42 +1,25 @@
 ############################################################################################################
 # desc: Runs the functional (e2e) tests on a deployed webapp with Testcafe
-# params: Env vars, workingDirectory, testcafe_browser_list (default to all)
+# params: Env vars, working_directory, testcafe_browser_list (default to all)
 # return: Publishes test results, screenshots
 # pre-reqs: deployed webapp
 ############################################################################################################
 
 parameters:
   env_vars: {}
-  workingDirectory: ''
+  working_directory: ''
   testcafe_browser_list: 'all'
 
 steps:
   # Install test runtime dependencies (not installing modules listed in devDependencies)
   - script: npm install
     displayName: 'Install test dependencies'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    workingDirectory: ${{ parameters.working_directory }}
 
   # Run tests with Testcafe
   - script: npm run test:e2e -- ${{ parameters.testcafe_browser_list }}
     displayName: 'Test: Run Testcafe tests against specified browsers'
-    workingDirectory: ${{ parameters.workingDirectory }}
+    workingDirectory: ${{ parameters.working_directory }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
-
-  # Publish Artifacts: Cypress will automatically capture screenshots when a failure happens
-  - task: PublishPipelineArtifact@1
-    inputs:
-      artifactName: 'screenshots'
-      targetPath: '${{ parameters.workingDirectory }}/screenshots'
-    displayName: 'Publish Screenshots (TestCafe)'
-    condition: failed()
-
-  # Publish CI test results
-  - task: PublishTestResults@2
-    inputs:
-      testRunner: xUnit
-      testResultsFiles: '**/testcafe-xunit-test-report.xml'
-      testRunTitle: 'TestCafe Tests'
-    displayName: 'Publish test results'
-    condition: succeededOrFailed()
