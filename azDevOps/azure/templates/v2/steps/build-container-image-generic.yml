@@ -21,6 +21,8 @@ steps:
     workingDirectory: ${{ parameters.working_directory }}
 
   - bash: |
-      docker push ${{ parameters.docker_containerregistryname }}/${{ parameters.docker_imagename }}
+      echo ${{ parameters.docker_containerregistryname }}/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }}
+      docker push ${{ parameters.docker_containerregistryname }}/${{ parameters.docker_imagename }}:latest
+      docker push ${{ parameters.docker_containerregistryname }}/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }}
     displayName: Push Container Image to Container Registry
     workingDirectory: ${{ parameters.working_directory }}
