@@ -18,6 +18,7 @@ steps:
       - bash: |
           ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }}
         displayName: "K8s: Yaml ${{ tpl.displayName }}"
+        failOnStdErr: true
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
           ${{ each var in tpl.env_vars }}:
