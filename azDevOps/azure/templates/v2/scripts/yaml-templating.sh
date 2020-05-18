@@ -8,28 +8,16 @@
 # """
 base_template="$1"
 file_out="$2"
-templated_out_yaml=""
-
-# remove temp if exists
-rm -f temp.yml
 
 # :param string: base_yaml path
 # :param string: out_yaml path
-# :return string - out path of the templated yaml file
+# :return integer - exit code
 function do_templating() {
   local base_yaml="$1"
   local out_yaml="$2"
-  simple_sub=$(envsubst < $base_yaml)
-
-  echo "$simple_sub" > $out_yaml
-  # ( echo "cat <<EOF >$out_yaml";
-  #   cat "$base_yaml";
-  #   echo "EOF";
-  # ) >temp.yml
-  # . temp.yml
-  # rm -f temp.yml
-  # # returns a string
-  echo $out_yaml
+  # simple_sub=$(envsubst -i $base_yaml -o $out_yaml -no-unset -no-empty)
+  envsubst -i $base_yaml -o $out_yaml -no-unset -no-empty
+  echo $?
 }
 
 if [ -z "$file_out" ]; then
@@ -51,6 +39,5 @@ echo "base yaml: $base_template"
 echo "out_template yaml: $out_template"
 
 ret_val="$(do_templating $base_template $out_template)"
-
-cat $ret_val
-exit 0;
+cat $out_template
+exit $ret_val
