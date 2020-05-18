@@ -23,7 +23,6 @@ steps:
 
   - ${{ each deployment in parameters.deployment_defs }}:
       - bash: |
-          echo kubectl apply -f ${{ deployment.file }} ${{ deployment.context }}
           kubectl apply -f ${{ deployment.file }} ${{ deployment.context }}
         displayName: "K8s: Deploy ${{ deployment.name }}"
         workingDirectory: ${{ parameters.working_dir }}
