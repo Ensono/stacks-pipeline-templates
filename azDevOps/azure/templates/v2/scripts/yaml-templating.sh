@@ -1,9 +1,10 @@
 #!/bin/bash
+
 # """
 # Relies on envsubst which is part of gettext
 # To run locally please use a pre-built container which includes this as a dependency
 # PWD should be in the scripts directory of the pipeline-templates repo locally checked out
-# docker run -it -v $(pwd):/usr/test amidostacks/ci-k8s:0.0.4 /bin/bash
+# docker run -it -v $(pwd):/usr/test amidostacks/ci-k8s:latest /bin/bash
 # $ ./yaml-templating.sh base_file_path out_file_path (optional)
 # """
 base_template="$1"
@@ -22,8 +23,9 @@ function do_templating() {
 
 if [ -z "$file_out" ]; then
   echo """
-  out not supplied - defaulting to stripping base_ from base yaml
-  Ensure you are following conventions and prepend you base yaml with `base_`
+Out not supplied - defaulting to stripping base_ from base yaml.
+Ensure you are following conventions and prepend you base yaml definition with base_.
+E.g.: base_app-deploy.yml ==> app-deploy.yml
   """
   out_template="${base_template//"base_"}"
   rm -f $out_template
