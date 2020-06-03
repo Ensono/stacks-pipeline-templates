@@ -1,0 +1,63 @@
+##################################################################################################################################
+# Desc: 
+# 
+# Pre-reqs: 
+
+# Documentation: 
+##################################################################################################################################
+
+parameters:
+  relative_path_to_lighthouse_tests: '/lighthouse'
+  lighthouse_test_target: '' #This is used in the token replacement step
+  #TODO: Add parameters for Lighthouse Server token replacements
+
+steps:
+- checkout: 'self'
+  fetchDepth: 1
+
+#TODO: curl to FE? prevent cold starts
+
+- task: Npm@1
+  displayName: 'Lighthouse - Install dependencies'
+  inputs:
+    command: 'install'
+    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
+    verbose: true
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: 'Lighthouse - Replace tokens in config.json'
+  inputs:
+    rootDirectory: 'lighthouse/config' #TODO: Should probably use the `relative_path_to_lighthouse_Tests` parameter, if we are sticking with that parameter as a req.
+    targetFiles: '**/*.json'
+    tokenPrefix: '#{'
+    tokenSuffix: '}#'
+  
+- task: Npm@1
+  displayName: 'Lighthouse - Collect'
+  inputs:
+    command: 'custom'
+    customCommand: 'run lh:collect'
+    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
+    verbose: true
+    
+- task: Npm@1
+  displayName: 'Lighthouse - Assert'
+  inputs:
+    command: 'custom'
+    customCommand: 'run lh:assert'
+    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
+    verbose: true
+    
+#TODO: This task should be added when we have Lighthouse Server container running somewhere
+# - task: Npm@1
+#   displayName: 'Lighthouse Upload'
+#   workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
+#   inputs:
+#     command: 'custom'
+#     customCommand: 'run lh:upload'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Lighthouse reports'
+  inputs:
+    targetPath: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}/.lighthouseci'
+    artifact: 'LighthouseResults'
