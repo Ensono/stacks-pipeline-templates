@@ -1,63 +1,54 @@
-##################################################################################################################################
-# Desc: 
-# 
-# Pre-reqs: 
-
-# Documentation: 
-##################################################################################################################################
+############################################################################################################
+# desc: 
+# return:
+# pre-reqs:
+############################################################################################################
 
 parameters:
-  relative_path_to_lighthouse_tests: '/lighthouse'
+  working_directory: ''
   lighthouse_test_target: '' #This is used in the token replacement step
-  #TODO: Add parameters for Lighthouse Server token replacements
+  lighthouse_config_file_name: ''
+  lighthouse_container: ''
+  lighthouse_scripts: {}
+  env_vars: {}
 
 steps:
-- checkout: 'self'
-  fetchDepth: 1
+  - target:
+      container: ${{ parameters.lighthouse_container }}
 
-#TODO: curl to FE? prevent cold starts
+  # Install test runtime dependencies (not installing modules listed in devDependencies)
+  - script: npm install
+    displayName: 'Install test dependencies'
+    workingDirectory: ${{ parameters.working_directory }}
 
-- task: Npm@1
-  displayName: 'Lighthouse - Install dependencies'
-  inputs:
-    command: 'install'
-    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
-    verbose: true
+  # Replace the tokens in the config file (relies on envsubst being in container)
+  - bash: |
+      envsubst -i ${{ parameters.lighthouse_config_file_name }} -o  ${{ parameters.lighthouse_config_file_name }} -no-empty -no-unset
+    workingDirectory: ${{ parameters.working_directory }}
+    displayName: 'Lighthouse - Replace environment variables in config'
 
-- task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  displayName: 'Lighthouse - Replace tokens in config.json'
-  inputs:
-    rootDirectory: 'lighthouse/config' #TODO: Should probably use the `relative_path_to_lighthouse_Tests` parameter, if we are sticking with that parameter as a req.
-    targetFiles: '**/*.json'
-    tokenPrefix: '#{'
-    tokenSuffix: '}#'
+  # # Run Lighthouse collect
+  # - task: Npm@1
+  #   displayName: 'Lighthouse - Collect'
+  #   inputs:
+  #     command: 'custom'
+  #     customCommand: 'run lh:collect'
+  #     workingDir: ${{ parameters.working_directory }}
+  #     verbose: true
   
-- task: Npm@1
-  displayName: 'Lighthouse - Collect'
-  inputs:
-    command: 'custom'
-    customCommand: 'run lh:collect'
-    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
-    verbose: true
-    
-- task: Npm@1
-  displayName: 'Lighthouse - Assert'
-  inputs:
-    command: 'custom'
-    customCommand: 'run lh:assert'
-    workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
-    verbose: true
-    
-#TODO: This task should be added when we have Lighthouse Server container running somewhere
-# - task: Npm@1
-#   displayName: 'Lighthouse Upload'
-#   workingDir: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}'
-#   inputs:
-#     command: 'custom'
-#     customCommand: 'run lh:upload'
-
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish Lighthouse reports'
-  inputs:
-    targetPath: '$(Build.SourcesDirectory)${{parameters.relative_path_to_lighthouse_tests}}/.lighthouseci'
-    artifact: 'LighthouseResults'
+  # Run Lighthouse scripts
+  - task: Npm@1
+    displayName: 'Lighthouse - Assert'
+    inputs:
+      command: 'custom'
+      workingDir: '$(Build.SourcesDirectory)${{parameters.working_directory}}'
+      verbose: true
+      ${{ each script in parameters.lighthouse_scripts }}:
+        customCommand: ${{ script.value }}
+  
+  # Publish the results to the pipeline      
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Lighthouse reports'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
+      artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
