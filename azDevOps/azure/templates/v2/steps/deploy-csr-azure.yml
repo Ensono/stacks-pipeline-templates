@@ -1,0 +1,34 @@
+############################################################################################################
+# desc: Builds react FE site
+# params: workingDirectory, docker build arguments, docker image naming, registry name
+# return: Publishes the image to Azure registry
+# pre-reqs: If pulling from a private registry, please ensure that the npmAuthenticate task is run to
+# embellish the project .npmrc with the token
+############################################################################################################
+
+parameters:
+  build_artifact: ''
+  storage_account_name: ''
+  storage_account_key: ''
+  build_command: 'npm run build'
+  build_vars: {}
+  build_out: './dist'
+
+steps:
+  - download: current
+    displayName: 'Download: Build Artefacts'
+    artifact: '${{ parameters.build_artefact }}'
+
+  - bash: |
+      ${{ parameters.build_command }}
+    displayName: Build React ClientSideRendered
+    workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artifact }}
+    env:
+      # Build Params
+      ${{ each var in parameters.build_vars }}:
+        ${{ var.key }}: ${{ var.value }}
+
+  - bash: |
+      az storage blob upload-batch --account-name ${{ parameters.storage_account_name }} --account-key ${{ parameters.storage_account_key }} -s ${{ parameters.build_out }} -d '$web'
+    displayName: Push to Blob Storage
+    workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artifact }}
