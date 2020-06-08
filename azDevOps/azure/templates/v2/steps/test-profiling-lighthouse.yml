@@ -14,21 +14,22 @@ parameters:
   working_directory: ''
   target_container: ''
   lighthouse_config_filename: ''
-  lighthouse_command: {}
-  lighthouse_urls: []
+  lighthouse_commands: []
+  lighthouse_urls: [] # List of urls e.g. "https://google.com", "https://google.com"
 
   steps:
-    # Lighthouse collect
-    - ${{ each command in parameters.lighthouse_scripts }}:
+    # Lighthouse commands
+    # - ${{ each url in parameters.lighthouse_urls }}:
+    - ${{ each command in parameters.lighthouse_commands }}:
       - bash: |
-          lhci collect --config=${{ parameters.lighthouse_config_filename }}
-        displayName: "Audit Analysis: Lighthouse"
+          lhci ${{ command }} --config=${{ parameters.lighthouse_config_filename }}
+        displayName: "Lighthouse Audit: lhci ${{ command }}"
         target:
           container: ${{ parameters.target_container }}
         workingDirectory: ${{ parameters.working_directory }}
         env:
-          LHCI_URL: ${{ parameters.lighthouse_urls }}
-  
+            LHCI_URL: ${{ parameters.lighthouse_urls }}
+
     # Publish the results to the pipeline      
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Lighthouse reports'
