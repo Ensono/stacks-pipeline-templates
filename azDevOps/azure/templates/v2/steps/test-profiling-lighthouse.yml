@@ -1,54 +1,37 @@
 ############################################################################################################
-# desc: 
+# desc: Runs the lighthouse ci in a docker container.
 # return:
-# pre-reqs:
+# inputs:
+#    - working_directory
+#    - target_container (see amidostacks/lhci)
+#    - lighthouse_config_filename: name of the lighthouse config file, eg. lighthouserc.json
+#    - lighthouse_command: commands to run as configured in the config file, e.g. collect, assert, server
+#    - lighthouse_urls: list/array of urls to run on, overiding defaults in config file. eg. - google.com
+# pre-reqs: Deployed webapp on a given URL
 ############################################################################################################
 
 parameters:
   working_directory: ''
-  lighthouse_test_target: '' #This is used in the token replacement step
-  lighthouse_config_file_name: ''
-  lighthouse_container: ''
-  lighthouse_scripts: {}
-  env_vars: {}
+  target_container: ''
+  lighthouse_config_filename: ''
+  lighthouse_command: {}
+  lighthouse_urls: []
 
-steps:
-  - target:
-      container: ${{ parameters.lighthouse_container }}
-
-  # Install test runtime dependencies (not installing modules listed in devDependencies)
-  - script: npm install
-    displayName: 'Install test dependencies'
-    workingDirectory: ${{ parameters.working_directory }}
-
-  # Replace the tokens in the config file (relies on envsubst being in container)
-  - bash: |
-      envsubst -i ${{ parameters.lighthouse_config_file_name }} -o  ${{ parameters.lighthouse_config_file_name }} -no-empty -no-unset
-    workingDirectory: ${{ parameters.working_directory }}
-    displayName: 'Lighthouse - Replace environment variables in config'
-
-  # # Run Lighthouse collect
-  # - task: Npm@1
-  #   displayName: 'Lighthouse - Collect'
-  #   inputs:
-  #     command: 'custom'
-  #     customCommand: 'run lh:collect'
-  #     workingDir: ${{ parameters.working_directory }}
-  #     verbose: true
+  steps:
+    # Lighthouse collect
+    - ${{ each command in parameters.lighthouse_scripts }}:
+      - bash: |
+          lhci collect --config=${{ parameters.lighthouse_config_filename }}
+        displayName: "Audit Analysis: Lighthouse"
+        target:
+          container: ${{ parameters.target_container }}
+        workingDirectory: ${{ parameters.working_directory }}
+        env:
+          LHCI_URL: ${{ parameters.lighthouse_urls }}
   
-  # Run Lighthouse scripts
-  - task: Npm@1
-    displayName: 'Lighthouse - Assert'
-    inputs:
-      command: 'custom'
-      workingDir: '$(Build.SourcesDirectory)${{parameters.working_directory}}'
-      verbose: true
-      ${{ each script in parameters.lighthouse_scripts }}:
-        customCommand: ${{ script.value }}
-  
-  # Publish the results to the pipeline      
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Lighthouse reports'
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
-      artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
+    # Publish the results to the pipeline      
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Lighthouse reports'
+      inputs:
+        targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
+        artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'

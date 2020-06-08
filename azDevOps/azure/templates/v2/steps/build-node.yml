@@ -87,7 +87,7 @@ steps:
   - ${{ if eq(parameters.static_code_analysis, true) }}:
       - template: ./test-static-code-sonar.yml
         parameters:
-          working_irectory: ${{ parameters.project_root_dir }}
+          working_directory: ${{ parameters.project_root_dir }}
           target_container: $${{ parameters.sonar_container }}
 
   # Consumer driven contract tests
