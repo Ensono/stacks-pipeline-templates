@@ -13,7 +13,7 @@ parameters:
   build_command: 'npm run build'
   build_vars: {}
   build_out: './dist'
-  storage_dest: '$web'
+  storage_dest: '\$web'
 
 steps:
   - download: current
