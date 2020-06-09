@@ -14,13 +14,14 @@ parameters:
   working_directory: ''
   target_container: ''
   lighthouse_config_filename: ''
-  lighthouse_commands: []
+  # lighthouse_commands: ['collect', 'assert']
+  lighthouse_commands_temp: ['collect', 'assert']
   lighthouse_urls: []
 
   steps:
     # Lighthouse commands
     # - ${{ each url in parameters.lighthouse_urls }}:
-    - ${{ each command in parameters.lighthouse_commands }}:
+    - ${{ each command in parameters.lighthouse_commands_temp }}:
         - bash: |
             lhci ${{ command }} --config=${{ parameters.lighthouse_config_filename }}
           displayName: "Lighthouse Audit: lhci ${{ command }}"
