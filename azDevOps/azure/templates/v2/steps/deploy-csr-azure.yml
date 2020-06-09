@@ -13,11 +13,12 @@ parameters:
   build_command: 'npm run build'
   build_vars: {}
   build_out: './dist'
+  storage_dest: '$web'
 
 steps:
   - download: current
-    displayName: 'Download: Build Artefacts'
-    artifact: '${{ parameters.build_artefact }}'
+    displayName: 'Download: Build Artifacts'
+    artifact: ${{ parameters.build_artifact }}
 
   - bash: |
       ${{ parameters.build_command }}
@@ -29,6 +30,6 @@ steps:
         ${{ var.key }}: ${{ var.value }}
 
   - bash: |
-      az storage blob upload-batch --account-name ${{ parameters.storage_account_name }} --account-key ${{ parameters.storage_account_key }} -s ${{ parameters.build_out }} -d '$web'
+      az storage blob upload-batch --account-name ${{ parameters.storage_account_name }} --account-key ${{ parameters.storage_account_key }} -s ${{ parameters.build_out }} -d ${{ parameters.storage_dest }}
     displayName: Push to Blob Storage
     workingDirectory: $(Pipeline.Workspace)/${{ parameters.build_artifact }}
