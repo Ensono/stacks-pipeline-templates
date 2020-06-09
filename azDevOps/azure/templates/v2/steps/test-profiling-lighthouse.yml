@@ -14,31 +14,27 @@ parameters:
   working_directory: ''
   target_container: ''
   lighthouse_config_filename: ''
-  # lighthouse_commands: ['collect', 'assert']
+  # lighthouse_commands: []
   lighthouse_commands_temp: ['collect', 'assert']
   lighthouse_urls: []
 
   steps:
-    # Do Login
+  - script: echo lighthouse
+    displayName: 'Lighthouse Audit'
+
+  - ${{ each lhcommand in parameters.lighthouse_commands_temp }}:
     - bash: |
-        echo "This better work"
-      displayName: "task before expression"
+        lhci ${{ lhcommand }} --config=${{ parameters.lighthouse_config_filename }}
+      displayName: "Lighthouse Audit: lhci ${{ lhcommand }}"
+      target:
+        container: ${{ parameters.target_container }}
+      workingDirectory: ${{ parameters.working_directory }}
+      # env:
+      #   LHCI_URL: ${{ parameters.lighthouse_urls }}
 
-    # Lighthouse commands
-    # - ${{ each url in parameters.lighthouse_urls }}:
-    - ${{ each command in parameters.lighthouse_commands_temp }}:
-        - bash: |
-            lhci ${{ command }} --config=${{ parameters.lighthouse_config_filename }}
-          displayName: "Lighthouse Audit: lhci ${{ command }}"
-          target:
-            container: ${{ parameters.target_container }}
-          workingDirectory: ${{ parameters.working_directory }}
-          # env:
-          #   LHCI_URL: ${{ parameters.lighthouse_urls }}
-
-    # Publish the results to the pipeline
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Lighthouse reports'
-      inputs:
-        targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
-        artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
+  # Publish the results to the pipeline
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Lighthouse reports'
+    inputs:
+      targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
+      artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
