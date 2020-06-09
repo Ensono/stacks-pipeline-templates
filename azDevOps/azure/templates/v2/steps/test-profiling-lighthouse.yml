@@ -15,7 +15,6 @@ parameters:
   target_container: ''
   lighthouse_config_filename: ''
   lighthouse_commands: []
-  # lighthouse_commands_temp: 'collect'
   lighthouse_urls: []
 
 steps:
@@ -26,8 +25,8 @@ steps:
         target:
           container: ${{ parameters.target_container }}
         workingDirectory: ${{ parameters.working_directory }}
-        # env:
-        #   LHCI_URL: ${{ parameters.lighthouse_urls }}
+        env:
+          LHCI_URL: ${{ parameters.lighthouse_urls }}
 
   # Publish the results to the pipeline
   - task: PublishPipelineArtifact@1
