@@ -19,6 +19,11 @@ parameters:
   lighthouse_urls: []
 
   steps:
+    # Do Login
+    - bash: |
+        echo "This better work"
+      displayName: "task before expression"
+
     # Lighthouse commands
     # - ${{ each url in parameters.lighthouse_urls }}:
     - ${{ each command in parameters.lighthouse_commands_temp }}:
