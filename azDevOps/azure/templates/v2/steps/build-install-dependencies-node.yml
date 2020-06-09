@@ -9,6 +9,7 @@ parameters:
   versionSpec: ""
   workingDirectory: ""
   customRegistry: ""
+  run_build: true
 
 steps:
   # Ensure Node.js 12 is active
@@ -37,7 +38,8 @@ steps:
       ${{ if ne(parameters.customRegistry, '') }}:
         customRegistry: ${{ parameters.customRegistry }}
 
-  - script: |
-      npm run build
-    displayName: "Build: Run Transpile"
-    workingDirectory: ${{ parameters.workingDirectory }}
+  - ${{ if eq(parameters.run_build, true) }}:
+      - script: |
+          npm run build
+        displayName: "Build: Run Transpile"
+        workingDirectory: ${{ parameters.workingDirectory }}
