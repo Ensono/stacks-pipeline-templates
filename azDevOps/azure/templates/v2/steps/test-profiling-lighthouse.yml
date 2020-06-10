@@ -27,7 +27,7 @@ steps:
           - bash: |
               lhci ${{ lhcommand }} --config=${{ parameters.lighthouse_config_filename }}
             target:
-                container: ${{ parameters.target_container }}
+              container: ${{ parameters.target_container }}
             displayName: "Lighthouse Audit: lhci ${{ lhcommand }}"
             workingDirectory: ${{ parameters.working_directory }}
             env:
