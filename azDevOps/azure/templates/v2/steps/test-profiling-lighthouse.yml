@@ -20,7 +20,7 @@ parameters:
 steps:
   - checkout: self
     target:
-      container: target_container
+      container: ${{ parameters.target_container }}
 
   - ${{ each url in parameters.lighthouse_urls }}:
       - ${{ each lhcommand in parameters.lighthouse_commands }}:
