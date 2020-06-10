@@ -36,3 +36,5 @@ steps:
   - bash: |
       ls -la
     displayName: 'contents output'
+    target:
+      container: ${{ parameters.target_container }}
