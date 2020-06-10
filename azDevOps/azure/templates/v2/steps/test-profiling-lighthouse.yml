@@ -35,3 +35,4 @@ steps:
     inputs:
       targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
       artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
+      condition: succeededOrfailed()
