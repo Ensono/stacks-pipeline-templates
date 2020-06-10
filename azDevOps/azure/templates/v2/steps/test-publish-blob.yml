@@ -12,7 +12,7 @@ parameters:
   test_results_storage: ''
   test_results_blob_prefix: ''
   test_results_container: 'testresults'
-  test_results_path: ${{ parameters.working_directory }}
+  test_results_path: $(working_directory)
 
 steps:
   # Upload single or directory of reports to blob storage
