@@ -18,10 +18,6 @@ parameters:
   lighthouse_urls: []
 
 steps:
-  - checkout: self
-    target:
-      container: ${{ parameters.target_container }}
-
   - ${{ each url in parameters.lighthouse_urls }}:
       - ${{ each lhcommand in parameters.lighthouse_commands }}:
           - bash: |
@@ -35,6 +31,7 @@ steps:
 
   - bash: |
       ls -la
+      pwd
     displayName: 'contents output'
     target:
       container: ${{ parameters.target_container }}
