@@ -56,7 +56,7 @@ steps:
   #     azure_tenant_id: $(azure_tenant_id)
 
   # Upload test results in pipeline, as artifacts, and html report to blob storage
-  - template: azDevOps/azure/templates/v2/steps/test-publish-blob.yml@templates
+  - template: ../steps/test-publish-blob.yml
     parameters:
       test_tool_name: ${{ parameters.test_tool_name }}
       working_directory: ${{ parameters.working_directory }}
