@@ -18,21 +18,19 @@ parameters:
   lighthouse_urls: []
 
 steps:
+  - checkout: self
+    target:
+      container: target_container
+
   - ${{ each url in parameters.lighthouse_urls }}:
       - ${{ each lhcommand in parameters.lighthouse_commands }}:
           - bash: |
               lhci ${{ lhcommand }} --config=${{ parameters.lighthouse_config_filename }}
             displayName: "Lighthouse Audit: lhci ${{ lhcommand }}"
-            target:
-              container: ${{ parameters.target_container }}
             workingDirectory: ${{ parameters.working_directory }}
             env:
               LHCI_URL: ${{ url }}
 
-  # Publish the results to the pipeline
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish Lighthouse reports'
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)${{parameters.working_directory}}/.lighthouseci'
-      artifact: 'Lighthouse CI - Results $(Build.BuildNumber)'
-      condition: succeededOrfailed()
+  - bash: |
+      ls -la
+    displayName: 'contents output'

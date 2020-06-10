@@ -1,0 +1,30 @@
+############################################################################################################
+# desc: Publishes reports and converts and uploads to specified blob container
+# params: test tool (eg, cypress, testcafe, selenium, lighthouse), working dir, blob storage account, storage container
+# tests results path, blob prefix
+# return:
+# pre-reqs:
+############################################################################################################
+
+parameters:
+  test_tool_name: ''
+  working_directory: ''
+  test_results_storage: ''
+  test_results_blob_prefix: ''
+  test_results_container: 'testresults'
+  test_results_path: ${{ parameters.working_directory }}
+
+steps:
+  # Upload single or directory of reports to blob storage
+  - bash: |
+      az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
+      az account set -s $azure_subscription_id
+      az storage copy -s ${{ parameters.test_results_path }} -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }}-${{ parameters.test_tool_name }} --recursive
+      az logout --username $azure_client_id
+    displayName: 'Copy: ${{ parameters.test_tool_name }} Reports Blob Storge '
+    workingDirectory: ${{ parameters.working_directory }}
+    env:
+      azure_client_id: $(azure_client_id)
+      azure_client_secret: $(azure_client_secret)
+      azure_subscription_id: $(azure_subscription_id)
+      azure_tenant_id: $(azure_tenant_id)
