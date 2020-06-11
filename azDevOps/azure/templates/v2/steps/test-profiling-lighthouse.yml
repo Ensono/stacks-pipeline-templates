@@ -30,13 +30,21 @@ steps:
               LHCI_URL: ${{ url }}
 
   - bash: |
-      ls -la
       pwd
-      /__w/1/
       ls -la
-      cd /__w/_temp
+      cd /__w/1/
       ls -la
+      echo $(Agent.BuildDirectory)
     displayName: 'contents output'
     target:
       container: ${{ parameters.target_container }}
     workingDirectory: ${{ parameters.working_directory }}
+
+  # Upload test results in pipeline, as artifacts, and html report to blob storage
+  - template: azDevOps/azure/templates/v2/steps/test-publish-blob.yml@templates
+    parameters:
+      test_tool_name: lighthouse
+      working_directory: ${{ parameters.working_directory }}
+      test_results_storage: amidostacksuksdev
+      test_results_container: 'testresults'
+      test_results_path: $(Agent.BuildDirectory)/.lighthouseci
