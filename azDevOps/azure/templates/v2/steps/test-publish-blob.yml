@@ -15,6 +15,11 @@ parameters:
   test_results_path: $(working_directory)
 
 steps:
+  - bash: |
+      pwd
+      ls -la
+    workingDirectory: ${{ parameters.working_directory }}
+    displayName: Workdir file contents
   # Upload single or directory of reports to blob storage
   - bash: |
       az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
