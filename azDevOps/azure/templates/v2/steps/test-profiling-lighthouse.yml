@@ -17,8 +17,6 @@ parameters:
   lighthouse_commands: []
   lighthouse_urls: []
 
-container: ${{ parameters.target_container }}
-
 steps:
   - ${{ each url in parameters.lighthouse_urls }}:
       - ${{ each lhcommand in parameters.lighthouse_commands }}:
