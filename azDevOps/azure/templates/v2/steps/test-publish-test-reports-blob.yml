@@ -40,3 +40,11 @@ steps:
       npx xunit-viewer -r ${{ parameters.test_tool_name }}-xunit-test-report.xml -o ${{ parameters.test_tool_name }}-xunit-test-results.html -t ${{ parameters.test_tool_name }}
     workingDirectory: ${{ parameters.working_directory }}
     displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
+
+  # Upload test results in pipeline, as artifacts, and html report to blob storage
+  - template: ../steps/test-publish-blob.yml
+    parameters:
+      test_tool_name: ${{ parameters.test_tool_name }}
+      working_directory: ${{ parameters.working_directory }}
+      test_results_storage: ${{ parameters.test_results_storage }}
+      test_results_path: ${{ parameters.test_results_path }}/${{ parameters.test_tool_name }}-xunit-test-results.html
