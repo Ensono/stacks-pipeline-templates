@@ -28,23 +28,3 @@ steps:
             workingDirectory: ${{ parameters.working_directory }}
             env:
               LHCI_URL: ${{ url }}
-
-  - bash: |
-      pwd
-      ls -la
-      cd /__w/1/
-      ls -la
-      echo $(Agent.BuildDirectory)
-    displayName: 'contents output'
-    target:
-      container: ${{ parameters.target_container }}
-    workingDirectory: ${{ parameters.working_directory }}
-
-  # Upload test results in pipeline, as artifacts, and html report to blob storage
-  - template: ../steps/test-publish-blob.yml
-    parameters:
-      test_tool_name: lighthouse
-      working_directory: ${{ parameters.working_directory }}
-      test_results_storage: amidostacksuksdev
-      test_results_container: 'testresults'
-      test_results_path: $(Agent.BuildDirectory)/.lighthouseci
