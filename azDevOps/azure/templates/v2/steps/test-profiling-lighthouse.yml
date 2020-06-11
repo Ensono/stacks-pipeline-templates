@@ -41,7 +41,7 @@ steps:
     workingDirectory: ${{ parameters.working_directory }}
 
   # Upload test results in pipeline, as artifacts, and html report to blob storage
-  - template: azDevOps/azure/templates/v2/steps/test-publish-blob.yml@templates
+  - template: ../steps/test-publish-blob.yml
     parameters:
       test_tool_name: lighthouse
       working_directory: ${{ parameters.working_directory }}
