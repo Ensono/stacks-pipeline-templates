@@ -17,6 +17,8 @@ parameters:
   lighthouse_commands: []
   lighthouse_urls: []
 
+container: ${{ parameters.target_container }}
+
 steps:
   - ${{ each url in parameters.lighthouse_urls }}:
       - ${{ each lhcommand in parameters.lighthouse_commands }}:
@@ -32,6 +34,11 @@ steps:
   - bash: |
       ls -la
       pwd
+      /__w/1/
+      ls -la
+      cd /__w/_temp
+      ls -la
     displayName: 'contents output'
     target:
       container: ${{ parameters.target_container }}
+    workingDirectory: ${{ parameters.working_directory }}
