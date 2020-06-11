@@ -15,16 +15,11 @@ parameters:
   test_results_path: $(working_directory)
 
 steps:
-  - bash: |
-      pwd
-      ls -la
-    workingDirectory: ${{ parameters.working_directory }}
-    displayName: Workdir file contents
   # Upload single or directory of reports to blob storage
   - bash: |
       az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
       az account set -s $azure_subscription_id
-      az storage copy -s ${{ parameters.test_results_path }} -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }}-${{ parameters.test_tool_name }} --recursive
+      az storage copy -s ${{ parameters.test_results_path }} -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }} --recursive
       az logout --username $azure_client_id
     displayName: 'Copy: ${{ parameters.test_tool_name }} Reports Blob Storge '
     workingDirectory: ${{ parameters.working_directory }}
