@@ -9,6 +9,11 @@ parameters:
   versionSpec: ''
   build_number: ''
   workingDirectory: ''
+  pact_bearer_token: $(PACT_BEARER_TOKEN)
+  pact_consumer: $(PACT_CONSUMER)
+  pact_broker: $(PACT_BROKER)
+  pact_provider: $(PACT_PROVIDER)
+  env_vars: {}
 
 steps:
   # Run Pact contract tests
@@ -16,8 +21,8 @@ steps:
     displayName: 'Run pact tests'
     workingDirectory: ${{ parameters.workingDirectory }}
     env:
-      PACT_CONSUMER: $(PACT_CONSUMER)
-      PACT_PROVIDER: $(PACT_PROVIDER)
+      PACT_CONSUMER: ${{ parameters.pact_consumer }}
+      PACT_PROVIDER: ${{ parameters.pact_provider }}
 
   # Publish Pact test results
   - task: PublishTestResults@2
@@ -35,7 +40,9 @@ steps:
     env:
       BUILD_NUMBER: ${{ parameters.build_number }}
       SOURCE_BRANCH_NAME: $(build.SourceBranchName)
-      PACT_BROKER: $(PACT_BROKER)
-      PACT_BEARER_TOKEN: $(PACT_BEARER_TOKEN)
-      PACT_CONSUMER: $(PACT_CONSUMER)
-      PACT_PROVIDER: $(PACT_PROVIDER)
+      PACT_BROKER: ${{ parameters.pact_broker }}
+      PACT_BEARER_TOKEN: ${{ parameters.pact_bearer_token }}
+      PACT_CONSUMER: ${{ parameters.pact_consumer }}
+      PACT_PROVIDER: ${{ parameters.pact_provider }}
+      ${{ each var in parameters.env_vars }}:
+        ${{ var.key }}: ${{ var.value }}
