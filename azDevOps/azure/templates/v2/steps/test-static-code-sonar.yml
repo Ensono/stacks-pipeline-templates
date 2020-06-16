@@ -1,26 +1,26 @@
 ############################################################################################################
 # desc: Performs static code analysis using code coverage from Jest unit tests and SonarCloud
-# params: Working directory
+# params: Working directory, container to run in
 # return:
 # pre-reqs: dependency installation
 ############################################################################################################
 
 parameters:
-  workingDirectory: ""
+  working_directory: ""
+  target_container: ""
 
 steps:
   # SonarCloud Start
   - bash: |
-      sonar-scanner -v
-      sonar-scanner
+      ${{ parameters.target_container }} -v
+      ${{ parameters.target_container }}
     displayName: "Static Analysis: SonarScanner Run"
-    # TOD: remove this! all target/container definitions should be handled at a job/caller level
     target:
-      container: sonar_scanner
+      container: ${{ parameters.target_container }}
     env:
       SONAR_HOST_URL: https://sonarcloud.io
       SONAR_TOKEN: $SONAR_TOKEN
       SONAR_PROJECT_KEY: $SONAR_PROJECT_KEY
       SONAR_ORGANIZATION: $SONAR_ORGANIZATION
       BUILD_NUMBER: $(Build.BuildNumber)
-    workingDirectory: ${{ parameters.workingDirectory }}
+    workingDirectory: ${{ parameters.working_directory }}
