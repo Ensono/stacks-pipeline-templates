@@ -9,7 +9,7 @@
 # """
 base_template="$1"
 file_out="$2"
-
+additional_envsubst_args="$3:-\"\""
 # :param string: base_yaml path
 # :param string: out_yaml path
 # :return integer - exit code
@@ -17,7 +17,7 @@ function do_templating() {
   local base_yaml="$1"
   local out_yaml="$2"
   # simple_sub=$(envsubst -i $base_yaml -o $out_yaml -no-unset -no-empty)
-  envsubst -i $base_yaml -o $out_yaml -no-unset -no-empty
+  envsubst -i $base_yaml -o $out_yaml -no-unset $additional_envsubst_args[@]
   echo $?
 }
 
