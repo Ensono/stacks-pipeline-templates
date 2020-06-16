@@ -41,16 +41,10 @@ steps:
     workingDirectory: ${{ parameters.working_directory }}
     displayName: 'Generate ${{ parameters.test_tool_name }} HTML Report'
 
-  # Upload html report to blob storage
-  - bash: |
-      az login --service-principal --username $azure_client_id --password $azure_client_secret --tenant $azure_tenant_id
-      az account set -s $azure_subscription_id
-      az storage copy -s ${{ parameters.test_tool_name }}-xunit-test-results.html -d https://${{ parameters.test_results_storage }}.blob.core.windows.net/${{ parameters.test_results_container }}/${{ parameters.test_results_blob_prefix }} --recursive
-      az logout --username $azure_client_id
-    displayName: 'Copy: ${{ parameters.test_tool_name }} HTML Report Blob Storge '
-    workingDirectory: ${{ parameters.working_directory }}
-    env:
-      azure_client_id: $(azure_client_id)
-      azure_client_secret: $(azure_client_secret)
-      azure_subscription_id: $(azure_subscription_id)
-      azure_tenant_id: $(azure_tenant_id)
+  # Upload test results in pipeline, as artifacts, and html report to blob storage
+  - template: ../steps/test-publish-blob.yml
+    parameters:
+      test_tool_name: ${{ parameters.test_tool_name }}
+      working_directory: ${{ parameters.working_directory }}
+      test_results_storage: ${{ parameters.test_results_storage }}
+      test_results_path: ${{ parameters.test_results_path }}/${{ parameters.test_tool_name }}-xunit-test-results.html
