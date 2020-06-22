@@ -11,6 +11,11 @@ parameters:
   target_container: ''
 
 steps:
+  - bash: |
+      cypress install
+    condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
+    displayName: Install Cypress if not in cache
+
   # Run tests with Cypress
   - script: npm run test:cypress
     displayName: 'Start webapp server and run Cypress tests'

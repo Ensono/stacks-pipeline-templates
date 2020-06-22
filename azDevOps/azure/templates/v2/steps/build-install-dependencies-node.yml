@@ -11,7 +11,7 @@ parameters:
   customRegistry: ""
   run_build: true
   cache_cypress: false
-  npm_config_cache: $(Pipeline.Workspace)
+  npm_config_cache: $(Pipeline.Workspace)/.npm
 
 steps:
   # Ensure Node.js 12 is active
@@ -54,7 +54,7 @@ steps:
       - task: Cache@2
         inputs:
           key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-          path: $(Pipeline.Workspace)/.cache/Cypress
+          path: $(Pipeline.Workspace)/.cache
           restoreKeys: 'cypress | $(Agent.OS)'
           cacheHitVar: CYPRESS_CACHE_RESTORED
         displayName: Cache Cypress binary
