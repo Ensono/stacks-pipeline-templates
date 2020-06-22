@@ -74,6 +74,7 @@ steps:
         workingDirectory: ${{ parameters.workingDirectory }}
 
   - bash: |
+      echo $HOME/.npm
       ls -lat $HOME/.npm
-      ls -lat $(Pipeline.Workspace)/.npm
+      echo $HOME/.cache
       ls -lat $HOME/.cache
