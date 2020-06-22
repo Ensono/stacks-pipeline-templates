@@ -8,12 +8,15 @@
 parameters:
   env_vars: {}
   workingDirectory: ''
+  target_container: ''
 
 steps:
   # Run tests with Cypress
   - script: npm run test:cypress
     displayName: 'Start webapp server and run Cypress tests'
     workingDirectory: ${{ parameters.workingDirectory }}
+    ${{ if ne(parameters.target_container, '') }}:
+      target: ${{ parameters.target_container }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
