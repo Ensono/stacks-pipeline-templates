@@ -10,6 +10,7 @@ parameters:
   workingDirectory: ''
   target_container: ''
   cypress_run_script: 'npm run test:cypress'
+  # CYPRESS_INSTALL_BINARY:
 
 steps:
   # if container specified check if cache exists
@@ -17,8 +18,7 @@ steps:
       bash: |
         node_modules/.bin/cypress install
       workingDirectory: ${{ parameters.workingDirectory }}
-      target:
-        container: ${{ parameters.target_container }}
+      target: ${{ parameters.target_container }}
       condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
       displayName: Install Cypress if Cache miss
 
@@ -27,8 +27,7 @@ steps:
     displayName: 'Start webapp server and run Cypress tests'
     workingDirectory: ${{ parameters.workingDirectory }}
     ${{ if ne(parameters.target_container, '') }}:
-      target:
-        container: ${{ parameters.target_container }}
+      target: ${{ parameters.target_container }}
     env:
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
@@ -40,8 +39,7 @@ steps:
       targetPath: '${{ parameters.workingDirectory }}/__tests__/cypress/screenshots'
     displayName: 'Publish Screenshots (Cypress)'
     ${{ if ne(parameters.target_container, '') }}:
-      target:
-        container: ${{ parameters.target_container }}
+      target: ${{ parameters.target_container }}
     condition: failed()
 
   # Publish Artifacts: Cypress records a video for each spec file when running tests
@@ -52,8 +50,7 @@ steps:
       targetPath: '${{ parameters.workingDirectory }}/__tests__/cypress/videos'
     displayName: 'Publish Videos (Cypress)'
     ${{ if ne(parameters.target_container, '') }}:
-      target:
-        container: ${{ parameters.target_container }}
+      target: ${{ parameters.target_container }}
     condition: failed()
 
   # Publish CI test results
@@ -64,6 +61,5 @@ steps:
       testRunTitle: 'Cypress Tests'
     displayName: 'Publish test results'
     ${{ if ne(parameters.target_container, '') }}:
-      target:
-        container: ${{ parameters.target_container }}
+      target: ${{ parameters.target_container }}
     condition: succeededOrFailed()

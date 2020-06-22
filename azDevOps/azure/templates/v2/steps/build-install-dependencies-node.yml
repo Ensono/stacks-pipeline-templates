@@ -72,10 +72,3 @@ steps:
           npm run build
         displayName: "Build: Run Transpile"
         workingDirectory: ${{ parameters.workingDirectory }}
-
-  - bash: |
-      echo $HOME
-      ls -lat $(Pipeline.Workspace)/.cache
-      ls -lat $(Pipeline.Workspace)/.npm
-      ls -alt ${{ parameters.workingDirectory }}/package-lock.json
-    displayName: "Test delete"
