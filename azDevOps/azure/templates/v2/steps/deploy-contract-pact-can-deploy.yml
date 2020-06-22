@@ -10,7 +10,7 @@ parameters:
   pact_bearer_token: $(PACT_BEARER_TOKEN)
   pact_consumer: $(PACT_CONSUMER)
   pact_broker: $(PACT_BROKER)
-  script: 'npm run test:pact-can-i-deploy'
+  script: 'npm run test:pact-can-i-deploy-ci'
 
 steps:
   # Check Pact broker if the consumer is safe to deploy with latest provider version
