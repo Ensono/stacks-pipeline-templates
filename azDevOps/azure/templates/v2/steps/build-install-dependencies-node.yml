@@ -20,6 +20,22 @@ steps:
       customRegistry: ${{ parameters.customRegistry }}
     displayName: "Use Node.js ${{ parameters.versionSpec }}"
 
+  - task: Npm@1
+    displayName: "Build: Install Dev Dependencies"
+    inputs:
+      # Options: install, publish, custom
+      command: "install"
+      workingDir: ${{ parameters.workingDirectory }}
+      verbose: false
+      ${{ if ne(parameters.customRegistry, '') }}:
+        customRegistry: ${{ parameters.customRegistry }}
+
+  - ${{ if eq(parameters.run_build, true) }}:
+      - script: |
+          npm run build
+        displayName: "Build: Run Transpile"
+        workingDirectory: ${{ parameters.workingDirectory }}
+
   # NPM modules and Cypress binary should be cached
   # otherwise the install will be too slow
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/caching/?view=azure-devops
@@ -49,19 +65,3 @@ steps:
         displayName: "Registry: Authenticate to custom registry"
         inputs:
           workingFile: ${{ parameters.workingDirectory }}/.npmrc
-
-  - task: Npm@1
-    displayName: "Build: Install Dev Dependencies"
-    inputs:
-      # Options: install, publish, custom
-      command: "install"
-      workingDir: ${{ parameters.workingDirectory }}
-      verbose: false
-      ${{ if ne(parameters.customRegistry, '') }}:
-        customRegistry: ${{ parameters.customRegistry }}
-
-  - ${{ if eq(parameters.run_build, true) }}:
-      - script: |
-          npm run build
-        displayName: "Build: Run Transpile"
-        workingDirectory: ${{ parameters.workingDirectory }}
