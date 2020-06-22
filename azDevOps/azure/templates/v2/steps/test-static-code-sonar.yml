@@ -8,12 +8,13 @@
 parameters:
   working_directory: ""
   target_container: ""
+  sonar_command: "sonar-scanner"
 
 steps:
   # SonarCloud Start
   - bash: |
-      ${{ parameters.target_container }} -v
-      ${{ parameters.target_container }}
+      ${{ parameters.sonar_command }} -v
+      ${{ parameters.sonar_command }}
     displayName: "Static Analysis: SonarScanner Run"
     target:
       container: ${{ parameters.target_container }}
