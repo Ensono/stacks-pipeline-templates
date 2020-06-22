@@ -47,7 +47,6 @@ steps:
       path: $(Pipeline.Workspace)/.npm
       restoreKeys: |
         npm | $(Agent.OS)
-        npm
       cacheHitVar: CACHE_RESTORED
     displayName: Cache NPM packages
 
@@ -56,9 +55,8 @@ steps:
         inputs:
           key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
           path: $(Pipeline.Workspace)/.cache/Cypress
-          restoreKeys: |
-            cypress | $(Agent.OS)
-            cypress
+          restoreKeys: 'cypress | $(Agent.OS)'
+          cacheHitVar: CYPRESS_CACHE_RESTORED
         displayName: Cache Cypress binary
 
   - task: Npm@1
@@ -77,3 +75,8 @@ steps:
           npm run build
         displayName: "Build: Run Transpile"
         workingDirectory: ${{ parameters.workingDirectory }}
+
+  - bash: |
+      echo "cypress cache"
+      ls -lat $(Pipeline.Workspace)/.cache/Cypress
+    displayName: "Test delete"
