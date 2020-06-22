@@ -55,17 +55,14 @@ steps:
   - task: CacheBeta@1
     inputs:
       key: npm | $(Agent.OS) | package-lock.json
-      path: /home/vsts_azpcontainer/.npm
+      path: /home/vsts_azpcontainer/${{ parameters.workingDirectory }}/.npm
       restoreKeys: npm | $(Agent.OS) | package-lock.json
     displayName: Cache NPM packages
-    workingDirectory: ${{ parameters.workingDirectory }}
-
 
   - ${{ if eq(parameters.cache_cypress, true) }}:
       - task: CacheBeta@1
         inputs:
           key: cypress | $(Agent.OS) | package-lock.json
-          path: /home/vsts_azpcontainer/.cache/Cypress
+          path: /home/vsts_azpcontainer/${{ parameters.workingDirectory }}.cache/Cypress
           restoreKeys: cypress | $(Agent.OS) | package-lock.json
         displayName: Cache Cypress binary
-        workingDirectory: ${{ parameters.workingDirectory }}
