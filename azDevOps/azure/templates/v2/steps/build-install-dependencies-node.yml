@@ -41,7 +41,7 @@ steps:
   - task: Cache@2
     inputs:
       key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-      path: $(npm_config_cache)
+      path: $HOME/.npm
       restoreKeys: |
         npm | $(Agent.OS)
       cacheHitVar: NPM_CACHE_RESTORED
@@ -51,7 +51,7 @@ steps:
       - task: Cache@2
         inputs:
           key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-          path: $(Pipeline.Workspace)/.cache
+          path: $HOME/.cache
           restoreKeys: 'cypress | $(Agent.OS)'
           cacheHitVar: CYPRESS_CACHE_RESTORED
         displayName: Cache Cypress binary
