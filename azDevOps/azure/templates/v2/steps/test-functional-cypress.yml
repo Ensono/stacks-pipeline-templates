@@ -13,6 +13,7 @@ parameters:
 steps:
   - bash: |
       cypress install
+    workingDirectory: ${{ parameters.workingDirectory }}
     condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
     displayName: Install Cypress if not in cache
 
