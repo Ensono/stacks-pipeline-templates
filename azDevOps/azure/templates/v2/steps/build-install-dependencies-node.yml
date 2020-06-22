@@ -55,15 +55,19 @@ steps:
   # just use "/home/vsts_azpcontainer/" for now
   - task: Cache@2
     inputs:
-      key: npm | $(Agent.OS) | package-lock.json
+      key: 'npm | $(Agent.OS) | package-lock.json'
       path: $(npm_config_cache)/.npm
-      restoreKeys: npm | $(Agent.OS)
+      restoreKeys: |
+        npm | $(Agent.OS)
+        npm
     displayName: Cache NPM packages
 
   - ${{ if eq(parameters.cache_cypress, true) }}:
       - task: Cache@2
         inputs:
-          key: \"cypress\" | $(Agent.OS) | package-lock.json
+          key: 'cypress | $(Agent.OS) | package-lock.json'
           path: $(npm_config_cache)/.cache/Cypress
-          restoreKeys: cypress | $(Agent.OS)
+          restoreKeys: |
+            cypress | $(Agent.OS)
+            cypresss
         displayName: Cache Cypress binary
