@@ -72,3 +72,8 @@ steps:
           npm run build
         displayName: "Build: Run Transpile"
         workingDirectory: ${{ parameters.workingDirectory }}
+
+  - bash: |
+      ls -lat $HOME/.npm
+      ls -lat $(Pipeline.Workspace)/.npm
+      ls -lat $HOME/.cache
