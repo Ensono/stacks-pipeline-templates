@@ -12,8 +12,8 @@ parameters:
 steps:
   # SonarCloud Start
   - bash: |
-      ${{ parameters.target_container }} -v
-      ${{ parameters.target_container }}
+      sonar-scanner -v
+      sonar-scanner
     displayName: "Static Analysis: SonarScanner Run"
     target:
       container: ${{ parameters.target_container }}
