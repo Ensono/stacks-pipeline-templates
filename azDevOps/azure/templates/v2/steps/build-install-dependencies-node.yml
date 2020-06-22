@@ -12,7 +12,6 @@ parameters:
   run_build: true
   cache_cypress: false
   npm_config_cache: $(Pipeline.Workspace)/.npm
-  HOME: $(Pipeline.Workspace)
 
 steps:
   # Ensure Node.js 12 is active
@@ -41,9 +40,10 @@ steps:
   - task: Cache@2
     inputs:
       key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-      path: $HOME/.npm
+      path: /home/vsts_azpcontainer/.npm
       restoreKeys: |
         npm | $(Agent.OS)
+        npm
       cacheHitVar: NPM_CACHE_RESTORED
     displayName: Cache NPM packages
 
@@ -51,7 +51,7 @@ steps:
       - task: Cache@2
         inputs:
           key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-          path: $HOME/.cache
+          path: /home/vsts_azpcontainer/.cache/Cypress
           restoreKeys: 'cypress | $(Agent.OS)'
           cacheHitVar: CYPRESS_CACHE_RESTORED
         displayName: Cache Cypress binary

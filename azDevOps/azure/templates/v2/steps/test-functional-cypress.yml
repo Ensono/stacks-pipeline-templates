@@ -15,7 +15,7 @@ steps:
   # if container specified check if cache exists
   - ${{ if ne(parameters.target_container, '') }}:
       bash: |
-        npm install
+        node_modules/.bin/cypress install
       workingDirectory: ${{ parameters.workingDirectory }}
       target:
         container: ${{ parameters.target_container }}
