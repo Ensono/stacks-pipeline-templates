@@ -12,6 +12,7 @@ parameters:
   run_build: true
   cache_cypress: false
   npm_config_cache: $(Pipeline.Workspace)/.npm
+  HOME: $(Pipeline.Workspace)
 
 steps:
   # Ensure Node.js 12 is active
@@ -30,10 +31,6 @@ steps:
         inputs:
           workingFile: ${{ parameters.workingDirectory }}/.npmrc
 
-  - bash: |
-      ls -alt ${{ parameters.workingDirectory }}/package-lock.json
-    displayName: test
-
   # NPM modules and Cypress binary should be cached
   # otherwise the install will be too slow
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/caching/?view=azure-devops
@@ -44,10 +41,10 @@ steps:
   - task: Cache@2
     inputs:
       key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-      path: $(Pipeline.Workspace)/.npm
+      path: $(npm_config_cache)
       restoreKeys: |
         npm | $(Agent.OS)
-      cacheHitVar: CACHE_RESTORED
+      cacheHitVar: NPM_CACHE_RESTORED
     displayName: Cache NPM packages
 
   - ${{ if eq(parameters.cache_cypress, true) }}:
@@ -61,7 +58,7 @@ steps:
 
   - task: Npm@1
     displayName: "Build: Install Dev Dependencies"
-    condition: ne(variables.CACHE_RESTORED, 'true')
+    condition: ne(variables.NPM_CACHE_RESTORED, 'true')
     inputs:
       # Options: install, publish, custom
       command: "install"
@@ -77,6 +74,8 @@ steps:
         workingDirectory: ${{ parameters.workingDirectory }}
 
   - bash: |
-      echo "cypress cache"
-      ls -lat $(Pipeline.Workspace)/.cache/Cypress
+      echo $HOME
+      ls -lat $(Pipeline.Workspace)/.cache
+      ls -lat $(Pipeline.Workspace)/.npm
+      ls -alt ${{ parameters.workingDirectory }}/package-lock.json
     displayName: "Test delete"
