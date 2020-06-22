@@ -12,14 +12,15 @@ parameters:
   cypress_run_script: 'npm run test:cypress'
 
 steps:
-  - bash: |
-      npm install
-    workingDirectory: ${{ parameters.workingDirectory }}
-    ${{ if ne(parameters.target_container, '') }}:
+  # if container specified check if cache exists
+  - ${{ if ne(parameters.target_container, '') }}:
+      bash: |
+        npm install
+      workingDirectory: ${{ parameters.workingDirectory }}
       target:
         container: ${{ parameters.target_container }}
-    condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
-    displayName: Install Cypress if Cache miss
+      condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
+      displayName: Install Cypress if Cache miss
 
   # Run tests with Cypress
   - script: ${{ parameters.cypress_run_script }}
