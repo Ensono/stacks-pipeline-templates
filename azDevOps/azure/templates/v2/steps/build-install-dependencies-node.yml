@@ -38,7 +38,7 @@ steps:
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops
   # just use "/home/vsts_azpcontainer/" for now
   - task: Cache@2
-    condition: eq(parameters.enable_cache, true)
+    condition: eq(${{ parameters.enable_cache }}, true)
     inputs:
       key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
       path: $(npm_config_cache)
