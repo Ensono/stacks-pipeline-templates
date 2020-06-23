@@ -8,6 +8,7 @@
 parameters:
   working_directory: ""
   target_container: ""
+  env_vars: {}
 
 steps:
   # SonarCloud Start
