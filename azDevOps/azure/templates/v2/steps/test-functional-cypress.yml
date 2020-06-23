@@ -22,7 +22,7 @@ steps:
     condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
 
   # Run tests with Cypress
-  - script: ${{ parameters.cypress_run_script }}
+  - script: npm run test:cypress
     displayName: 'Start webapp server and run Cypress tests'
     workingDirectory: ${{ parameters.workingDirectory }}
     ${{ if ne(parameters.target_container, '') }}:
