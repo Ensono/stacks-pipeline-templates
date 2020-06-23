@@ -9,6 +9,7 @@ parameters:
   working_directory: ""
   target_container: ""
   sonar_command: "sonar-scanner"
+  env_vars: {}
 
 steps:
   # SonarCloud Start
