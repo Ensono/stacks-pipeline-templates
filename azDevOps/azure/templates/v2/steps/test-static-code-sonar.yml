@@ -7,7 +7,7 @@
 
 parameters:
   working_directory: ""
-  target_container: ""
+  target_container: "sonar_scanner"
   sonar_command: "sonar-scanner"
   env_vars: {}
 
