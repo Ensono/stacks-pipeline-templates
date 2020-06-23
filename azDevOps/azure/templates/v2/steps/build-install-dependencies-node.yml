@@ -49,10 +49,11 @@ steps:
 
   - task: Npm@1
     displayName: "Build: Install Dev Dependencies"
-    condition: ne(variables.NPM_CACHE_RESTORED, 'true')
+    # condition: ne(variables.NPM_CACHE_RESTORED, 'true')
     inputs:
       # Options: install, publish, custom
-      command: "install"
+      command: "custom"
+      customCommand: "ci"
       workingDir: ${{ parameters.workingDirectory }}
       verbose: false
       ${{ if ne(parameters.customRegistry, '') }}:
