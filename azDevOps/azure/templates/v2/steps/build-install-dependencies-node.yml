@@ -10,7 +10,7 @@ parameters:
   workingDirectory: ""
   customRegistry: ""
   run_build: true
-  cache_cypress: false
+  enable_cache: false
   npm_config_cache: $(Pipeline.Workspace)/.npm
 
 steps:
@@ -37,7 +37,8 @@ steps:
   # (there is even an open question about it)
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops
   # just use "/home/vsts_azpcontainer/" for now
-  - task: CacheBeta@1
+  - task: Cache@2
+    condition: eq(parameters.enable_cache, true)
     inputs:
       key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
       path: $(npm_config_cache)
