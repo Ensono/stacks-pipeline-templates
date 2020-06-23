@@ -48,10 +48,14 @@ steps:
     displayName: Cache NPM packages
 
   - ${{ if eq(parameters.cache_cypress, true) }}:
+      - bash: |
+          cp -r $HOME/.cache $(Pipeline.Workspace)/.cache
+        displatyName: Ensure archived binary is copied into shareable workspace
+
       - task: Cache@2
         inputs:
           key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-          path: /home/vsts_azpcontainer/.cache/Cypress
+          path: $(Pipeline.Workspace)/.cache/Cypress
           restoreKeys: 'cypress | $(Agent.OS)'
           cacheHitVar: CYPRESS_CACHE_RESTORED
         displayName: Cache Cypress binary
@@ -74,6 +78,9 @@ steps:
         workingDirectory: ${{ parameters.workingDirectory }}
 
   - bash: |
+      echo $(Pipeline.Workspace)
+      ls -lat $(Pipeline.Workspace)/.npm
+      ls -lat $(Pipeline.Workspace)/.cache
       echo $HOME/.npm
       ls -lat $HOME/.npm
       echo $HOME/.cache
