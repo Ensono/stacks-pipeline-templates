@@ -47,19 +47,6 @@ steps:
       cacheHitVar: NPM_CACHE_RESTORED
     displayName: Cache NPM packages
 
-  - ${{ if eq(parameters.cache_cypress, true) }}:
-      - bash: |
-          cp -r $HOME/.cache $(Pipeline.Workspace)/.cache
-        displayName: Ensure archived binary is copied into shareable workspace
-
-      - task: Cache@2
-        inputs:
-          key: 'cypress | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
-          path: $(Pipeline.Workspace)/.cache/Cypress
-          restoreKeys: 'cypress | $(Agent.OS)'
-          cacheHitVar: CYPRESS_CACHE_RESTORED
-        displayName: Cache Cypress binary
-
   - task: Npm@1
     displayName: "Build: Install Dev Dependencies"
     condition: ne(variables.NPM_CACHE_RESTORED, 'true')
@@ -76,12 +63,3 @@ steps:
           npm run build
         displayName: "Build: Run Transpile"
         workingDirectory: ${{ parameters.workingDirectory }}
-
-  - bash: |
-      echo $(Pipeline.Workspace)
-      ls -lat $(Pipeline.Workspace)/.npm
-      ls -lat $(Pipeline.Workspace)/.cache
-      echo $HOME/.npm
-      ls -lat $HOME/.npm
-      echo $HOME/.cache
-      ls -lat $HOME/.cache

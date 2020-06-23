@@ -13,14 +13,13 @@ parameters:
   # CYPRESS_INSTALL_BINARY:
 
 steps:
-  # if container specified check if cache exists
-  - ${{ if ne(parameters.target_container, '') }}:
-      bash: |
-        node_modules/.bin/cypress install
-      workingDirectory: ${{ parameters.workingDirectory }}
+  - bash: |
+      node_modules/.bin/cypress install
+    workingDirectory: ${{ parameters.workingDirectory }}
+    ${{ if ne(parameters.target_container, '') }}:
       target: ${{ parameters.target_container }}
-      condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
-      displayName: Install Cypress if Cache miss
+    displayName: Install Cypress if Cache miss
+    condition: ne(variables.CYPRESS_CACHE_RESTORED, 'true')
 
   # Run tests with Cypress
   - script: ${{ parameters.cypress_run_script }}
