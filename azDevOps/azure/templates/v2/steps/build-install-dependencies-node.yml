@@ -50,7 +50,7 @@ steps:
   - ${{ if eq(parameters.cache_cypress, true) }}:
       - bash: |
           cp -r $HOME/.cache $(Pipeline.Workspace)/.cache
-        displatyName: Ensure archived binary is copied into shareable workspace
+        displayName: Ensure archived binary is copied into shareable workspace
 
       - task: Cache@2
         inputs:
