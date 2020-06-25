@@ -16,6 +16,7 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
+          echo "./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }} ${{ tpl.args }}"
           ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }} ${{ tpl.args }}
         displayName: "K8s: Yaml ${{ tpl.displayName }}"
         failOnStderr: true
