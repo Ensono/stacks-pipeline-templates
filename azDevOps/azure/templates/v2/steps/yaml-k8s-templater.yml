@@ -1,5 +1,5 @@
 parameters:
-  # template_input: [{base: "", out: "", env_vars: {}}]
+  # template_input: [{base: "", out: "", env_vars: {}, args: ""}]
   template_input: []
   scripts_dir: ""
 
@@ -16,7 +16,7 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }}
+          ./yaml-templating.sh ${{ tpl.base }} ${{ tpl.out }} ${{ tpl.args }}
         displayName: "K8s: Yaml ${{ tpl.displayName }}"
         failOnStderr: true
         workingDirectory: ${{ parameters.scripts_dir }}
