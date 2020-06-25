@@ -16,8 +16,7 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          echo "./yaml-templating.sh ${{ tpl.base }} ${{ coalesce(tpl.out, '', '') }} ${{ coalesce(tpl.args, '', '') }}"
-          ./yaml-templating.sh ${{ tpl.base }} "\"${{ tpl.out }}\"" ${{ coalesce(tpl.args, '', '') }}
+          ./yaml-templating.sh -i ${{ tpl.base }} -o "${{ tpl.out }}" -a "${{ coalesce(tpl.args, '', '') }}"
         displayName: "K8s: Yaml ${{ tpl.displayName }}"
         failOnStderr: true
         workingDirectory: ${{ parameters.scripts_dir }}
