@@ -6,19 +6,21 @@
 # docker run -it -v $(pwd):/usr/test amidostacks/ci-k8s:latest /bin/bash
 # $ ./yaml-templating.sh base_file_path out_file_path (optional)
 # """
-while getopts ":i:o:a:" opt; do
+# show_output=
+
+while getopts ":i:o:a:s" opt; do
   case $opt in
     i)
       base_template="$OPTARG"
-      echo "base_template: $OPTARG" >&2
       ;;
     o)
       file_out="$OPTARG"
-      echo "file_out: $OPTARG" >&2
       ;;
     a)
-      additional_envsubst_args="$OPTARG"
-      echo "additional_envsubst_args: $OPTARG" >&2
+      additional_envsubst_args=$OPTARG
+      ;;
+    s)
+      show_output=1
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -63,5 +65,9 @@ echo "base yaml: $base_template"
 echo "out_template yaml: $out_template"
 
 ret_val="$(do_templating $base_template $out_template)"
-cat $out_template
+
+if [[ $show_output ]]; then
+  cat $out_template
+fi
+
 exit $ret_val
