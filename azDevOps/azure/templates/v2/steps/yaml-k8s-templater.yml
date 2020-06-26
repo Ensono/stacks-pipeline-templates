@@ -16,7 +16,8 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          if [[ ${{ tpl.debug }} ]]; then
+          do_debug=${{ tpl.debug }}
+          if [[ $do_debug ]]; then
             ./yaml-templating.sh -i ${{ tpl.base }} -o "${{ tpl.out }}" -a "${{ coalesce(tpl.args, '', '') }}" -s
           else
             ./yaml-templating.sh -i ${{ tpl.base }} -o "${{ tpl.out }}" -a "${{ coalesce(tpl.args, '', '') }}"
