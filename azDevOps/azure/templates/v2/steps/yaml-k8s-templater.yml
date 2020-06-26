@@ -1,6 +1,8 @@
 parameters:
   # template_input: [{base: "", out: "", env_vars: {}, args: ""}]
   template_input: []
+  shared_env_vars: {}
+  enable_debug: ""
   scripts_dir: ""
 
 steps:
@@ -11,12 +13,11 @@ steps:
   ## :inputs.out: string - file path to outputted yaml with replaced variables inside the template
   ## ==> if empty will default to base file and stripping out the `base_` from name
   ## if convention is followed no need to specify out and only pass
-  ##
   ## :inputs.env_vars: map - key/value string pairs to replace per file
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
-          do_debug=${{ tpl.debug }}
+          do_debug=${{ parameters.enable_debug }}
           if [[ $do_debug ]]; then
             ./yaml-templating.sh -i ${{ tpl.base }} -o "${{ tpl.out }}" -a "${{ coalesce(tpl.args, '', '') }}" -s
           else
@@ -26,5 +27,7 @@ steps:
         failOnStderr: true
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
+          ${{ each var in parameters.shared_env_vars }}:
+            ${{ var.key }}: ${{ var.value }}
           ${{ each var in tpl.env_vars }}:
             ${{ var.key }}: ${{ var.value }}
