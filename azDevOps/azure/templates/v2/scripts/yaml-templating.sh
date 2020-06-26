@@ -46,27 +46,29 @@ function do_templating() {
 }
 
 if [ -z "$file_out" ]; then
-  echo """
+  default_template_out="""
 Out not supplied - defaulting to stripping base_ from base yaml.
 Ensure you are following conventions and prepend you base yaml definition with base_.
 E.g.: base_app-deploy.yml ==> app-deploy.yml
   """
   out_template="${base_template//"base_"}"
   rm -f $out_template
-  echo "generated output path for the templated file: $out_template"
+  file_msg_out="generated output path for the templated file: $out_template"
 else
   # remove template-in if exists
   rm -f "$file_out"
   out_template="$file_out"
-  echo "supplied output path for the templated file: $out_template"
+  user_supplied_out="supplied output path for the templated file: $out_template"
 fi
-
-echo "base yaml: $base_template"
-echo "out_template yaml: $out_template"
 
 ret_val="$(do_templating $base_template $out_template)"
 
 if [[ $show_output ]]; then
+  echo "base yaml: $base_template"
+  echo "out_template yaml: $out_template"
+  echo "$default_template_out"
+  echo "$file_msg_out"
+  echo "$user_supplied_out"
   cat $out_template
 fi
 
