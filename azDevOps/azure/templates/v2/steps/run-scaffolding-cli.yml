@@ -22,7 +22,7 @@ steps:
       - template: ../steps/build-container-image-no-push.yml
         parameters:
           working_directory: ${{ parameters.docker_workdir }}
-          docker_build_additional_args: ${{ arg }}
+          docker_build_additional_args: ${{ parameters.docker_build_additional_args }}
           docker_tag_args: ${{ parameters.docker_tag_args }}
 
   # Run Docker Image
@@ -30,6 +30,6 @@ steps:
       - template: ../steps/run-container-image.yml
         parameters:
           working_directory: ${{ parameters.docker_workdir }}
-          docker_run_additional_args: ${{ arg }}
+          docker_run_additional_args: ${{ parameters.docker_run_additional_args }}
           docker_imagename: ${{ parameters.docker_imagename }}
           docker_containerregistryname: ${{ parameters.docker_containerregistryname }}
