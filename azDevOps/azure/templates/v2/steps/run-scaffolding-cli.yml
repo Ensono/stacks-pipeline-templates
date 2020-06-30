@@ -5,7 +5,7 @@ parameters:
   build_container_image: false
   run_container_image: false
   docker_build_additional_args: ""
-  docker_run_additional_args: ""
+  docker_run_additional_args: []
   docker_workdir: ""
   docker_imagename: ""
   docker_containerregistryname: ""
@@ -27,9 +27,10 @@ steps:
 
   # Run Docker Image
   - ${{ if eq(parameters.run_container_image, true) }}:
-      - template: ../steps/run-container-image.yml
-        parameters:
-          working_directory: ${{ parameters.docker_workdir }}
-          docker_run_additional_args: ${{ parameters.docker_run_additional_args }}
-          docker_imagename: ${{ parameters.docker_imagename }}
-          docker_containerregistryname: ${{ parameters.docker_containerregistryname }}
+      - ${{ each arg in parameters.docker_run_additional_args }}:
+          - template: ../steps/run-container-image.yml
+            parameters:
+              working_directory: ${{ parameters.docker_workdir }}
+              docker_run_additional_args: ${{ arg }}
+              docker_imagename: ${{ parameters.docker_imagename }}
+              docker_containerregistryname: ${{ parameters.docker_containerregistryname }}
