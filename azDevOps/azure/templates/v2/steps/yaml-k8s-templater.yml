@@ -17,6 +17,7 @@ steps:
   #####################
   - ${{ each tpl in parameters.template_input }}:
       - bash: |
+          chmod -R +x yaml-templating.sh
           do_debug=${{ parameters.enable_debug }}
           if [[ $do_debug ]]; then
             ./yaml-templating.sh -i ${{ tpl.base }} -o "${{ tpl.out }}" -a "${{ coalesce(tpl.args, '', '') }}" -s
