@@ -10,11 +10,6 @@ parameters:
   target_container: "sonar_scanner"
   sonar_command: "sonar-scanner"
   env_vars: {}
-  # backwards compatibility
-  sonar_url: "https://sonarcloud.io"
-  sonar_token: $SONAR_TOKEN
-  sonar_project_key: $SONAR_PROJECT_KEY
-  sonar_org: $SONAR_ORGANIZATION
 
 steps:
   # SonarCloud Start
@@ -25,11 +20,6 @@ steps:
     target:
       container: ${{ parameters.target_container }}
     env:
-      SONAR_HOST_URL: ${{ parameters.sonar_url }}
-      SONAR_TOKEN: ${{ parameters.sonar_token }}
-      SONAR_PROJECT_KEY: ${{ parameters.sonar_project_key }}
-      SONAR_ORGANIZATION: ${{ parameters.sonar_org }}
-      BUILD_NUMBER: $(Build.BuildNumber)
       ${{ each var in parameters.env_vars }}:
         ${{ var.key }}: ${{ var.value }}
     workingDirectory: ${{ parameters.working_directory }}
