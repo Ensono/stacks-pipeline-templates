@@ -11,6 +11,10 @@ parameters:
   kubectl_filepath: []
   kubectl_working_dir: ""
   performance_test: false
+  kubectl_check_deployment: false
+  resource_def_name: ""
+  namespace: ""
+  deployment_status_timeout: "30"
 
 steps:
   ## Prerequisites
@@ -46,3 +50,10 @@ steps:
         displayName: "Deploy: Kubectl Apply"
         workingDirectory: ${{ parameters.kubectl_working_dir }}
         failOnStderr: true
+
+  # TODO: We should always check for the status, this is here for backwards compatability until templates are updated.
+  - ${{ if eq(parameters.kubectl_check_deployment, true) }}:
+      - bash: |
+          kubectl rollout status -n ${{ parameters.namespace }} deploy/${{ parameters.resource_def_name }} --timeout ${{ parameters.deployment_status_timeout }}
+        failOnStderr: true
+        displayName: "Deploy: Check deploy status"
