@@ -3,6 +3,7 @@ parameters:
   dependsOn: 'GetPackage'
   # Docker Config
   docker_workdir: ''
+  docker_build_args: ''
   docker_imagename: ''
   docker_imagetag: ''
   docker_containerregistryname: ''
@@ -116,7 +117,9 @@ jobs:
             inputs:
               command: 'build'
               workingDirectory: ${{ parameters.static_code_analysis_build_path }}
-
+            env:
+              STACKS_NUGET: $(STACKS_NUGET)
+              STACKS_NUGET_TOKEN: $(STACKS_NUGET_TOKEN)
       # Set the code_coverage_arguments variable to make `dotnet test` output coverage
       - bash: |
           if [ -z "${{ parameters.code_coverage_arguments }}" ]; then
@@ -181,6 +184,9 @@ jobs:
               projects: '${{ parameters.contract_test_project }}'
               arguments: '-v n $(code_coverage_arguments)'
               testRunTitle: 'Test: Provider Contracts'
+            env:
+              STACKS_NUGET: $(STACKS_NUGET)
+              STACKS_NUGET_TOKEN: $(STACKS_NUGET_TOKEN)
 
       # SonarCloud Results
       - ${{ if eq(parameters.static_code_analysis, true) }}:
@@ -209,6 +215,7 @@ jobs:
         parameters:
           devops_artefact_name: '${{ parameters.devops_artefact_name }}'
           # Docker
+          docker_build_args: ${{ parameters.docker_build_args }}
           docker_workdir: '${{ parameters.docker_workdir }}'
           docker_imagename: '${{ parameters.docker_imagename }}'
           docker_imagetag: '${{ parameters.docker_imagetag }}'

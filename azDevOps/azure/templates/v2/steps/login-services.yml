@@ -1,0 +1,80 @@
+parameters:
+  aks_resource_group_name: ''
+  aks_cluster_name: ''
+  azure_tenant_id: ''
+  azure_subscription_id: ''
+  azure_client_id: ''
+  azure_client_secret: ''
+  login_azure: false
+  login_kubernetes: false
+  aks_set_acr_perms: false
+  login_gke: false
+  login_gcp: false
+  login_gcr: false
+  gcp_auth: {}
+  # Can be a comma separated
+  # "eu.gcr.io,us.gcr.io"
+  gcp_registries: "eu.gcr.io"
+  acr_name: ''
+  acr_resource_group_name: ''
+
+steps:
+  - ${{ if eq(parameters.login_azure, true) }}:
+      - bash: |
+          az login --service-principal --username ${{ parameters.azure_client_id }} \
+          --password ${{ parameters.azure_client_secret }} \
+          --tenant ${{ parameters.azure_tenant_id }}
+          az account set -s ${{ parameters.azure_subscription_id }}
+        displayName: 'Login: Azure'
+        env:
+          AZURE_CLOUD_NAME: AzureCloud
+
+  - ${{ if eq(parameters.login_kubernetes, true) }}:
+      - bash: |
+          az aks get-credentials --overwrite-existing --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }}
+        displayName: 'Login: AKS Kubernetes'
+        failOnStderr: true
+        env:
+          AZURE_CLOUD_NAME: AzureCloud
+
+  - ${{ if eq(parameters.aks_set_acr_perms, true) }}:
+      - bash: |
+          CLIENT_ID=$(az aks show --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }} --query "servicePrincipalProfile.clientId" --output tsv)
+          ACR_ID=$(az acr show --name ${{ parameters.acr_name }} --resource-group ${{ parameters.acr_resource_group_name }} --query "id" --output tsv)
+          az role assignment create --assignee ${{ parameters.azure_client_id }} --role acrpull --scope $ACR_ID
+          az aks update -n ${{ parameters.aks_cluster_name }} -g ${{ parameters.aks_resource_group_name }} --attach-acr $ACR_ID
+        displayName: 'AAD Perms: Set AcrPull policy on Cluster SPN'
+        failOnStderr: false
+        env:
+          AZURE_CLOUD_NAME: AzureCloud
+
+  - ${{ if eq(parameters.login_gcp, true) }}:
+      - bash: |
+          echo "$GOOGLE_CREDENTIALS" > /tmp/gkey.json
+          gcloud auth activate-service-account --key-file=/tmp/gkey.json
+        displayName: 'Login: GCP Service Account'
+        failOnStderr: false
+        env:
+          # AUTH PARAMS
+          GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)
+
+  - ${{ if eq(parameters.login_gke, true) }}:
+      - bash: |
+          gcloud container clusters get-credentials ${CLOUDSDK_CONTAINER_CLUSTER} --region ${CLOUDSDK_COMPUTE_REGION}
+        displayName: 'Login: GKE'
+        failOnStderr: false
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}
+
+  - ${{ if eq(parameters.login_gcr, true) }}:
+      - bash: |
+          docker-credential-gcr configure-docker
+          gcloud auth configure-docker ${{ parameters.gcp_registries }}
+        displayName: 'Login: GCR'
+        failOnStderr: false
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}

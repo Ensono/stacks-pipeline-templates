@@ -8,6 +8,7 @@ parameters:
   # Deploy Config
   package_feed: ''
   publish_symbols: ''
+  publish_public: ''
   # Secret Config
   cosmosdb_secret: false
   cosmosdb_account: ''
@@ -42,7 +43,10 @@ jobs:
           package_feed: '${{ parameters.package_feed }}'
           dotnet_core_version: ${{ parameters.dotnet_core_version }}
 
-      - template: ../steps/deploy-push-package-symbols.yml
+      - template: ../steps/deploy-push-package-symbols-public.yml
         parameters:
           package_feed: '${{ parameters.package_feed }}'
           publish_symbols: '${{ parameters.publish_symbols }}'
+          publish_public: '${{ parameters.publish_public }}'
+          dotnet_core_version: ${{ parameters.dotnet_core_version }}
+          package_path: $(Build.Repository.LocalPath)\${{ parameters.package_path }}

@@ -1,5 +1,6 @@
 parameters:
   docker_workdir: ''
+  docker_build_args: ''
   docker_imagename: ''
   docker_imagetag: ''
   docker_containerregistryname: ''
@@ -9,7 +10,9 @@ parameters:
 
 steps:
   - bash: |
-      docker build . -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
+      docker build ${{ parameters.docker_build_args }} -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} \
+      -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} \
+      -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest .
     displayName: Build Container Image
     workingDirectory: ${{ parameters.docker_workdir }}
 

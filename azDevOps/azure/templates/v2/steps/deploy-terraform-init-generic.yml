@@ -1,0 +1,28 @@
+parameters:
+  # Terraform Basic Config
+  working_dir: ""
+  terraform_state_workspace: ""
+  terraform_init_backend_config: ""
+  terraform_auth_properties: {}
+
+steps:
+  - bash: |
+      terraform version
+      terraform init ${{ parameters.terraform_init_backend_config }}
+    displayName: "Terraform: Initialise"
+    # target:
+    #   container: terraform_custom
+    workingDirectory: ${{ parameters.working_dir }}
+    env:
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}
+
+  - bash: |
+      terraform workspace select ${{ parameters.terraform_state_workspace }} || terraform workspace new ${{ parameters.terraform_state_workspace }}
+    displayName: "Terraform: Select Workspace"
+    # target:
+    #   container: terraform_custom
+    workingDirectory: ${{ parameters.working_dir }}
+    env:
+      ${{ each var in parameters.terraform_auth_properties }}:
+        ${{ var.key }}: ${{ var.value }}

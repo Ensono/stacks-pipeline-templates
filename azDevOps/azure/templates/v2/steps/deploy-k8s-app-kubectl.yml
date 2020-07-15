@@ -1,0 +1,59 @@
+parameters:
+  download_deploy_artefact: false
+  deploy_artifact_name: ""
+  test_artefact: "tests"
+  test_baseurl: ""
+  functional_test: false
+  smoke_test: false
+  kubernetes_clusterrg: ""
+  kubernetes_clustername: ""
+  # Kubectl config
+  kubectl_filepath: []
+  kubectl_working_dir: ""
+  performance_test: false
+  kubectl_check_deployment: false
+  resource_def_name: ""
+  namespace: ""
+  deployment_status_timeout: "30s"
+
+steps:
+  ## Prerequisites
+  - ${{ if eq(parameters.download_deploy_artefact, true) }}:
+      - download: current
+        displayName: "Download: Build Artefacts"
+        artifact: "${{ parameters.deploy_artifact_name }}"
+
+  # Download this artefact if functional or performance tests are enabled for this deployment
+  - ? ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}
+    : - download: current
+        displayName: "Download: Test Artefacts"
+        artifact: "${{ parameters.test_artefact }}"
+  # - template: ./
+
+  - template: ./login-services.yml
+    parameters:
+      # Azure
+      login_azure: true
+      azure_tenant_id: "$(azure_tenant_id)"
+      azure_subscription_id: "$(azure_subscription_id)"
+      azure_client_id: "$(azure_client_id)"
+      azure_client_secret: "$(azure_client_secret)"
+      # Kubernetes
+      login_kubernetes: true
+      aks_resource_group_name: "${{ parameters.kubernetes_clusterrg }}"
+      aks_cluster_name: "${{ parameters.kubernetes_clustername }}"
+
+  ## Deployment
+  - ${{ each k8s_yaml in parameters.kubectl_filepath }}:
+      - bash: |
+          kubectl apply -f ${{ k8s_yaml }}
+        displayName: "Deploy: Kubectl Apply"
+        workingDirectory: ${{ parameters.kubectl_working_dir }}
+        failOnStderr: true
+
+  # TODO: We should always check for the status, this is here for backwards compatability until templates are updated.
+  - ${{ if eq(parameters.kubectl_check_deployment, true) }}:
+      - bash: |
+          kubectl rollout status -n ${{ parameters.namespace }} deploy/${{ parameters.resource_def_name }} --timeout ${{ parameters.deployment_status_timeout }}
+        failOnStderr: true
+        displayName: "Deploy: Check deploy status"

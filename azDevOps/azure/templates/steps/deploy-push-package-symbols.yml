@@ -1,9 +1,11 @@
 parameters:
   package_feed: ''
   publish_symbols: true
+  publish_public: false
+  dotnet_core_version: ''
+  package_path: ''
 
 steps:
-  # Publish Nuget packages
   - task: DotNetCoreCLI@2
     displayName: 'Publish: Push Packages'
     inputs:

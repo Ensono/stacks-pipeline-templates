@@ -1,0 +1,30 @@
+############################################################################################################
+# desc: Runs the lighthouse ci in a docker container.
+# return:
+# inputs:
+#    - working_directory
+#    - target_container (see amidostacks/lhci)
+#    - lighthouse_config_filename: name of the lighthouse config file, eg. lighthouserc.json
+#    - lighthouse_command: commands to run as configured in the config file, e.g. collect, assert, server
+#    - lighthouse_urls: list/array of urls to run on, overiding defaults in config file. eg. - google.com
+# pre-reqs: Deployed webapp on a given URL
+############################################################################################################
+
+parameters:
+  working_directory: ''
+  target_container: ''
+  lighthouse_config_filename: ''
+  lighthouse_commands: []
+  lighthouse_urls: []
+
+steps:
+  - ${{ each url in parameters.lighthouse_urls }}:
+      - ${{ each lhcommand in parameters.lighthouse_commands }}:
+          - bash: |
+              lhci ${{ lhcommand }} --config=${{ parameters.lighthouse_config_filename }}
+            target:
+              container: ${{ parameters.target_container }}
+            displayName: "Lighthouse Audit: lhci ${{ lhcommand }}"
+            workingDirectory: ${{ parameters.working_directory }}
+            env:
+              LHCI_URL: ${{ url }}

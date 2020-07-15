@@ -1,0 +1,44 @@
+parameters:
+  login_gcp: false
+  login_gke: false
+  login_gcr: false
+  gcp_auth: {}
+  login_azure: false
+  login_kubernetes: false
+  azure_auth: {}
+  cluster_name: ""
+  working_dir: ""
+  deployment_defs: {}
+
+steps:
+  # Do Login
+  - template: ./login-services.yml
+    parameters:
+      login_gcp: ${{ parameters.login_gcp }}
+      login_gke: ${{ parameters.login_gke }}
+      login_gcr: ${{ parameters.login_gcr }}
+      gcp_auth: ${{ parameters.gcp_auth }}
+      login_azure: ${{ parameters.login_azure }}
+      login_kubernetes: ${{ parameters.login_kubernetes }}
+
+  - ${{ each deployment in parameters.deployment_defs }}:
+      - bash: |
+          kubectl apply -f ${{ deployment.file }} ${{ deployment.context }}
+        displayName: "K8s: Deploy ${{ deployment.name }}"
+        workingDirectory: ${{ parameters.working_dir }}
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}
+          ${{ each var in parameters.azure_auth }}:
+            ${{ var.key }}: ${{ var.value }}
+
+
+# TODO: make an all encompassing kubectly apply task
+# kubectl rollout status -n $NAMESPACE deploy/$DEPLOYMENT  -w --timeout=30s
+# if [ $? -eq 0 ]; then
+#   echo "Deployment succeeded";
+# else
+#   echo "Deployment failed. Rolling back";
+#   kubectl rollout undo -n $NAMESPACE deploy/$DEPLOYMENT
+# fi;

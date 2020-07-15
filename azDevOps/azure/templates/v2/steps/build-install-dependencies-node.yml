@@ -1,0 +1,67 @@
+############################################################################################################
+# desc: Installs dependencies on the Node version of choice, builds/transpiles solution
+# params: Node version, working directory
+# return: .npmrc with npm credentials for task runners
+# pre-reqs: dependency installation
+############################################################################################################
+
+parameters:
+  versionSpec: ""
+  workingDirectory: ""
+  customRegistry: ""
+  run_build: true
+  enable_cache: false
+  npm_config_cache: $(Pipeline.Workspace)/.npm
+
+steps:
+  # Ensure Node.js 12 is active
+  - task: NodeTool@0
+    inputs:
+      versionSpec: ${{ parameters.versionSpec }}
+      customRegistry: ${{ parameters.customRegistry }}
+    displayName: "Use Node.js ${{ parameters.versionSpec }}"
+
+  # If we are using a private or custom npm registry, then we must authenticate to embellish the .npmrc file with the credentials
+  # This is required for task runners, e.g. building docker images in bash.
+  # See https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/package/npm-authenticate for more information
+  - ${{ if eq(parameters.customRegistry, 'useNpmrc') }}:
+      - task: npmAuthenticate@0
+        displayName: "Registry: Authenticate to custom registry"
+        inputs:
+          workingFile: ${{ parameters.workingDirectory }}/.npmrc
+
+  # NPM modules and Cypress binary should be cached
+  # otherwise the install will be too slow
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/caching/?view=azure-devops
+  # since the username / user home directory are not available via system variables
+  # (there is even an open question about it)
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops
+  # just use "/home/vsts_azpcontainer/" for now
+  - task: Cache@2
+    condition: eq(${{ parameters.enable_cache }}, true)
+    inputs:
+      key: 'npm | $(Agent.OS) | ${{ parameters.workingDirectory }}/package-lock.json'
+      path: $(npm_config_cache)
+      restoreKeys: |
+        npm | $(Agent.OS)
+        npm
+      cacheHitVar: NPM_CACHE_RESTORED
+    displayName: Cache NPM packages
+
+  - task: Npm@1
+    displayName: "Build: Install Dev Dependencies"
+    # condition: ne(variables.NPM_CACHE_RESTORED, 'true')
+    inputs:
+      # Options: install, publish, custom
+      command: "custom"
+      customCommand: "ci"
+      workingDir: ${{ parameters.workingDirectory }}
+      verbose: false
+      ${{ if ne(parameters.customRegistry, '') }}:
+        customRegistry: ${{ parameters.customRegistry }}
+
+  - ${{ if eq(parameters.run_build, true) }}:
+      - script: |
+          npm run build
+        displayName: "Build: Run Transpile"
+        workingDirectory: ${{ parameters.workingDirectory }}
