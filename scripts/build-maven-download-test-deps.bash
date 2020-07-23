@@ -27,7 +27,7 @@ fi
 
 ./mvnw test --no-transfer-progress -Dmaven.repo.local="$M2_LOCATION" -Dgroups='!'"(${ALLOWED_TAGS})"
 
-if [ -d "$TEST_REPORT_DIRS" ]; then
+if [ -d "$TEST_REPORT_DIR" ]; then
 	echo "FAIL: Tests with no tags or with tags not allowed detected." \
 		" Please tag tests correctly or update the \`ALLOWED_TAGS\` parameter."
 	exit 1
