@@ -6,7 +6,7 @@ set -exo pipefail
 GROUP="$1"
 
 # Optional
-M2_LOCATION="$1"
+M2_LOCATION="$2"
 
 if [ -z "$GROUP" ]; then
 	echo 'Please specify a group of tests to run, e.g. `Unit`.'
