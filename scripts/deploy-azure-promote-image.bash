@@ -35,7 +35,7 @@ usage()
 
 # Detect `--help`, show usage and exit.
 for var in "$@"; do
-	if [ "$var" == '--help' ]; then
+	if [ "${var}" == '--help' ]; then
 		usage
 		exit 0
 	fi
@@ -147,7 +147,8 @@ az login --service-principal \
 az account set -s "${PULL_ARM_SUBSCRIPTION_ID}"
 az acr login --name "${PULL_DOCKER_REGISTRY}"
 
-docker pull $DOCKER_IMAGE
+PULL_DOCKER_IMAGE="${PULL_DOCKER_REGISTRY}/${DOCKER_IMAGE}"
+docker pull "${PULL_DOCKER_IMAGE}"
 
 echo "Logging in to Push Azure"
 az login --service-principal \
@@ -163,13 +164,14 @@ TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${TAG_LATEST}")"
 if [ "${TAG_LATEST}" == "true" ]; then
 	# Strip tag off image
 	DOCKER_IMAGE_NO_TAG="${DOCKER_IMAGE%:*}"
-	DOCKER_IMAGE_LATEST="${PUSH_DOCKER_REGISTRY}/${DOCKER_IMAGE_NO_TAG}:latest"
-	docker tag "${DOCKER_IMAGE}" "${DOCKER_IMAGE_LATEST}"
+	PUSH_DOCKER_IMAGE_LATEST="${PUSH_DOCKER_REGISTRY}/${DOCKER_IMAGE_NO_TAG}:latest"
+	docker tag "${PULL_DOCKER_IMAGE}" "${PUSH_DOCKER_IMAGE_LATEST}"
 
 	echo "Pushing \`${DOCKER_IMAGE_LATEST}\`"
-	docker push "${DOCKER_IMAGE_LATEST}"
+	docker push "${PUSH_DOCKER_IMAGE_LATEST}"
 fi
 
-DOCKER_IMAGE="${PUSH_DOCKER_REGISTRY}/${DOCKER_IMAGE}"
-echo "Pushing \`${DOCKER_IMAGE}\`"
-docker push "${DOCKER_IMAGE}"
+PUSH_DOCKER_IMAGE="${PUSH_DOCKER_REGISTRY}/${DOCKER_IMAGE}"
+docker tag "${PULL_DOCKER_IMAGE}" "${PUSH_DOCKER_IMAGE}"
+echo "Pushing \`${PUSH_DOCKER_IMAGE}\`"
+docker push "${PUSH_DOCKER_IMAGE}"
