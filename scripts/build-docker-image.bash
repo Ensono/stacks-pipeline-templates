@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# This script builds and tags a docker image, optionally tagging latest.
+# This script builds and tags a docker image.
 
 set -exo pipefail
 
-OPTIONS="a:b:c:d:Y:Z:"
+OPTIONS="a:b:c:d:Z:"
 
 usage()
 {
@@ -19,7 +19,6 @@ usage()
 		  -d name		The container registry name to use in tagging.
 
 		Optional Arguments:
-		  -Y true|false		Addionally tag the image with \`latest\`. Default: false
 		  -Z .suffix.com	Use the suffix. Default: \`.azurecr.io\`
 	USAGE_STRING
 	)
@@ -46,7 +45,6 @@ do
 		d  ) DOCKER_REGISTRY_NAME="${OPTARG}";;
 
 		# Optional
-		Y  ) DOCKER_TAG_LATEST="${OPTARG}";;
 		Z  ) DOCKER_REGISTRY_SUFFIX="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
@@ -79,15 +77,6 @@ if [ -z "${DOCKER_REGISTRY_SUFFIX}" ]; then
 	DOCKER_REGISTRY_SUFFIX=".azurecr.io"
 fi
 
-# Boolean `true` workaround
-DOCKER_TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${DOCKER_TAG_LATEST}")"
-if [ "${DOCKER_TAG_LATEST}" == 'true' ]; then
-	DOCKER_LATEST_TAG_ARGUMENT="-t ${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:latest"
-else
-	DOCKER_LATEST_TAG_ARGUMENT=""
-fi
-
 docker build ${DOCKER_BUILD_ADDITIONAL_ARGS} \
 	-t ${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG} \
-	-t ${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG} \
-	${DOCKER_LATEST_TAG_ARGUMENT}
+	-t ${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}
