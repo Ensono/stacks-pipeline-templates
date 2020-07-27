@@ -8,25 +8,61 @@
 
 set -exo pipefail
 
-# Optional
-ALLOWED_TAGS="$1"
-M2_LOCATION="$2"
-TEST_REPORT_DIR="$3"
+usage()
+{
+	set +x
+	USAGE=$(cat <<- USAGE_STRING
+		Usage: $(basename $0) [OPTION]...
+
+		Optional Arguments:
+		  -X 'tag1 [| tag2]...'	An  set of tags to allow. Default: Unit | Component | Integration | Functional | Performance | Smoke
+		  -Y location	The location of the test reports. Default: target/surefire-reports
+		  -Z location	Optional maven cache directory. Default: \`./.m2\`
+	USAGE_STRING
+	)
+
+	echo "$USAGE"
+
+	set -x
+}
+
+# Detect `--help`, show usage and exit.
+for var in "$@"; do
+	if [ "${var}" == '--help' ]; then
+		usage
+		exit 0
+	fi
+done
+
+while getopts $OPTIONS option
+do
+	case "$option" in
+		# Optional
+		X  ) ALLOWED_TAGS="$OPTARG";;
+		Y  ) TEST_REPORT_DIR="$OPTARG";;
+		Z  ) M2_LOCATION="$OPTARG";;
+
+		\? ) echo "Unknown option: -$OPTARG" >&2; exit 1;;
+		:  ) echo "Missing option argument for -$OPTARG" >&2; exit 1;;
+		*  ) echo "Unimplemented option: -$option. This is probably unintended." >&2; exit 1;;
+	esac
+done
 
 if [ -z "$ALLOWED_TAGS" ]; then
 	ALLOWED_TAGS="Unit | Component | Integration | Functional | Performance | Smoke"
+fi
+
+if [ -z "$TEST_REPORT_DIR" ]; then
+	TEST_REPORT_DIR="target/surefire-reports"
 fi
 
 if [ -z "$M2_LOCATION" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-if [ -z "$TEST_REPORT_DIR" ]; then
-	TEST_REPORT_DIRS="target/surefire-reports"
-fi
-
 ./mvnw test --no-transfer-progress -Dmaven.repo.local="$M2_LOCATION" -Dgroups='!'"(${ALLOWED_TAGS})"
 
+# If the directory exists it means some tests ran.
 if [ -d "$TEST_REPORT_DIR" ]; then
 	echo "FAIL: Tests with no tags or with tags not allowed detected." \
 		" Please tag tests correctly or update the \`ALLOWED_TAGS\` parameter."

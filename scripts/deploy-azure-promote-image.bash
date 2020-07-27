@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script takes a Docker image (and tag) and pulls it from one Azure ACR
+# and uploads it to another. This can be used to promote an image between
+# subscriptions or
+
 set -exo pipefail
 
 OPTIONS="a:b:c:d:e:f:g:h:i:j:k:Z:"
@@ -11,20 +15,20 @@ usage()
 		Usage: $(basename $0) [OPTION]...
 
 		Required Arguments:
-		  -a	Docker Image and Tag, e.g. \`stacks-java:0.0.2-master\`
-		  -b	Pull Docker Registry
-		  -c	Pull ARM Subscription ID
-		  -d	Pull ARM Client ID
-		  -e	Pull ARM Client Secret
-		  -f	Pull ARM Tenant ID
-		  -g	Push Docker Registry
-		  -h	Push ARM Subscription ID
-		  -i	Push ARM Client ID
-		  -j	Push ARM Client Secret
-		  -k	Push ARM Tenant ID
+		  -a image:tag		Docker Image and Tag, e.g. \`stacks-java:0.0.2-master\`
+		  -b foo.azureacr.io	Pull Docker Registry
+		  -c id			Pull ARM Subscription ID
+		  -d id			Pull ARM Client ID
+		  -e secret		Pull ARM Client Secret
+		  -f id			Pull ARM Tenant ID
+		  -g bar.azureacr.io	Push Docker Registry
+		  -h id			Push ARM Subscription ID
+		  -i id			Push ARM Client ID
+		  -j secret		Push ARM Client Secret
+		  -k id			Push ARM Tenant ID
 
 		Optional Arguments:
-		  -Z	Addionally tag the image in the Push Docker Registry with \`latest\`. Default: false
+		  -Z true|false		Addionally tag the image in the Push Docker Registry with \`latest\`. Default: false
 	USAGE_STRING
 	)
 
