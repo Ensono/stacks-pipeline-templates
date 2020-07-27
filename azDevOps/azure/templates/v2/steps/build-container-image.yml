@@ -12,6 +12,7 @@ parameters:
   docker_imagename: ''
   docker_imagetag: ''
   docker_containerregistryname: ''
+  docker_taglatest: true # TODO: Need to use it.
 
 steps:
   - bash: |

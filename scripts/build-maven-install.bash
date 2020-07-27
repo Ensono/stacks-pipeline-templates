@@ -4,6 +4,8 @@
 
 set -exo pipefail
 
+OPTIONS=":Z:"
+
 usage()
 {
 	set +x
