@@ -136,18 +136,18 @@ strip_refs "${TARGET_BRANCH_REF}"
 TARGET_BRANCH="${RETURN_BRANCH}"
 
 if [ -z "${PULL_REQUEST_NUMBER}" ]; then
-	EXTRA_SONAR_ARGUMENTS="-Dsonar.branch.name='${SOURCE_BRANCH}'"
-	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.branch.target='${TARGET_BRANCH}'"
+	EXTRA_SONAR_ARGUMENTS="-Dsonar.branch.name=${SOURCE_BRANCH}"
+	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.branch.target=${TARGET_BRANCH}"
 else
 	PROVIDER_LOWERCASED="$(tr '[:upper:]' '[:lower:]' <<< "${PULL_REQUEST_PROVIDER}")"
 
-	EXTRA_SONAR_ARGUMENTS="-Dsonar.pullrequest.key='${PULL_REQUEST_NUMBER}'"
-	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.branch='${SOURCE_BRANCH}'"
-	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.provider='${PROVIDER_LOWERCASED}'"
-	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.base='${TARGET_BRANCH}'"
+	EXTRA_SONAR_ARGUMENTS="-Dsonar.pullrequest.key=${PULL_REQUEST_NUMBER}"
+	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.branch=${SOURCE_BRANCH}"
+	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.provider=${PROVIDER_LOWERCASED}"
+	EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.base=${TARGET_BRANCH}"
 
 	if [ "$PROVIDER_LOWERCASED" == 'github' ]; then
-		EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.github.repository='${PULL_REQUEST_REPO}'"
+		EXTRA_SONAR_ARGUMENTS="${EXTRA_SONAR_ARGUMENTS} -Dsonar.pullrequest.github.repository=${PULL_REQUEST_REPO}"
 	fi
 fi
 
@@ -159,4 +159,4 @@ fi
 	-Dsonar.login="${SONAR_TOKEN}" \
 	-Dsonar.organization="${SONAR_ORGANISATION}" \
 	-Dsonar.projectVersion="${BUILD_NUMBER}" \
-	${EXTRA_SONAR_ARGUMENTS}
+	"${EXTRA_SONAR_ARGUMENTS}"
