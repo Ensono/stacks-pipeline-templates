@@ -159,4 +159,4 @@ fi
 	-Dsonar.login="${SONAR_TOKEN}" \
 	-Dsonar.organization="${SONAR_ORGANISATION}" \
 	-Dsonar.projectVersion="${BUILD_NUMBER}" \
-	"${EXTRA_SONAR_ARGUMENTS}"
+	${EXTRA_SONAR_ARGUMENTS}
