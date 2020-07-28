@@ -26,7 +26,7 @@ usage()
 		  -Y branch	The Target Branch Name. Empty default.
 		  -Z pr		The number of the PR. Empty default.
 
-		Options '-W', '-Y', and '-Z' must all be provided together.
+		Options '-W', '-X', '-Y', and '-Z' must all be provided together.
 	USAGE_STRING
 	)
 
@@ -152,4 +152,11 @@ else
 fi
 
 "${SONAR_COMMAND}" -v
-"${SONAR_COMMAND}" "${EXTRA_SONAR_ARGUMENTS}"
+"${SONAR_COMMAND}" \
+	-Dsonar.host.url="${SONAR_HOST_URL}" \
+	-Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+	-Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
+	-Dsonar.login="${SONAR_TOKEN}" \
+	-Dsonar.organization="${SONAR_ORGANISATION}" \
+	-Dsonar.projectVersion="${BUILD_NUMBER}" \
+	"${EXTRA_SONAR_ARGUMENTS}"
