@@ -17,7 +17,7 @@ There are some best practices to follow when creating scripts:
   9. Boolean flags should always accept an argument and check for lowercase `true` as truthy.
      An example helper snippet is below in [Booleans](#booleans)
   10. If you need to add additional arguments to scripts in a single variable, please refer to the
-      [Multiple Arguments in a Single Varibale](#multiple-arguments-in-a-single-variable) section.
+      [Multiple Arguments in a Single Variable](#multiple-arguments-in-a-single-variable) section.
       **Never** build up arguments as a string as it's prone to failure.
 
 If in doubt, check some of the scripts in this directory to see how things have been done before.
@@ -148,7 +148,7 @@ DOCKER_TAG_LATEST="$(echo "${DOCKER_TAG_LATEST}" | tr '[:upper:]' '[:lower:]')"
 if [ "${DOCKER_TAG_LATEST}" == 'true' ]; then
 ```
 
-## Multiple Arguments in a Single Varibale
+## Multiple Arguments in a Single Variable
 
 Sometimes you may need to build complex argument strings into a single variable. As there are
 plenty of pitfalls with shell and arguments through runtime variables it's worth noting how we should
