@@ -1,22 +1,20 @@
 #!/bin/bash
 
-# Runs tests with the supplied tag.
+# Validates YAML using YAMLint
 
 set -exo pipefail
 
-OPTIONS=":a:Z:"
+OPTIONS=":a:b:"
 
 usage()
 {
 	set +x
-	USAGE=$(cat <<- USAGE_STRING
+	USAGE	=$(cat <<- USAGE_STRING
 		Usage: $(basename $0) [OPTION]...
 
 		Required Arguments:
-		  -a Tag	The test tag to run.
-
-		Optional Arguments:
-		  -Z location	Optional maven cache directory. Default: \`./.m2\`
+		  -a config		Config file location
+		  -b files		The files to search
 	USAGE_STRING
 	)
 
@@ -36,10 +34,8 @@ done
 while getopts "${OPTIONS}" option
 do
 	case "${option}" in
-		# Required
-		a  ) GROUP="${OPTARG}";;
-		# Optional
-		Z  ) M2_LOCATION="${OPTARG}";;
+		a  ) CONFIG_FILE="${OPTARG}";;
+		b  ) BASE_PATH_TO_SEARCH="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -47,13 +43,15 @@ do
 	esac
 done
 
-if [ -z "${GROUP}" ]; then
-	echo '-a: Missing a group of tests to run, e.g. `Unit`.'
+if [ -z "${CONFIG_FILE}" ]; then
+	echo '-a: Missing path to config file'
 	exit 1
 fi
 
-if [ -z "${M2_LOCATION}" ]; then
-	M2_LOCATION="./.m2"
+if [ -z "${BASE_PATH_TO_SEARCH}" ]; then
+	echo '-b: Missing base path to scan'
+	exit 2
 fi
 
-./mvnw test --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}" --offline -Dgroups="${GROUP}"
+# Scan the base path and subdirectories and also scan the config file itself.
+python3 -m yamllint -sc ${CONFIG_FILE} ${BASE_PATH_TO_SEARCH} ${CONFIG_FILE}

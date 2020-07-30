@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Logs into `az` CLI and sets the subscription.
+
 set -exo pipefail
 
 OPTIONS=":a:b:c:d:"
