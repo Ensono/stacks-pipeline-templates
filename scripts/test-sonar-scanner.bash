@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Performs the Sonar Scanner on the repo, handling PR and Branch Analysis
+
 set -exo pipefail
 
 OPTIONS=":a:b:c:d:e:f:g:V:W:X:Y:Z:"
