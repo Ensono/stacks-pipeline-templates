@@ -148,7 +148,7 @@ else
 	EXTRA_SONAR_ARGUMENTS+=(-Dsonar.pullrequest.provider="${PROVIDER_LOWERCASED}")
 	EXTRA_SONAR_ARGUMENTS+=(-Dsonar.pullrequest.base="${TARGET_BRANCH}")
 
-	if [ "$PROVIDER_LOWERCASED" == 'github' ]; then
+	if [ "${PROVIDER_LOWERCASED}" == 'github' ]; then
 		EXTRA_SONAR_ARGUMENTS+=(-Dsonar.pullrequest.github.repository="${PULL_REQUEST_REPO}")
 	fi
 fi
