@@ -12,7 +12,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a id		Azure Client ID
@@ -22,7 +22,7 @@ usage()
 
 		Optional Arguments:
 		  -Z plan	Planfile name. Default: 'tfplan'
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -30,7 +30,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage

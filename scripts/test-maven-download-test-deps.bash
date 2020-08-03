@@ -14,13 +14,13 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
-		  -X 'tag1 [| tag2]...'	An  set of tags to allow. Default: Unit | Component | Integration | Functional | Performance | Smoke
-		  -Y location	The location of the test reports. Default: target/surefire-reports
-		  -Z location	Optional maven cache directory. Default: \`./.m2\`
-	USAGE_STRING
+		  -X 'tag1 [| tag2]...'	A set of tags to allow. Default: 'Unit | Component | Integration | Functional | Performance | Smoke'
+		  -Y location		The location of the test reports. Default: 'target/surefire-reports'
+		  -Z location		Optional maven cache directory. Default: './.m2'
+		USAGE_STRING
 	)
 
 	echo "$USAGE"
@@ -28,7 +28,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage

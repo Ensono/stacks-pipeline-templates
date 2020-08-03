@@ -10,7 +10,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a url	The URL to the Sonar(cloud) instance
@@ -29,7 +29,7 @@ usage()
 		  -Z pr		The number of the PR. Empty default.
 
 		Options '-W', '-X', '-Y', and '-Z' must all be provided together.
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -37,7 +37,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
@@ -128,7 +128,11 @@ function strip_refs()
 {
 	local BRANCH_REF="${1}"
 
-	RETURN_BRANCH="$(sed -e "s%^refs/\(heads\|tags\)/%%" <<< ${BRANCH_REF})"
+	shopt -s extglob
+
+	# Could use `${BRANCH_REF/#refs\/@(heads|tags)\/}` with `shopt -s extglob` on
+	# shellcheck disable=SC2001
+	RETURN_BRANCH="$(sed -e "s%^refs/\(heads\|tags\)/%%" <<< "${BRANCH_REF}")"
 }
 
 strip_refs "${SOURCE_BRANCH_REF}"

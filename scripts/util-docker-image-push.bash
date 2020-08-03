@@ -11,7 +11,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a image		The image name.
@@ -21,7 +21,7 @@ usage()
 		Optional Arguments:
 		  -Y true|false		Addionally tag the image with \`latest\` and push. Default: false
 		  -Z .suffix.com	Use the suffix. Default: \`.azurecr.io\`
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -29,7 +29,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
@@ -55,7 +55,7 @@ do
 done
 
 if [ -z "${DOCKER_IMAGENAME}" ]; then
-	echo '-a: Missing Docker image name to push, e.g. `nginx-ingress`'
+	echo "-a: Missing Docker image name to push, e.g. 'nginx-ingress'"
 	exit 2
 fi
 
@@ -80,7 +80,7 @@ if [ "${DOCKER_IMAGETAG}" != "${TRIMMED_DOCKER_IMAGETAG}" ]; then
 	DOCKER_IMAGETAG="${TRIMMED_DOCKER_IMAGETAG}"
 fi
 
-az acr login --name ${DOCKER_REGISTRY_NAME}
+az acr login --name "${DOCKER_REGISTRY_NAME}"
 
 DOCKER_IMAGE="${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"
 

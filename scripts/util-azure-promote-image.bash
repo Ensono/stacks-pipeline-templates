@@ -12,7 +12,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a image:tag		Docker Image and Tag, e.g. \`stacks-java:0.0.2-master\`
@@ -29,7 +29,7 @@ usage()
 
 		Optional Arguments:
 		  -Z true|false		Addionally tag the image in the Push Docker Registry with \`latest\`. Default: false
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "$USAGE"
@@ -37,7 +37,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
