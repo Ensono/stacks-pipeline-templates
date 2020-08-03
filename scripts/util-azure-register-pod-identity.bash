@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Runs a Terraform Validate check
+# This registers preview bindings for Pod Identity
+# Note: This is a preview and won't work beyond October 2020
+# https://docs.microsoft.com/en-us/azure/aks/use-pod-security-policies
 
 set -exo pipefail
 
@@ -36,5 +38,12 @@ do
 	esac
 done
 
-terraform init -backend=false
-terraform validate
+az feature register \
+	--name MSIPreview \
+	--namespace Microsoft.ContainerService
+
+az feature register \
+	--name PodSecurityPolicyPreview \
+	--namespace Microsoft.ContainerService
+
+az provider register -n Microsoft.ContainerService
