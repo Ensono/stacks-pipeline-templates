@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs a Terraform Plan
+# This script runs a Terraform Apply
 # Any extra vars should be passed into the script by mapping them
 # as environment variables prefixed with `TF_VAR_`, e.g. `TF_VAR_foo=bar`
 
@@ -84,4 +84,4 @@ export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
 export ARM_TENANT_ID="${AZURE_TENANT_ID}"
 export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
 
-terraform plan -input=false -out="${PLAN_FILE}"
+terraform apply ${PLAN_FILE}
