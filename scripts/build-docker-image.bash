@@ -10,7 +10,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a ARGS...		Additional build arguments, such as the path to the Dockerfile.
@@ -20,7 +20,7 @@ usage()
 
 		Optional Arguments:
 		  -Z .suffix.com	Use the suffix. Default: \`.azurecr.io\`
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -28,7 +28,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
@@ -59,7 +59,7 @@ if [ -z "${DOCKER_BUILD_ADDITIONAL_ARGS}" ]; then
 fi
 
 if [ -z "${DOCKER_IMAGENAME}" ]; then
-	echo '-b: Missing Docker image name to use, e.g. `nginx-ingress`'
+	echo "-b: Missing Docker image name to use, e.g. 'nginx-ingress'"
 	exit 2
 fi
 
@@ -77,6 +77,6 @@ if [ -z "${DOCKER_REGISTRY_SUFFIX}" ]; then
 	DOCKER_REGISTRY_SUFFIX=".azurecr.io"
 fi
 
-docker build ${DOCKER_BUILD_ADDITIONAL_ARGS} \
-	-t ${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG} \
-	-t ${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}
+docker build "${DOCKER_BUILD_ADDITIONAL_ARGS}" \
+	-t "${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}" \
+	-t "${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"

@@ -17,12 +17,12 @@ usage()
 
 		Required Arguments:
 			-a inname	The input filename to use
-			-b args	Any additonal arguments to pass to 'envsubst'
+			-b args		Any additonal arguments to pass to 'envsubst'
 
 		Optional Arguments:
 			-Y true|false	Whether to 'cat' the output file. Default: false
 			-Z outname	The output filename. Default: Strip 'base-' from the inname
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -68,7 +68,7 @@ if [ -z "${OUTPUT_FILENAME}" ]; then
 	OUTPUT_FILENAME="${INPUT_TEMPLATE_FILENAME#"base_"}"
 fi
 
-if [ -z "${INPUT_TEMPLATE_FILENAME}" == "${OUTPUT_FILENAME}" ]; then
+if [ "${INPUT_TEMPLATE_FILENAME}" == "${OUTPUT_FILENAME}" ]; then
 	echo "Either specify an output filename or prefix the input file with 'base_'!" >&2
 	exit 1
 fi

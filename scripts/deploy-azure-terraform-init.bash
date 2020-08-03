@@ -10,7 +10,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a id		Azure Client ID
@@ -22,7 +22,7 @@ usage()
 		  -g container	The container name
 		  -h key	The state filename
 		  -i workspace	The workspace name to use, usually the env, e.g. 'dev'
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -30,7 +30,7 @@ usage()
 	set -x
 }
 
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
@@ -114,5 +114,5 @@ terraform init \
 	-backend-config="container_name=${CONTAINER_NAME}" \
 	-backend-config="key=${KEY_NAME}"
 
-terraform workspace select ${WORKSPACE_NAME} \
-	|| terraform workspace new ${WORKSPACE_NAME}
+terraform workspace select "${WORKSPACE_NAME}" \
+	|| terraform workspace new "${WORKSPACE_NAME}"

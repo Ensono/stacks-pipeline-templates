@@ -88,7 +88,7 @@ usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
-		Usage: $(basename $0) [OPTION]...
+		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
 		  -a url	The URL to the Sonar(cloud) instance
@@ -107,7 +107,7 @@ usage()
 		  -Z pr		The number of the PR. Empty default.
 
 		Options '-W', '-X', '-Y', and '-Z' must all be provided together.
-	USAGE_STRING
+		USAGE_STRING
 	)
 
 	echo "${USAGE}"
@@ -120,7 +120,7 @@ usage()
 
 After declaring a `usage()` function, this function should be present as is:
 ```bash
-# Detect `--help`, show usage and exit.
+# Detect `--help`, show usage and exit
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
