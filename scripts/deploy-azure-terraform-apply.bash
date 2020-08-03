@@ -84,4 +84,4 @@ export ARM_CLIENT_SECRET="${AZURE_CLIENT_SECRET}"
 export ARM_TENANT_ID="${AZURE_TENANT_ID}"
 export ARM_SUBSCRIPTION_ID="${AZURE_SUBSCRIPTION_ID}"
 
-terraform apply ${PLAN_FILE}
+terraform apply "${PLAN_FILE}"
