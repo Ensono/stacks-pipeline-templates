@@ -51,7 +51,7 @@ do
 done
 
 if [ -z "$ALLOWED_TAGS" ]; then
-	ALLOWED_TAGS="Unit | Component | Integration | Functional | Performance | Smoke"
+	ALLOWED_TAGS="Unit | Component | Integration"
 fi
 
 if [ -z "$TEST_REPORT_DIR" ]; then
