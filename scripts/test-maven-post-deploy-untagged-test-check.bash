@@ -76,7 +76,6 @@ export BASE_URL
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
-	--offline \
 	"${TAGS_ARRAY[@]}"
 
 # If tests ran, then the tags aren't correct.
