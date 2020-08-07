@@ -64,8 +64,8 @@ if [ ! -z "${IGNORE_GROUPS}" ]; then
 	IGNORE_GROUPS="and not(${IGNORE_GROUPS})"
 fi
 
-declare -a TAGS
-TAGS+=("-Dcucumber.options=\"--tags 'not (${GROUP}) ${IGNORE_GROUPS}'\"")
+declare -a TAGS_ARRAY
+TAGS_ARRAY+=("-Dcucumber.options=\"--tags 'not (${GROUP}) ${IGNORE_GROUPS}'\"")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
