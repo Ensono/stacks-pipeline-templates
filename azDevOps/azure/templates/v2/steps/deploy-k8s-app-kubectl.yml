@@ -15,6 +15,10 @@ parameters:
   resource_def_name: ""
   namespace: ""
   deployment_status_timeout: "30s"
+  azure_tenant_id: "$(azure_tenant_id)"
+  azure_subscription_id: "$(azure_subscription_id)"
+  azure_client_id: "$(azure_client_id)"
+  azure_client_secret: "$(azure_client_secret)"
 
 steps:
   ## Prerequisites
@@ -34,10 +38,10 @@ steps:
     parameters:
       # Azure
       login_azure: true
-      azure_tenant_id: "$(azure_tenant_id)"
-      azure_subscription_id: "$(azure_subscription_id)"
-      azure_client_id: "$(azure_client_id)"
-      azure_client_secret: "$(azure_client_secret)"
+      azure_tenant_id: "${{ parameters.azure_tenant_id }}"
+      azure_subscription_id: "${{ parameters.azure_subscription_id }}"
+      azure_client_id: "${{ parameters.azure_client_id }}"
+      azure_client_secret: "${{ parameters.azure_client_secret }}"
       # Kubernetes
       login_kubernetes: true
       aks_resource_group_name: "${{ parameters.kubernetes_clusterrg }}"
