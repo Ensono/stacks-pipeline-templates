@@ -7,7 +7,7 @@ set -exo pipefail
 OPTIONS=":a:Y:Z:"
 
 # TODO: Pull out into params in future
-TEST_HTML_REPORT_DIRECTORY="./target/site/serentity"
+TEST_HTML_REPORT_DIRECTORY="./target/site/serenity"
 TEST_REPORT_DIRECTORY="./target/failsafe-reports"
 
 usage()
@@ -65,7 +65,7 @@ if [ ! -z "${IGNORE_GROUPS}" ]; then
 fi
 
 declare -a TAGS_ARRAY
-TAGS_ARRAY+=("-Dcucumber.options=\"--tags 'not (${GROUP}) ${IGNORE_GROUPS}'\"")
+TAGS_ARRAY+=(-Dcucumber.options="--tags 'not (${GROUP}) ${IGNORE_GROUPS}'")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
@@ -79,7 +79,7 @@ export BASE_URL
 	"${TAGS_ARRAY[@]}"
 
 # If tests ran, then the tags aren't correct.
-if [ ! -z "$(ls -A -- "${TEST_HTML_REPORT_DIRECTORY}")" ]; then
+if [ "$(ls -1 -- "${TEST_HTML_REPORT_DIRECTORY}" | wc -l)" -ne 0 ]; then
 	echo "Untagged tests or tests with unknown tags detected!" >&2;
 	exit 1
 fi
