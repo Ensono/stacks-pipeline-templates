@@ -43,7 +43,6 @@ do
 	case "${option}" in
 		# Required
 		a  ) GROUP="${OPTARG}";;
-		b  ) BASE_URL="${OPTARG}";;
 
 		# Optional
 		Y  ) IGNORE_GROUPS="${OPTARG}";;
@@ -60,7 +59,7 @@ if [ -z "${GROUP}" ]; then
 	exit 1
 fi
 
-if [ ! -z "${IGNORE_GROUPS}" ]; then
+if [ -n "${IGNORE_GROUPS}" ]; then
 	IGNORE_GROUPS="and not(${IGNORE_GROUPS})"
 fi
 
@@ -71,15 +70,13 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-export BASE_URL
-
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	"${TAGS_ARRAY[@]}"
 
 # If tests ran, then the tags aren't correct.
-if [ "$(ls -1 -- "${TEST_HTML_REPORT_DIRECTORY}" | wc -l)" -ne 0 ]; then
+if [ "$(find --max-depth=1 "${TEST_HTML_REPORT_DIRECTORY}" | wc -l)" -ne 0 ]; then
 	echo "Untagged tests or tests with unknown tags detected!" >&2;
 	exit 1
 fi
