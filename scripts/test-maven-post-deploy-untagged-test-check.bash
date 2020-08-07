@@ -76,7 +76,7 @@ fi
 	"${TAGS_ARRAY[@]}"
 
 # If tests ran, then the tags aren't correct.
-if [ "$(find --max-depth=1 "${TEST_HTML_REPORT_DIRECTORY}" | wc -l)" -ne 0 ]; then
+if [ "$(find "${TEST_HTML_REPORT_DIRECTORY}" -maxdepth 0 | wc -l)" -ne 1 ]; then
 	echo "Untagged tests or tests with unknown tags detected!" >&2;
 	exit 1
 fi
