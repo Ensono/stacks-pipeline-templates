@@ -84,5 +84,4 @@ if [ ! -z "$(ls -A -- "${TEST_HTML_REPORT_DIRECTORY}")" ]; then
 	exit 1
 fi
 
-rm -rf ${TEST_HTML_REPORT_DIRECTORY}
-rm -rf ${TEST_REPORT_DIRECTORY}
+rm -rf "${TEST_HTML_REPORT_DIRECTORY}" "${TEST_REPORT_DIRECTORY}"
