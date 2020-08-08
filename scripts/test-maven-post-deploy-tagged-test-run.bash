@@ -79,7 +79,3 @@ export BASE_URL
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	"${TAGS_ARRAY[@]}"
-
-./mvnw failsafe:verify \
-	--no-transfer-progress \
-	-Dmaven.repo.local="${M2_LOCATION}"
