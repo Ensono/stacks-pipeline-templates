@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Performs a test run which should result in no tests being run
+# Performs a test run with the supplied tags
 
 set -exo pipefail
 
-OPTIONS=":a:W:X:Y:Z:"
+OPTIONS=":a:b:Y:Z:"
 
 usage()
 {
@@ -14,10 +14,9 @@ usage()
 
 		Required Arguments:
 		  -a Tag	The test tag(s) that are allowed run, e.g. '@Functional or @Smoke or @Performance'
+		  -b url	The base URL of the API, e.g. https://dev-java-api.amidostacks.com/api
 
 		Optional Arguments:
-		  -W location	The location to the serenity HTML reports. Default: "./target/site/serenity"
-		  -X location	The location to the failsafe reports. Default: "./target/failsafe-reports"
 		  -Y ignore		Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
@@ -41,10 +40,9 @@ do
 	case "${option}" in
 		# Required
 		a  ) GROUP="${OPTARG}";;
+		b  ) BASE_URL="${OPTARG}";;
 
 		# Optional
-		W  ) TEST_HTML_REPORT_DIRECTORY="${OPTARG}";;
-		X  ) TEST_REPORT_DIRECTORY="${OPTARG}";;
 		Y  ) IGNORE_GROUPS="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
@@ -59,15 +57,9 @@ if [ -z "${GROUP}" ]; then
 	exit 1
 fi
 
-TEST_HTML_REPORT_DIRECTORY="./target/site/serenity"
-
-
-if [ -z "${TEST_HTML_REPORT_DIRECTORY}" ]; then
-	TEST_HTML_REPORT_DIRECTORY="./target/site/serenity"
-fi
-
-if [ -z "${TEST_REPORT_DIRECTORY}" ]; then
-	TEST_REPORT_DIRECTORY="./target/failsafe-reports"
+if [ -z "${BASE_URL}" ]; then
+	echo "-b: Missing the base URL of the application, e.g. https://dev-java-api.amidostacks.com/api" >&2;
+	exit 2
 fi
 
 if [ -n "${IGNORE_GROUPS}" ]; then
@@ -75,23 +67,19 @@ if [ -n "${IGNORE_GROUPS}" ]; then
 fi
 
 declare -a TAGS_ARRAY
-TAGS_ARRAY+=(-Dcucumber.options="--tags 'not (${GROUP}) ${IGNORE_GROUPS}'")
+TAGS_ARRAY+=(-Dcucumber.options="--tags '(${GROUP}) ${IGNORE_GROUPS}'")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
+
+export BASE_URL
 
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	"${TAGS_ARRAY[@]}"
 
-# If tests ran, then the tags aren't correct.
-if [ "$(find "${TEST_HTML_REPORT_DIRECTORY}" -maxdepth 0 | wc -l)" -ne 1 ]; then
-	echo "Untagged tests or tests with unknown tags detected!" >&2;
-	exit 1
-fi
-
-# There should be basically nothing in here, but it's safer to remove them
-# As it won't pollute the test results when they're finally run post-deploy
-rm -rf "${TEST_HTML_REPORT_DIRECTORY}" "${TEST_REPORT_DIRECTORY}"
+./mvnw failsafe:verify \
+	--no-transfer-progress \
+	-Dmaven.repo.local="${M2_LOCATION}"
