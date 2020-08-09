@@ -4,15 +4,20 @@ parameters:
   terraform_output_artefact: 'tfoutputs'
   # Terraform State Config
   # DEFAULTING to globally available library
-  terraform_backend_client_id: $(azure_client_id)
-  terraform_backend_client_secret: $(azure_client_secret)
-  terraform_backend_tenant_id: $(azure_tenant_id)
-  terraform_backend_subscription_id: $(azure_subscription_id)
+  terraform_backend_client_id: "$(azure_client_id)"
+  terraform_backend_client_secret: "$(azure_client_secret)"
+  terraform_backend_tenant_id: "$(azure_tenant_id)"
+  terraform_backend_subscription_id: "$(azure_subscription_id)"
   terraform_state_rg: ''
   terraform_state_storage: ''
   terraform_state_container: ''
   terraform_state_key: ''
   terraform_state_workspace: ''
+  # Azure Config for Terraform
+  azure_client_id: "$(azure_client_id)"
+  azure_client_secret: "$(azure_client_secret)"
+  azure_tenant_id: "$(azure_subscription_id)"
+  azure_subscription_id: "$(azure_subscription_id)"
   # Global Config
   company: 'amido'
   project: 'stacks'
@@ -24,7 +29,6 @@ parameters:
   # Terraform Resource Specific Config
   terraform_extra_properties: {}
   terraform_output_commands: ''
-  azure_cli_providers: []
 
 steps:
   - template: ./deploy-terraform-init.yml
@@ -45,7 +49,7 @@ steps:
       terraform_backend_subscription_id: ${{ parameters.terraform_backend_subscription_id }}
 
   - bash: |
-      az login --service-principal --username $(azure_client_id) --password $(azure_client_secret) --tenant $(azure_tenant_id)
+      az login --service-principal --username ${{ parameters.azure_client_id }} --password ${{ parameters.azure_client_secret }} --tenant ${{ parameters.azure_tenant_id }}
       az feature register --name MSIPreview --namespace Microsoft.ContainerService
       az feature register --name PodSecurityPolicyPreview --namespace Microsoft.ContainerService
       az provider register -n Microsoft.ContainerService
@@ -56,10 +60,10 @@ steps:
     workingDirectory: ${{ parameters.terraform_working_dir }}
     env:
       # AUTH PARAMS
-      ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-      ARM_CLIENT_ID: $(azure_client_id)
-      ARM_CLIENT_SECRET: $(azure_client_secret)
-      ARM_TENANT_ID: $(azure_tenant_id)
+      ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+      ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+      ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+      ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
       # Extra Parameters
       # Business specific vars passed from pipeline
       ${{ each var in parameters.terraform_extra_properties }}:
@@ -76,10 +80,10 @@ steps:
     workingDirectory: ${{ parameters.terraform_working_dir }}
     env:
       # AUTH PARAMS
-      ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-      ARM_CLIENT_ID: $(azure_client_id)
-      ARM_CLIENT_SECRET: $(azure_client_secret)
-      ARM_TENANT_ID: $(azure_tenant_id)
+      ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+      ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+      ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+      ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
       # Extra Parameters
       # Business specific vars passed from pipeline
       ${{ each var in parameters.terraform_extra_properties }}:
