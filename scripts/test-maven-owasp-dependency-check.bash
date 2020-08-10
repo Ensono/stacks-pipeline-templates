@@ -60,4 +60,6 @@ fi
 ./mvnw org.owasp:dependency-check-maven:check \
 	-Powasp-dependency-check \
 	-Dmaven.repo.local="${M2_LOCATION}" \
+	-Dsun.jnu.encoding=UTF-8 \
+	-Dfile.encoding=UTF-8 \
 	-DfailBuildOnAnyVulnerability="${FAIL_BUILD_ON_VULNERABILITY}"
