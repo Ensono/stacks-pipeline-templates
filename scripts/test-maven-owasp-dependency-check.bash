@@ -58,6 +58,7 @@ if [ "${FAIL_BUILD_ON_VULNERABILITY}" != "true" ]; then
 fi
 
 ./mvnw org.owasp:dependency-check-maven:check \
+	--no-transfer-progress \
 	-Powasp-dependency-check \
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	-Dsun.jnu.encoding=UTF-8 \
