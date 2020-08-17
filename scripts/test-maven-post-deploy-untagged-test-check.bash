@@ -87,7 +87,7 @@ fi
 if [ "$(find "${TEST_HTML_REPORT_DIRECTORY}" -maxdepth 1 | wc -l)" -ne 1 ]; then
 	echo "Untagged tests or tests with unknown tags detected!" >&2;
 	echo "Please check tags for spelling mistakes or update the allowed tags" >&2;
-	echo "Tags: ${TAGS_ARRAY[@]}" >&2;
+	echo "Tags: ${TAGS_ARRAY[*]}" >&2;
 	exit 1
 fi
 
