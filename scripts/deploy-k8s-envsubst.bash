@@ -42,9 +42,9 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		a  ) INPUT_TEMPLATE_FILENAME="${OPTARG}";;
+		b  ) ADDITIONAL_ENVSUBST_ARGUMENTS="${OPTARG}";;
 
 		# Optional
-		X  ) ADDITIONAL_ENVSUBST_ARGUMENTS="${OPTARG}";;
 		Y  ) CAT_OUTPUT_FILE="${OPTARG}";;
 		Z  ) OUTPUT_FILENAME="${OPTARG}";;
 
@@ -55,7 +55,7 @@ do
 done
 
 if [ -z "${INPUT_TEMPLATE_FILENAME}" ]; then
-	echo "-a: Missing input template name"
+	echo "-a: Missing input template name" >&2
 	exit 1
 fi
 
@@ -70,7 +70,7 @@ fi
 
 if [ "${INPUT_TEMPLATE_FILENAME}" == "${OUTPUT_FILENAME}" ]; then
 	echo "Either specify an output filename or prefix the input file with 'base_'!" >&2
-	exit 1
+	exit 2
 fi
 
 rm -f "${OUTPUT_FILENAME}"
@@ -80,7 +80,7 @@ envsubst \
 	-i "${INPUT_TEMPLATE_FILENAME}" \
 	-o "${OUTPUT_FILENAME}" \
 	-no-unset \
-	"${ADDITIONAL_ENVSUBST_ARGUMENTS}" \
+	"${ADDITIONAL_ENVSUBST_ARGUMENTS[@]}" \
 || RETURN_CODE="$?"
 
 echo "Input filename: ${INPUT_TEMPLATE_FILENAME}"
@@ -92,4 +92,4 @@ if [ "${CAT_OUTPUT_FILE}" == 'true' ]; then
 	cat "${OUTPUT_FILENAME}"
 fi
 
-exit $RETURN_CODE
+exit "${RETURN_CODE}"
