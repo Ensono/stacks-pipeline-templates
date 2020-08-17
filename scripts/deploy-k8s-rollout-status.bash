@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:Z"
+OPTIONS=":a:b:Z:"
 
 usage()
 {
@@ -15,6 +15,8 @@ usage()
 		Required Arguments:
 			-a deploy		The deployname
 			-b namespace	The namespace of the deploy
+
+		Optional Arguments:
 			-Z timeout		The k8s formatted timeout to wait for the deployment to rollout. Default '30s'
 		USAGE_STRING
 	)
