@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Performs a test run with the supplied tags
+# Performs a UI test run with the supplied tags
 
 set -exo pipefail
 
-OPTIONS=":a:b:Y:Z:"
+OPTIONS=":a:b:c:Y:Z:"
 
 usage()
 {
@@ -15,6 +15,7 @@ usage()
 		Required Arguments:
 		  -a Tag	The test tag(s) that are allowed run, e.g. '@Functional or @Smoke or @Performance'
 		  -b url	The base URL of the API, e.g. https://dev-java-api.amidostacks.com/api
+		  -c url	The base URL of the UI, e.g. https://dev-app.amidostacks.com/web/stacks
 
 		Optional Arguments:
 		  -Y ignore	Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
@@ -41,9 +42,9 @@ do
 		# Required
 		a  ) GROUP="${OPTARG}";;
 		b  ) BASE_URL="${OPTARG}";;
+		c  ) BASE_UI_URL="${OPTARG}";;
 
 		# Optional
-		X  ) EXTRA_ARGS="${OPTARG}";;
 		Y  ) IGNORE_GROUPS="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
@@ -59,8 +60,17 @@ if [ -z "${GROUP}" ]; then
 fi
 
 if [ -z "${BASE_URL}" ]; then
-	echo "-b: Missing the base URL of the application, e.g. https://dev-java-api.amidostacks.com/api" >&2;
+	echo "-b: Missing the base URL of the API, e.g. https://dev-java-api.amidostacks.com/api" >&2;
 	exit 2
+fi
+
+if [ -z "${BASE_UI_URL}" ]; then
+	echo "-b: Missing the base URL of the UI application, e.g. https://dev-app.amidostacks.com/web/stacks" >&2;
+	exit 3
+fi
+
+if [ -z "${EXTRA_ARGS}" ]; then
+	EXTRA_ARGS=""
 fi
 
 if [ -n "${IGNORE_GROUPS}" ]; then
@@ -74,9 +84,10 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-export BASE_URL
-
 ./mvnw failsafe:integration-test \
+	-Dchrome.switches="--headless,--no-sandbox,--disable-dev-shm-usage"
+	-Dwebdriver.base.url="${BASE_UI_URL}" \
+	-Dapi.base.url="${BASE_URL}" \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	"${TAGS_ARRAY[@]}"
