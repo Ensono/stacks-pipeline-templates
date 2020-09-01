@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:Y:Z:"
+OPTIONS=":a:b:X:Y:Z:"
 
 usage()
 {
@@ -17,7 +17,8 @@ usage()
 		  -b url	The base URL of the API, e.g. https://dev-java-api.amidostacks.com/api
 
 		Optional Arguments:
-		  -Y ignore		Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
+		  -X args	Any extra arguments to pass to the test run
+		  -Y ignore	Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -43,6 +44,7 @@ do
 		b  ) BASE_URL="${OPTARG}";;
 
 		# Optional
+		X  ) EXTRA_ARGS="${OPTARG}";;
 		Y  ) IGNORE_GROUPS="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
@@ -62,6 +64,10 @@ if [ -z "${BASE_URL}" ]; then
 	exit 2
 fi
 
+if [ -n "${EXTRA_ARGS}" ]; then
+	EXTRA_ARGS=""
+fi
+
 if [ -n "${IGNORE_GROUPS}" ]; then
 	IGNORE_GROUPS="and not(${IGNORE_GROUPS})"
 fi
@@ -78,4 +84,5 @@ export BASE_URL
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
-	"${TAGS_ARRAY[@]}"
+	"${TAGS_ARRAY[@]}" \
+	"${EXTRA_ARGS[@]}"
