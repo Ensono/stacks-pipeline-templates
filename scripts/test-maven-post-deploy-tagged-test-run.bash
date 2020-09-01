@@ -64,7 +64,7 @@ if [ -z "${BASE_URL}" ]; then
 	exit 2
 fi
 
-if [ -n "${EXTRA_ARGS}" ]; then
+if [ -z "${EXTRA_ARGS}" ]; then
 	EXTRA_ARGS=""
 fi
 
