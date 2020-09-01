@@ -85,7 +85,7 @@ if [ -z "${M2_LOCATION}" ]; then
 fi
 
 ./mvnw failsafe:integration-test \
-	-Dchrome.switches="--headless,--no-sandbox,--disable-dev-shm-usage"
+	-Dchrome.switches="--headless,--no-sandbox,--disable-dev-shm-usage" \
 	-Dwebdriver.base.url="${BASE_UI_URL}" \
 	-Dapi.base.url="${BASE_URL}" \
 	--no-transfer-progress \
