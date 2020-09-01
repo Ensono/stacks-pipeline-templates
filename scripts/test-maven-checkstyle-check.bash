@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Generates the JaCoCo coverage reports.
+# Checks the coding style using Checkstyle
 
 set -exo pipefail
 
@@ -46,7 +46,6 @@ if [ -z "$M2_LOCATION" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-./mvnw jacoco:report \
+./mvnw checkstyle:check \
 	--no-transfer-progress \
-	-Dmaven.repo.local="${M2_LOCATION}" \
-	--offline
+	-Dmaven.repo.local="${M2_LOCATION}"
