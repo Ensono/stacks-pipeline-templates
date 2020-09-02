@@ -48,5 +48,4 @@ fi
 
 ./mvnw spotbugs:check \
 	--no-transfer-progress \
-	-Dmaven.repo.local="${M2_LOCATION}" \
-	--offline
+	-Dmaven.repo.local="${M2_LOCATION}"
