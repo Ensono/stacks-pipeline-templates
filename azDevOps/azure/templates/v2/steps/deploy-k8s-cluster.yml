@@ -1,4 +1,8 @@
 parameters:
+  azure_tenant_id: ''
+  azure_subscription_id: ''
+  azure_client_id: ''
+  azure_client_secret: ''
   aks_cluster_name: ""
   aks_resource_group_name: ""
   aks_dns_resource_group_name: ""
@@ -14,28 +18,14 @@ parameters:
   domain_filter: ""
 
 steps:
-  # Do Login
-  - bash: |
-      az -v
-      az login --service-principal --username $(azure_client_id) --password $(azure_client_secret) --tenant $(azure_tenant_id)
-      az account set -s $(azure_subscription_id)
-      az aks get-credentials --overwrite-existing --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }}
-    displayName: "K8s: Login AKS"
-    env:
-      AZURE_CLOUD_NAME: AzureCloud
-      # ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-      # ARM_CLIENT_ID: $(azure_client_id)
-      # ARM_CLIENT_SECRET: $(azure_client_secret)
-      # ARM_TENANT_ID: $(azure_tenant_id)
-
   - template: ./login-services.yml
     parameters:
       # Azure
       login_azure: true
-      azure_tenant_id: "$(azure_tenant_id)"
-      azure_subscription_id: "$(azure_subscription_id)"
-      azure_client_id: "$(azure_client_id)"
-      azure_client_secret: "$(azure_client_secret)"
+      azure_tenant_id: "${{ parameters.azure_tenant_id }}"
+      azure_subscription_id: "${{ parameters.azure_subscription_id }}"
+      azure_client_id: "${{ parameters.azure_client_id }}"
+      azure_client_secret: "${{ parameters.azure_client_secret }}"
       # Kubernetes
       login_kubernetes: true
       aks_resource_group_name: "${{ parameters.aks_resource_group_name }}"
@@ -61,10 +51,10 @@ steps:
     displayName: "K8s: Deploy External DNS service"
     workingDirectory: ${{ parameters.scripts_dir }}
     env:
-      ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-      ARM_CLIENT_ID: $(azure_client_id)
-      ARM_CLIENT_SECRET: $(azure_client_secret)
-      ARM_TENANT_ID: $(azure_tenant_id)
+      ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+      ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+      ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+      ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
 
   - ${{ if eq(parameters.aks_aad_pod_identity, true) }}:
       - bash: |
@@ -74,10 +64,10 @@ steps:
         displayName: "K8s: Deploy AAD pod identity"
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
-          ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-          ARM_CLIENT_ID: $(azure_client_id)
-          ARM_CLIENT_SECRET: $(azure_client_secret)
-          ARM_TENANT_ID: $(azure_tenant_id)
+          ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+          ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+          ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+          ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
 
   - ${{ if eq(parameters.aks_deploy_gatekeeper, true) }}:
       - bash: |
@@ -85,7 +75,7 @@ steps:
         displayName: "K8s: Deploy Gatekeeper"
         workingDirectory: ${{ parameters.scripts_dir }}
         env:
-          ARM_SUBSCRIPTION_ID: $(azure_subscription_id)
-          ARM_CLIENT_ID: $(azure_client_id)
-          ARM_CLIENT_SECRET: $(azure_client_secret)
-          ARM_TENANT_ID: $(azure_tenant_id)
+          ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+          ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+          ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+          ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
