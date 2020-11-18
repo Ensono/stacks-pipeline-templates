@@ -1,0 +1,35 @@
+parameters:
+  # Version Config
+  sourcebranch_name: ''
+  raw_version_number: ''
+  # Build Config
+  test_path: ''
+  package_path: ''
+  # Deploy Config
+  package_feed: ''
+  publish_symbols: ''
+  publish_public: ''
+  #cosmosdb_account: ''
+  # .NET Core version variable
+  dotnet_core_version: '3.1.x'
+
+steps:
+  - template: build-updatebuildnumber-dotnet.yml
+    parameters:
+      sourcebranch_name: '${{ parameters.sourcebranch_name }}'
+      raw_version_number: '${{ parameters.raw_version_number }}'
+
+  - template: build-pack-test-dotnet.yml
+    parameters:
+      test_path: '${{ parameters.test_path }}'
+      package_path: '${{ parameters.package_path }}'
+      package_feed: '${{ parameters.package_feed }}'
+      dotnet_core_version: ${{ parameters.dotnet_core_version }}
+
+  - template: deploy-push-package-symbols-public.yml
+    parameters:
+      package_feed: '${{ parameters.package_feed }}'
+      publish_symbols: '${{ parameters.publish_symbols }}'
+      publish_public: '${{ parameters.publish_public }}'
+      dotnet_core_version: ${{ parameters.dotnet_core_version }}
+      package_path: $(Build.Repository.LocalPath)\${{ parameters.package_path }}

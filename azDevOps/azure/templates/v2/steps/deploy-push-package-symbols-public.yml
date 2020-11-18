@@ -1,0 +1,21 @@
+############################################################################################################
+# desc: Publishes the packages to nuget.org
+# params:
+# return: Publishes packages to nuget.org
+# pre-reqs: Packages are packed
+
+# Important: There is bug in .NET Core 2.1 SDK which returns a 409 on trying to publish the symbols package
+# See https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-nuget-push for more information.
+# If you require symbols to be published publically please add a step:
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/symbols
+############################################################################################################
+
+
+parameters:
+  publish_symbols: true
+
+steps:
+  # Publish Nuget packages to nuget.org
+  - script: dotnet nuget push --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols true
+    workingDirectory: $(Build.ArtifactStagingDirectory)
+    displayName: 'Publish: Push Packages Public'
