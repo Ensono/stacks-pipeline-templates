@@ -1,7 +1,4 @@
 parameters:
-  # Version Config
-  sourcebranch_name: ''
-  raw_version_number: ''
   # Build Config
   test_path: ''
   package_path: ''
@@ -9,16 +6,10 @@ parameters:
   package_feed: ''
   publish_symbols: ''
   publish_public: ''
-  #cosmosdb_account: ''
   # .NET Core version variable
   dotnet_core_version: '3.1.x'
 
 steps:
-  - template: build-updatebuildnumber-dotnet.yml
-    parameters:
-      sourcebranch_name: '${{ parameters.sourcebranch_name }}'
-      raw_version_number: '${{ parameters.raw_version_number }}'
-
   - template: build-pack-test-dotnet.yml
     parameters:
       test_path: '${{ parameters.test_path }}'
