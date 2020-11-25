@@ -1,5 +1,5 @@
 parameters:
-  # template_input: [{base: "", out: "", env_vars: {}, args: ""}]
+  container: "k8s_deploy"
   template_input: []
   shared_env_vars: {}
   enable_debug: ""
@@ -31,4 +31,6 @@ steps:
           ${{ each var in parameters.shared_env_vars }}:
             ${{ var.key }}: ${{ var.value }}
           ${{ each var in tpl.env_vars }}:
-            ${{ var.key }}: ${{ var.value }}
+            ${{ var.key }}: ${{ var.value }}pl
+        target:
+          container: "${{ parameters.container }}"

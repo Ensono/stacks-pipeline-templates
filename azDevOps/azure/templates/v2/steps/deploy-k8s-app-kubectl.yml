@@ -1,4 +1,5 @@
 parameters:
+  container: "k8s_deploy"
   download_deploy_artefact: false
   deploy_artifact_name: ""
   test_artefact: "tests"
@@ -36,6 +37,7 @@ steps:
 
   - template: ./login-services.yml
     parameters:
+      container: "${{ parameters.container }}"
       # Azure
       login_azure: true
       azure_tenant_id: "${{ parameters.azure_tenant_id }}"
@@ -54,6 +56,8 @@ steps:
         displayName: "Deploy: Kubectl Apply"
         workingDirectory: ${{ parameters.kubectl_working_dir }}
         failOnStderr: true
+        target:
+          container: "${{ parameters.container }}"
 
   # TODO: We should always check for the status, this is here for backwards compatability until templates are updated.
   - ${{ if eq(parameters.kubectl_check_deployment, true) }}:
@@ -61,3 +65,5 @@ steps:
           kubectl rollout status -n ${{ parameters.namespace }} deploy/${{ parameters.resource_def_name }} --timeout ${{ parameters.deployment_status_timeout }}
         failOnStderr: true
         displayName: "Deploy: Check deploy status"
+        target:
+          container: "${{ parameters.container }}"
