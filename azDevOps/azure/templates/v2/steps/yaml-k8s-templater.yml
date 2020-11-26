@@ -31,6 +31,6 @@ steps:
           ${{ each var in parameters.shared_env_vars }}:
             ${{ var.key }}: ${{ var.value }}
           ${{ each var in tpl.env_vars }}:
-            ${{ var.key }}: ${{ var.value }}pl
+            ${{ var.key }}: ${{ var.value }}
         target:
           container: "${{ parameters.container }}"
