@@ -1,0 +1,17 @@
+parameters:
+  pipeline_scripts_directory: ""
+  terraform_container: ""
+  terraform_directory: ""
+
+steps:
+  - bash: "${{ parameters.pipeline_scripts_directory }}/test-terraform-fmt-check.bash"
+    workingDirectory: "${{ parameters.terraform_directory }}"
+    target:
+      container: ${{ parameters.terraform_container }}
+    displayName: "Terraform: Format Check"
+
+  - bash: "${{ parameters.pipeline_scripts_directory }}/test-terraform-validate.bash"
+    workingDirectory: "${{ parameters.terraform_directory }}"
+    target:
+      container: ${{ parameters.terraform_container }}
+    displayName: "Terraform: Validate Check"
