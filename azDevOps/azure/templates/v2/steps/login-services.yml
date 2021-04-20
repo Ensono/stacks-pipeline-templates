@@ -63,7 +63,8 @@ steps:
         failOnStderr: false
         env:
           # AUTH PARAMS
-          GOOGLE_CREDENTIALS: $(GOOGLE_CREDENTIALS)
+          ${{ each var in parameters.gcp_auth }}:
+            ${{ var.key }}: ${{ var.value }}
         target:
           container: "${{ parameters.container }}"
 
