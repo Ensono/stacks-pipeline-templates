@@ -21,18 +21,48 @@ steps:
       login_azure: ${{ parameters.login_azure }}
       login_kubernetes: ${{ parameters.login_kubernetes }}
 
+  - bash: apt install jq
+    displayName: install jq
+
   - ${{ each deployment in parameters.deployment_defs }}:
       - bash: |
-          kubectl apply -f ${{ deployment.file }} ${{ deployment.context }}
+          set -eou pipefail
+          timeoutMinutes=10
+          echo "dry_run: ${dry_run}"
+          
+          if [ "$dry_run" = "True" ]
+          then
+              echo "performing dry run"
+              cat ${{ deployment.file }}
+              kubectl apply -f ${{ deployment.file }} ${{ deployment.context }} --dry-run=true
+          else
+              kubectlOutput=$(kubectl apply -f ${{ deployment.file }} ${{ deployment.context }} -o json)
+              echo "kubectl apply complete"
+              deployments=$(jq -c '.items[] | select(.kind == "Deployment") | {name: .metadata.name, namespace: .metadata.namespace}' <<< $kubectlOutput)
+              for deployment in $deployments
+              do
+                  deploymentName=$(echo "$deployment" | jq -r .name)
+                  deploymentNamepace=$(echo "$deployment" | jq -r .namespace)
+                  echo "checking deployment rollout status: ${deploymentNamepace}/${deploymentName}"
+                  kubectl -n "$deploymentNamepace" rollout status "deployment.v1.apps/${deploymentName}" --timeout "${timeoutMinutes}m"
+              done
+          fi
         displayName: "K8s: Deploy ${{ deployment.name }}"
         workingDirectory: ${{ parameters.working_dir }}
         env:
+          dry_run: ${{ parameters.dry_run }}
           # AUTH PARAMS
           ${{ each var in parameters.gcp_auth }}:
             ${{ var.key }}: ${{ var.value }}
           ${{ each var in parameters.azure_auth }}:
             ${{ var.key }}: ${{ var.value }}
 
+  - ${{ each deployment in parameters.deployment_defs }}:
+      - bash: |
+          cat ${{ deployment.file }}
+        displayName: "Print yaml on failure: ${{ deployment.name }}"
+        workingDirectory: ${{ parameters.working_dir }}
+        condition: failed()
 
 # TODO: make an all encompassing kubectly apply task
 # kubectl rollout status -n $NAMESPACE deploy/$DEPLOYMENT  -w --timeout=30s
