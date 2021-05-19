@@ -13,7 +13,6 @@ parameters:
   docker_imagetag: ''
   docker_containerregistryname: ''
   docker_taglatest: true # TODO: Need to use it.
-
 steps:
   - bash: |
       docker build ${{ parameters.docker_build_additional_args}} -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
@@ -23,5 +22,6 @@ steps:
   - bash: |
       az acr login --name ${{ parameters.docker_containerregistryname }} # this is super annoying
       docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}
+      docker push ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }}
     displayName: Push Container Image to Azure Container Registry
     workingDirectory: ${{ parameters.workingDirectory }}
