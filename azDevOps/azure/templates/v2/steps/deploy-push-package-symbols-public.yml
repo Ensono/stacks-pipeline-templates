@@ -27,6 +27,7 @@ steps:
     inputs:
       targetType: inline
       pwsh: true
+      workingDirectory: $(Build.ArtifactStagingDirectory)
       script:
         try
         {
@@ -57,5 +58,4 @@ steps:
         }
 
         dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols $noSymbols
-    workingDirectory: $(Build.ArtifactStagingDirectory)
     displayName: 'Publish: Push Packages Public'
