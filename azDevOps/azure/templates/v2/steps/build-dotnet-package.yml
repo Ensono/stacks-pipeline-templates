@@ -8,7 +8,9 @@ parameters:
   publish_public: ''
   # .NET Core version variable
   dotnet_core_version: '3.1.x'
-
+  # Nuget
+  use_nuget_service_connection: false
+  nuget_service_connection: ''
 steps:
   - template: build-pack-test-dotnet.yml
     parameters:
@@ -24,3 +26,5 @@ steps:
       publish_public: '${{ parameters.publish_public }}'
       dotnet_core_version: ${{ parameters.dotnet_core_version }}
       package_path: $(Build.Repository.LocalPath)\${{ parameters.package_path }}
+      use_nuget_service_connection: ${{ parameters.use_nuget_service_connection }}
+      nuget_service_connection: ${{ parameters.nuget_service_connection }}
