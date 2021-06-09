@@ -21,8 +21,6 @@ steps:
         inputs:
           nuGetServiceConnections: ${{ parameters.nuget_service_connection }}
 
-  - ${{ if ne(parameters.use_nuget_service_connection, true) }}:
-
   - task: PowerShell@2
     inputs:
       targetType: inline
