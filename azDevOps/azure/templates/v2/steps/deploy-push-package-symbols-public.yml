@@ -27,10 +27,6 @@ steps:
       pwsh: true
       workingDirectory: $(Build.ArtifactStagingDirectory)
       script:
-        Out-Host -InputObject "lol"
-        Out-Host -InputObject "${{ parameters.use_nuget_service_connection }}"
-        Out-Host -InputObject "lol"
-
         try
         {
           $noSymbols = [System.Convert]::ToBoolean("${{ parameters.publish_symbols }}")
