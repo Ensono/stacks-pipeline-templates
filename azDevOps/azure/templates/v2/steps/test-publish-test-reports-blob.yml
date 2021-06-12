@@ -20,7 +20,7 @@ steps:
   - ${{ each var in parameters.artifacts }}:
       task: PublishPipelineArtifact@1
       inputs:
-        artifactName: ${{ var.key }}
+        artifactName: ${{ var.key }}-$(System.JobAttempt)
         targetPath: ${{ var.value }}
       displayName: 'Test Artifact: ${{ var.key }}'
       condition: failed()
