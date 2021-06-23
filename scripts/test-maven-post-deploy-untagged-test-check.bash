@@ -72,7 +72,7 @@ if [ -n "${IGNORE_GROUPS}" ]; then
 fi
 
 declare -a TAGS_ARRAY
-TAGS_ARRAY+=(-Dcucumber.filter.tags="--tags 'not (${GROUP}) ${IGNORE_GROUPS}'")
+TAGS_ARRAY+=(-Dcucumber.filter.tags="'not (${GROUP}) ${IGNORE_GROUPS}'")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
