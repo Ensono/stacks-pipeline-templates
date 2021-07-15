@@ -55,6 +55,7 @@ steps:
         workingDirectory: ${{ parameters.terraform_working_dir }}
         env:
           FOO: BAR
+
   - ${{ if eq(parameters.external_dns, true) }}:
       - bash: |
           ./external-dns.sh ${{ parameters.aks_resource_group_name }} \
