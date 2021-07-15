@@ -34,7 +34,7 @@ steps:
       aks_set_acr_perms: ${{ parameters.aks_set_acr_perms }}
       acr_name: ${{ parameters.acr_name }}
       acr_resource_group_name: ${{ parameters.acr_resource_group_name }}
-      
+
   - ${{ if eq(parameters.aks_aad_pod_identity, true) }}:
       - bash: |
           az feature register --name MSIPreview --namespace Microsoft.ContainerService
