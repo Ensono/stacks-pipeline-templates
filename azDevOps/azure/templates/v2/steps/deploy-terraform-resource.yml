@@ -50,8 +50,6 @@ steps:
 
   - bash: |
       az login --service-principal --username ${{ parameters.azure_client_id }} --password ${{ parameters.azure_client_secret }} --tenant ${{ parameters.azure_tenant_id }}
-      az feature register --name MSIPreview --namespace Microsoft.ContainerService
-      az feature register --name PodSecurityPolicyPreview --namespace Microsoft.ContainerService
       az provider register -n Microsoft.ContainerService
       echo $ARM_SUBSCRIPTION_ID
       terraform -v

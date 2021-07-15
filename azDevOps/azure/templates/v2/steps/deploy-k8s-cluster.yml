@@ -14,6 +14,7 @@ parameters:
   acr_resource_group_name: ""
   ingress_definition: []
   scripts_dir: ""
+  external_dns: true
   external_dns_yml: ""
   domain_filter: ""
 
@@ -34,6 +35,18 @@ steps:
       acr_name: ${{ parameters.acr_name }}
       acr_resource_group_name: ${{ parameters.acr_resource_group_name }}
 
+  - ${{ if eq(parameters.aks_aad_pod_identity, true) }}:
+      - bash: |
+          az feature register --name MSIPreview --namespace Microsoft.ContainerService
+          az feature register --name PodSecurityPolicyPreview --namespace Microsoft.ContainerService
+          az provider register -n Microsoft.ContainerService
+        displayName: "K8s: Register AAD pod identity"
+        workingDirectory: ${{ parameters.scripts_dir }}
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+          ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+          ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+          ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
 
   - ${{ each ingress in parameters.ingress_definition }}:
       - bash: |
@@ -43,18 +56,19 @@ steps:
         env:
           FOO: BAR
 
-  - bash: |
-      ./external-dns.sh ${{ parameters.aks_resource_group_name }} \
-      ${{ parameters.aks_cluster_name }} \
-      ${{ parameters.aks_dns_resource_group_name }} \
-      ${{ parameters.external_dns_yml }}
-    displayName: "K8s: Deploy External DNS service"
-    workingDirectory: ${{ parameters.scripts_dir }}
-    env:
-      ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
-      ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
-      ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
-      ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
+  - ${{ if eq(parameters.external_dns, true) }}:
+      - bash: |
+          ./external-dns.sh ${{ parameters.aks_resource_group_name }} \
+          ${{ parameters.aks_cluster_name }} \
+          ${{ parameters.aks_dns_resource_group_name }} \
+          ${{ parameters.external_dns_yml }}
+        displayName: "K8s: Deploy External DNS service"
+        workingDirectory: ${{ parameters.scripts_dir }}
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ parameters.azure_subscription_id }}
+          ARM_CLIENT_ID: ${{ parameters.azure_client_id }}
+          ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
+          ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
 
   - ${{ if eq(parameters.aks_aad_pod_identity, true) }}:
       - bash: |

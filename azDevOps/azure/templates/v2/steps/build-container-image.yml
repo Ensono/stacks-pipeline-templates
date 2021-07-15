@@ -12,7 +12,8 @@ parameters:
   docker_imagename: ''
   docker_imagetag: ''
   docker_containerregistryname: ''
-  docker_taglatest: true # TODO: Need to use it.
+  # TODO: Need to use it.
+  docker_taglatest: true
 steps:
   - bash: |
       docker build ${{ parameters.docker_build_additional_args}} -t ${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:${{ parameters.docker_imagetag }} -t ${{ parameters.docker_containerregistryname }}.azurecr.io/${{ parameters.docker_imagename }}:latest
