@@ -29,11 +29,11 @@ steps:
         artifact: "${{ parameters.deploy_artifact_name }}"
 
   # Download this artefact if functional or performance tests are enabled for this deployment
-  - ? ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}
-    : - download: current
+  - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
+      - download: current
         displayName: "Download: Test Artefacts"
         artifact: "${{ parameters.test_artefact }}"
-  # - template: ./
+        path: $(Pipeline.Workspace)/tests
 
   - template: ./login-services.yml
     parameters:
@@ -67,3 +67,13 @@ steps:
         displayName: "Deploy: Check deploy status"
         target:
           container: "${{ parameters.container }}"
+
+  # Perform the functional tests if they have been enabled
+  - ${{ if eq(parameters.functional_test, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: "Test: Run Functional Tests"
+        inputs:
+          command: test
+          testRunTitle: "Functional Tests"
+          projects: $(Pipeline.Workspace)/tests
+          arguments: "-v n"
