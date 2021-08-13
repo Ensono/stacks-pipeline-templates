@@ -30,10 +30,11 @@ steps:
 
   # Download this artefact if functional or performance tests are enabled for this deployment
   - ${{ if or(eq(parameters.functional_test, true), eq(parameters.performance_test, true)) }}:
-      - download: current
+      - task: DownloadPipelineArtifact@2
         displayName: "Download: Test Artefacts"
-        artifact: "${{ parameters.test_artefact }}"
-        path: $(Pipeline.Workspace)/tests
+        inputs:
+          artifact: "${{ parameters.test_artefact }}"
+          path: $(Pipeline.Workspace)/tests
 
   - template: ./login-services.yml
     parameters:
