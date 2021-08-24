@@ -4,6 +4,9 @@ parameters:
   package_feed: ''
   # .NET Core version variable
   dotnet_core_version: '2.2.x'
+  # Name of the variable that holds the version number to version
+  # the package with
+  version_variable_name: Build.BuildNumber
 
 steps:
   - bash: |
@@ -44,5 +47,5 @@ steps:
       configuration: 'release'
       arguments: '--no-restore'
       versioningScheme: byEnvVar
-      versionEnvVar: Build.BuildNumber
+      versionEnvVar: ${{ parameters.version_variable_name }}
       packagesToPack: '${{ parameters.package_path }}/*.csproj'
