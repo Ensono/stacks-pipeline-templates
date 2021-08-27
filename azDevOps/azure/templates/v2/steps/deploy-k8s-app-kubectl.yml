@@ -74,7 +74,7 @@ steps:
 
       # Configure the variable to state what URL to run the tests agains
       - task: Bash@3
-        displayName: Set Testing URL: ${{ parameters.test_baseurl }}
+        displayName: "Set Testing URL: ${{ parameters.test_baseurl }}"
         inputs:
           targetType: inline
           script: |
