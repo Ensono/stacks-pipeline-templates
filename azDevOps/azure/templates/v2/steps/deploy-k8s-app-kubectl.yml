@@ -69,8 +69,17 @@ steps:
         target:
           container: "${{ parameters.container }}"
 
-  # Perform the functional tests if they have been enabled
-  - ${{ if eq(parameters.functional_test, true) }}:
+  # Perform the functional tests if they have been enabled and a test URL has been provided
+  - ${{ if and(eq(parameters.functional_test, true), ne(parameters.test_baseurl, '')) }}:
+
+      # Configure the variable to state what URL to run the tests agains
+      - task: Bash@3
+        displayName: Set Testing URL: ${{ parameters.test_baseurl }}
+        inputs:
+          targetType: inline
+          script: |
+            echo "##vso[task.setvariable variable=BaseUrl]${{ parameters.test_baseurl }}"
+
       - task: DotNetCoreCLI@2
         displayName: "Test: Run Functional Tests"
         inputs:
