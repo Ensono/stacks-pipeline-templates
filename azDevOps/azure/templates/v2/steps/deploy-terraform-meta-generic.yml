@@ -17,7 +17,7 @@ parameters:
   terraform_extra_properties: {}
   terraform_output_commands: ''
   terraform_plan_only: false
-  
+
 steps:
   - template: ./deploy-terraform-init-generic.yml
     parameters:
@@ -46,7 +46,7 @@ steps:
   #   inputs:
   #     instructions: 'reject or resume'
   #     onTimeout: 'reject'
-- ${{ if eq(parameters.terraform_plan_only, false) }}:
+ - ${{ if eq(parameters.terraform_plan_only, false) }}:
   - bash: terraform apply tfplan
     displayName: 'Terraform: Apply'
     workingDirectory: ${{ parameters.working_dir }}
