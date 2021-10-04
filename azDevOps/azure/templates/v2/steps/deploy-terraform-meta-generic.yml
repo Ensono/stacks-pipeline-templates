@@ -47,17 +47,17 @@ steps:
   #     instructions: 'reject or resume'
   #     onTimeout: 'reject'
   - ${{ if eq(parameters.terraform_plan_only, false) }}:
-    - bash: terraform apply tfplan
-      displayName: 'Terraform: Apply'
-      workingDirectory: ${{ parameters.working_dir }}
-      env:
-        # AUTH PARAMS
-        ${{ each var in parameters.terraform_auth_properties }}:
-          ${{ var.key }}: ${{ var.value }}
-        # Extra Parameters
-        # Business specific vars passed from pipeline
-        ${{ each var in parameters.terraform_extra_properties }}:
-          ${{ var.key }}: ${{ var.value }}
+      - bash: terraform apply tfplan
+        displayName: 'Terraform: Apply'
+        workingDirectory: ${{ parameters.working_dir }}
+        env:
+          # AUTH PARAMS
+          ${{ each var in parameters.terraform_auth_properties }}:
+            ${{ var.key }}: ${{ var.value }}
+          # Extra Parameters
+          # Business specific vars passed from pipeline
+          ${{ each var in parameters.terraform_extra_properties }}:
+            ${{ var.key }}: ${{ var.value }}
 
   - bash: ${{ parameters.terraform_output_commands }}
     displayName: 'Terraform: Write Outputs to Variables'
