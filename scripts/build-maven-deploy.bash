@@ -13,8 +13,8 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
+		  -s location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
-		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		USAGE_STRING
 	)
 
@@ -35,8 +35,8 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
+    s  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
-    S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
