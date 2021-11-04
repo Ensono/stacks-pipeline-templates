@@ -14,6 +14,7 @@ usage()
 
 		Optional Arguments:
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
+		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		USAGE_STRING
 	)
 
