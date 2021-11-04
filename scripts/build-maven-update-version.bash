@@ -35,7 +35,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
-    S  ) PACKAGE_VERSION="${OPTARG}";;
+    V  ) PACKAGE_VERSION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
