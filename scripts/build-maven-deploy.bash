@@ -52,7 +52,7 @@ if [ -z "${SETTINGS_LOCATION}" ]; then
 	SETTINGS_LOCATION="./.mvn/settings.xml"
 fi
 
-ARTIFACTORY_ADMIN="admin"
-ARTIFACTORY_PASSWORD="password"
+ARTIFACTORY_ADMIN="stacks-pipeline"
+ARTIFACTORY_PASSWORD="y7uPUe4rltW5"
 
 ./mvnw deploy --no-transfer-progress --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_ADMIN} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
