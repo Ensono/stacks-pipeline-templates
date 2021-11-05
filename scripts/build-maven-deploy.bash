@@ -40,7 +40,7 @@ do
 	case "${option}" in
 	  # Required
 	  u ) ARTIFACTORY_USER="${OPTARG}";;
-	  p ) ARTIFACTORY_PASSWORD"${OPTARG}";;
+	  p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
 
 		# Optional
     S  ) SETTINGS_LOCATION="${OPTARG}";;
