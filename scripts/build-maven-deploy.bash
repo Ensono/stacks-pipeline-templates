@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":u:p:Z:S:"
+OPTIONS=":u:p:Z:S:F:"
 
 usage()
 {
@@ -17,6 +17,7 @@ usage()
 		  -p password for the repository
 
 		Optional Arguments:
+		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
@@ -43,6 +44,7 @@ do
 	  p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
 
 		# Optional
+		F  ) POM_FILE="${OPTARG}";;
     S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
@@ -52,25 +54,16 @@ do
 	esac
 done
 
-if [ -z "${M2_LOCATION}" ]; then
-	M2_LOCATION="./.m2"
+if [ -z "${POM_FILE}" ]; then
+	POM_FILE="pom.xml"
 fi
 
 if [ -z "${SETTINGS_LOCATION}" ]; then
 	SETTINGS_LOCATION="./.mvn/settings.xml"
 fi
 
-if [ -z "${ARTIFACTORY_USER}" ]; then
-	ARTIFACTORY_USER="user"
+if [ -z "${M2_LOCATION}" ]; then
+	M2_LOCATION="./.m2"
 fi
 
-if [ -z "${ARTIFACTORY_PASSWORD}" ]; then
-	ARTIFACTORY_PASSWORD="pass"
-fi
-
-#ARTIFACTORY_ADMIN="stacks-pipeline"
-#ARTIFACTORY_PASSWORD="y7uPUe4rltW5"
-
-echo ${ARTIFACTORY_USER} // ${ARTIFACTORY_PASSWORD}
-
-./mvnw deploy -Dmaven.test.skip=true --no-transfer-progress --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
+./mvnw deploy -Dmaven.test.skip=true --no-transfer-progress -f  ${POM_FILE} --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
