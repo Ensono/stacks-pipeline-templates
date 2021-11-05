@@ -4,13 +4,17 @@
 
 set -exo pipefail
 
-OPTIONS=":Z:S:"
+OPTIONS=":u:p:Z:S:"
 
 usage()
 {
 	set +x
 	USAGE=$(cat <<- USAGE_STRING
 		Usage: $(basename "${0}") [OPTION]...
+
+		Required Arguments:
+		  -u username for the repository
+		  -p password for the repository
 
 		Optional Arguments:
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
@@ -34,6 +38,10 @@ done
 while getopts "${OPTIONS}" option
 do
 	case "${option}" in
+	  # Required
+	  u ) ARTIFACTORY_USER="${OPTARG}";;
+	  p ) ARTIFACTORY_PASSWORD"${OPTARG}";;
+
 		# Optional
     S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
@@ -52,7 +60,17 @@ if [ -z "${SETTINGS_LOCATION}" ]; then
 	SETTINGS_LOCATION="./.mvn/settings.xml"
 fi
 
-ARTIFACTORY_ADMIN="stacks-pipeline"
-ARTIFACTORY_PASSWORD="y7uPUe4rltW5"
+if [ -z "${ARTIFACTORY_USER}" ]; then
+	ARTIFACTORY_USER="user"
+fi
 
-./mvnw deploy --no-transfer-progress --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_ADMIN} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
+if [ -z "${ARTIFACTORY_PASSWORD}" ]; then
+	ARTIFACTORY_PASSWORD="pass"
+fi
+
+#ARTIFACTORY_ADMIN="stacks-pipeline"
+#ARTIFACTORY_PASSWORD="y7uPUe4rltW5"
+
+echo ${ARTIFACTORY_USER} // ${ARTIFACTORY_PASSWORD}
+
+./mvnw deploy -Dmaven.test.skip=true --no-transfer-progress --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
