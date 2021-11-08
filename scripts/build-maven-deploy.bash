@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":u:p:Z:S:F:"
+OPTIONS=":u:p:Z:S:F:R:"
 
 usage()
 {
@@ -17,6 +17,7 @@ usage()
 		  -p password for the repository
 
 		Optional Arguments:
+		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
@@ -44,6 +45,7 @@ do
 	  p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
 
 		# Optional
+		R  ) ALT_DEPLOYMENT_REPOSITORY="-DaltDeploymentRepository=${OPTARG}";;
 		F  ) POM_FILE="${OPTARG}";;
     S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
@@ -66,4 +68,8 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-./mvnw deploy -Dmaven.test.skip=true --no-transfer-progress -f  ${POM_FILE} --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
+if [ -z "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
+	ALT_DEPLOYMENT_REPOSITORY=""
+fi
+
+./mvnw deploy ${ALT_DEPLOYMENT_REPOSITORY} -Dmaven.test.skip=true --no-transfer-progress -f  ${POM_FILE} --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
