@@ -48,17 +48,19 @@ do
 	esac
 done
 
+MAVEN_OPTIONS=" --no-transfer-progress "
+
 if [ -z "${M2_LOCATION}" ]; then
-	M2_LOCATION="./.m2"
+	M2_LOCATION+="./.m2"
 fi
 
 if [ "${ARTIFACTORY_USER}" ]; then
-  AUTH_OPTIONS="-Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}"
+  MAVEN_OPTIONS+=" -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD} "
 fi
 
 if [ "${SETTINGS_LOCATION}" ]; then
-  SETTINGS_OPTIONS="--settings ${SETTINGS_LOCATION}"
+  MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
-./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS} ${SETTINGS_OPTIONS}
-./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS} ${SETTINGS_OPTIONS}
+./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" ${MAVEN_OPTIONS}
+./mvnw install -Dmaven.repo.local="${M2_LOCATION}" ${MAVEN_OPTIONS}
