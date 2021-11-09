@@ -54,7 +54,7 @@ if [ "${ARTIFACTORY_USER}" ]; then
   AUTH_OPTIONS="-Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}"
 fi
 
-echo ${AUTH_OPTIONS}
+echo "AUTH" ${AUTH_OPTIONS}
 
 ./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS}
-./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress "${AUTH_OPTIONS}"
+./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS}
