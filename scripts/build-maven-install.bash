@@ -50,7 +50,7 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-if [ -z "${ARTIFACTORY_USER}" ]; then
+if [ "${ARTIFACTORY_USER}" ]; then
   AUTH_OPTIONS="-Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}"
 fi
 
