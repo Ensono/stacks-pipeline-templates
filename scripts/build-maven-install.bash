@@ -47,4 +47,4 @@ if [ -z "${M2_LOCATION}" ]; then
 fi
 
 ./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress
-./mvnw install -Dmaven.repo.local="${M2_LOCATION}"
+./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress
