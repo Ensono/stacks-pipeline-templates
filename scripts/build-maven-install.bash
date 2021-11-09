@@ -15,6 +15,7 @@ usage()
 		Optional Arguments:
 		  -U location	Optional username for the repository
 		  -P location	Optional password for the repository
+		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -39,6 +40,7 @@ do
 		Z  ) M2_LOCATION="${OPTARG}";;
 	  U  ) ARTIFACTORY_USER="${OPTARG}";;
 	  P  ) ARTIFACTORY_PASSWORD="${OPTARG}";;
+    S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -54,7 +56,9 @@ if [ "${ARTIFACTORY_USER}" ]; then
   AUTH_OPTIONS="-Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}"
 fi
 
-echo "AUTH" ${AUTH_OPTIONS}
+if [ "${SETTINGS_LOCATION}" ]; then
+  SETTINGS_OPTIONS="--settings ${SETTINGS_LOCATION}"
+fi
 
-./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS}
-./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS}
+./mvnw dependency:go-offline -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS} ${SETTINGS_OPTIONS}
+./mvnw install -Dmaven.repo.local="${M2_LOCATION}" --no-transfer-progress ${AUTH_OPTIONS} ${SETTINGS_OPTIONS}
