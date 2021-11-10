@@ -11,19 +11,23 @@ parameters:
   vulnerability_scan_report: ""
   java_project_type: ""
   functional_test_project_type: ""
+  coverage_test: true
 
 steps:
+
   - task: PublishTestResults@2
     condition: always()
     displayName: "Publish Test Results"
 
-  - task: PublishCodeCoverageResults@1
-    condition: always()
-    inputs:
-      codeCoverageTool: "JaCoCo"
-      summaryFileLocation: "${{ parameters.project_root_dir }}/target/site/jacoco/jacoco.xml"
-      reportDirectory: "${{ parameters.project_root_dir }}/target/site/jacoco-inline"
-    displayName: "Publish JaCoCo Coverage Results"
+  # Publish Coverage reports if required
+  - ${{ if eq(parameters.coverage_test, true) }}:
+      - task: PublishCodeCoverageResults@1
+        condition: always()
+        inputs:
+          codeCoverageTool: "JaCoCo"
+          summaryFileLocation: "${{ parameters.project_root_dir }}/target/site/jacoco/jacoco.xml"
+          reportDirectory: "${{ parameters.project_root_dir }}/target/site/jacoco-inline"
+        displayName: "Publish JaCoCo Coverage Results"
 
   # Publish Vulnerability Artefacts if required
   - ${{ if eq(parameters.vulnerability_scan, true) }}:

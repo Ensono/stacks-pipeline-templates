@@ -21,6 +21,8 @@ parameters:
   project_type: ""
 
 steps:
+
+  # Maven: Install Packages
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
@@ -34,6 +36,7 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Install Packages (${{ parameters.project_type }})"
 
+  # Maven: Update version to the value defined in maven_package_version
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-version.bash"
@@ -45,6 +48,7 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Update version (${{ parameters.project_type }})"
 
+  # Maven: Build archetype
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-archetype.bash"
@@ -57,6 +61,7 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Build archetype (${{ parameters.project_type }})"
 
+  # Maven: Deploy Archetype
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
