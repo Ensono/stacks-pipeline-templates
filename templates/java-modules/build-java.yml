@@ -34,8 +34,7 @@ steps:
 
   - task: Bash@3
     inputs:
-      # filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
-      filePath: scripts/build-maven-install.bash@template
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
       arguments: >
         -U "${{ parameters.artifactory_username }}"
         -P "${{ parameters.artifactory_password }}"
