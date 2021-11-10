@@ -18,6 +18,8 @@ parameters:
   vulnerability_scan: false
   vulnerability_scan_fail_build_on_detection: true
   project_type: ""
+  # Testing
+  functional_testing_required: false
 
 steps:
 
@@ -108,72 +110,78 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Compile Application (${{ parameters.project_type }})"
 
-  #  - task: Bash@3
-  #    inputs:
-  #      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-download-test-deps.bash"
-  #      arguments: >
-  #        -X "${{ parameters.maven_allowed_test_tags }}"
-  #        -Y "${{ parameters.maven_surefire_reports_dir }}"
-  #        -Z "${{ parameters.maven_cache_directory }}"
-  #      workingDirectory: "${{ parameters.project_root_dir }}"
-  #    target:
-  #      container: ${{ parameters.docker_build_container }}
-  #    displayName: "Test: Download Test Deps (${{ parameters.project_type }})"
-  #
-  #  - task: Bash@3
-  #    inputs:
-  #      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
-  #      arguments: >
-  #        -a "Unit"
-  #        -Z "${{ parameters.maven_cache_directory }}"
-  #      workingDirectory: "${{ parameters.project_root_dir }}"
-  #    target:
-  #      container: ${{ parameters.docker_build_container }}
-  #    displayName: "Test: Unit tests (${{ parameters.project_type }})"
-  #
-  #  - task: Bash@3
-  #    inputs:
-  #      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
-  #      arguments: >
-  #        -a "Component"
-  #        -Z "${{ parameters.maven_cache_directory }}"
-  #      workingDirectory: "${{ parameters.project_root_dir }}"
-  #    target:
-  #      container: ${{ parameters.docker_build_container }}
-  #    displayName: "Test: Component tests (${{ parameters.project_type }})"
-  #
-  #  - task: Bash@3
-  #    inputs:
-  #      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
-  #      arguments: >
-  #        -a "Integration"
-  #        -Z "${{ parameters.maven_cache_directory }}"
-  #      workingDirectory: "${{ parameters.project_root_dir }}"
-  #    target:
-  #      container: ${{ parameters.docker_build_container }}
-  #    displayName: "Test: Integration tests (${{ parameters.project_type }})"
-  #
-  #  - task: Bash@3
-  #    inputs:
-  #      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-generate-jacoco-report.bash"
-  #      arguments: >
-  #        -Z "${{ parameters.maven_cache_directory }}"
-  #      workingDirectory: "${{ parameters.project_root_dir }}"
-  #    target:
-  #      container: ${{ parameters.docker_build_container }}
-  #    displayName: "Generate Jacoco coverage reports (${{ parameters.project_type }})"
-  #
-  #  # TODO: Pull this out into a bash script?
-  #  - bash: |
-  #      set -euxo pipefail
-  #      cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
-  #      npm i
-  #      ./node_modules/.bin/gulp inline-css-images
-  #      ./node_modules/.bin/gulp inline-sources
-  #    workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
-  #    target:
-  #      container: node
-  #    displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-download-test-deps.bash"
+          arguments: >
+            -X "${{ parameters.maven_allowed_test_tags }}"
+            -Y "${{ parameters.maven_surefire_reports_dir }}"
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Test: Download Test Deps (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
+          arguments: >
+            -a "Unit"
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Test: Unit tests (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
+          arguments: >
+            -a "Component"
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Test: Component tests (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
+          arguments: >
+            -a "Integration"
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Test: Integration tests (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-generate-jacoco-report.bash"
+          arguments: >
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Generate Jacoco coverage reports (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # TODO: Pull this out into a bash script?
+      - bash: |
+          set -euxo pipefail
+          cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
+          npm i
+          ./node_modules/.bin/gulp inline-css-images
+          ./node_modules/.bin/gulp inline-sources
+        workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
+        target:
+          container: node
+        displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - task: Bash@3
     inputs:
