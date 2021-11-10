@@ -15,4 +15,4 @@ steps:
       workingDirectory: "${{ parameters.repo_root_dir }}"
     target:
       container: "${{ parameters.container }}"
-    displayName: "Validate: Yamllint Validation"
+    displayName: "Validate: Yamllint Validation from Template"
