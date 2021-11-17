@@ -52,5 +52,6 @@ if [ -z "${PACKAGE_VERSION}" ]; then
 	PACKAGE_VERSION="1.0.0.SNAPSHOT"
 fi
 
+MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DnewVersion=${PACKAGE_VERSION}"
 
-./mvnw  --no-transfer-progress versions:set -DnewVersion=${PACKAGE_VERSION} -Dmaven.repo.local="${M2_LOCATION}"
+./mvnw  versions:set ${MAVEN_OPTIONS}

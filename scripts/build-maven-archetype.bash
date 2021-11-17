@@ -47,12 +47,18 @@ do
 	esac
 done
 
-if [ -z "${SETTINGS_LOCATION}" ]; then
-	SETTINGS_LOCATION="./.mvn/settings.xml"
+if [ -z "${ARCHETYPE_PROPERTIES_FILE}" ]; then
+	ARCHETYPE_PROPERTIES_FILE="archetype.properties"
 fi
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-./mvnw clean archetype:create-from-project --settings ${SETTINGS_LOCATION} -DpropertyFile=${ARCHETYPE_PROPERTIES_FILE} --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}"
+MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}"
+
+if [ "${SETTINGS_LOCATION}" ]; then
+  MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
+fi
+
+./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS}

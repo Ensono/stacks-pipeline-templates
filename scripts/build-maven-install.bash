@@ -63,4 +63,4 @@ if [ "${SETTINGS_LOCATION}" ]; then
 fi
 
 ./mvnw dependency:go-offline ${MAVEN_OPTIONS}
-./mvnw install ${MAVEN_OPTIONS}
+./mvnw process-resources ${MAVEN_OPTIONS}
