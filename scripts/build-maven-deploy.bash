@@ -45,7 +45,7 @@ do
 	  p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
 
 		# Optional
-		R  ) ALT_DEPLOYMENT_REPOSITORY="-DaltDeploymentRepository=${OPTARG}";;
+		R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
 		F  ) POM_FILE="${OPTARG}";;
     S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
@@ -56,20 +56,22 @@ do
 	esac
 done
 
-if [ -z "${POM_FILE}" ]; then
-	POM_FILE="pom.xml"
-fi
-
-if [ -z "${SETTINGS_LOCATION}" ]; then
-	SETTINGS_LOCATION="./.mvn/settings.xml"
-fi
-
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-if [ -z "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
-	ALT_DEPLOYMENT_REPOSITORY=""
+MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}  --no-transfer-progress "
+
+if [ -z "${SETTINGS_LOCATION}" ]; then
+	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
-./mvnw deploy ${ALT_DEPLOYMENT_REPOSITORY} -Dmaven.test.skip=true --no-transfer-progress -f  ${POM_FILE} --settings ${SETTINGS_LOCATION} -Dmaven.repo.local="${M2_LOCATION}"  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}
+if [ -z "${POM_FILE}" ]; then
+	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
+fi
+
+if [ -z "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
+	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
+fi
+
+./mvnw deploy ${MAVEN_OPTIONS}
