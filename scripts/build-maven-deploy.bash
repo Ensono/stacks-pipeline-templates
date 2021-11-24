@@ -40,19 +40,19 @@ done
 while getopts "${OPTIONS}" option
 do
 	case "${option}" in
-        # Required
-        u ) ARTIFACTORY_USER="${OPTARG}";;
-        p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
+		# Required
+		u ) ARTIFACTORY_USER="${OPTARG}";;
+		p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
 
-        # Optional
-        R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
-        F  ) POM_FILE="${OPTARG}";;
-        S  ) SETTINGS_LOCATION="${OPTARG}";;
-        Z  ) M2_LOCATION="${OPTARG}";;
+		# Optional
+		R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
+		F  ) POM_FILE="${OPTARG}";;
+		S  ) SETTINGS_LOCATION="${OPTARG}";;
+		Z  ) M2_LOCATION="${OPTARG}";;
 
-        \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
-        :  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
-        *  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
+		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
+		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
+		*  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
     esac
 done
 
