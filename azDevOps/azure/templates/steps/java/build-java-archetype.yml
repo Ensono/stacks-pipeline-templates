@@ -1,0 +1,78 @@
+parameters:
+  repo_root_dir: ""
+  project_root_dir: ""
+  pipeline_scripts_directory: ""
+  # Maven
+  maven_cache_directory: ""
+  maven_surefire_reports_dir: ""
+  maven_allowed_test_tags: ""
+  maven_pom_file: ""
+  maven_archetype_properties_file: ""
+  maven_settings_file: ""
+  maven_repository_server: ""
+  # Artifactory
+  artifactory_username: ""
+  artifactory_password: ""
+  # Docker Config
+  docker_build_container: ""
+  # Vulnerability Scanning
+  vulnerability_scan: false
+  vulnerability_scan_fail_build_on_detection: true
+  project_type: ""
+
+steps:
+
+  # Maven: Install Packages
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
+      arguments: >
+        -U "${{ parameters.artifactory_username }}"
+        -P "${{ parameters.artifactory_password }}"
+        -S "${{ parameters.maven_settings_file }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Install Packages (${{ parameters.project_type }})"
+
+  # Maven: Update version to the value defined in maven_package_version
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-version.bash"
+      arguments: >
+        -Z "${{ parameters.maven_cache_directory }}"
+        -V "${{ parameters.maven_package_version }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Update version (${{ parameters.project_type }})"
+
+  # Maven: Build archetype
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-archetype.bash"
+      arguments: >
+        -A "${{ parameters.maven_archetype_properties_file }}"
+        -S "${{ parameters.maven_settings_file }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Build archetype (${{ parameters.project_type }})"
+
+  # Maven: Deploy Archetype
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
+      arguments: >
+        -u "${{ parameters.artifactory_username }}"
+        -p "${{ parameters.artifactory_password }}"
+        -R "${{ parameters.maven_repository_server }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+        -F "${{ parameters.maven_pom_file }}"
+        -S "${{ parameters.maven_settings_file }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Deploy Archetype (${{ parameters.project_type }}) to Artifactory"

@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":Z:U:P:S:"
+OPTIONS=":Z:V:"
 
 usage()
 {
@@ -13,9 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
-		  -U location	Optional username for the repository
-		  -P location	Optional password for the repository
-		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
+		  -V location	Optional maven package version file. Default: \`1.0.0.SNAPSHOT\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -37,10 +35,8 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
+		V  ) PACKAGE_VERSION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
-	  U  ) ARTIFACTORY_USER="${OPTARG}";;
-	  P  ) ARTIFACTORY_PASSWORD="${OPTARG}";;
-    S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -49,18 +45,13 @@ do
 done
 
 if [ -z "${M2_LOCATION}" ]; then
-	M2_LOCATION+="./.m2"
+	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
-
-if [ "${ARTIFACTORY_USER}" ]; then
-  MAVEN_OPTIONS+=" -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD} "
+if [ -z "${PACKAGE_VERSION}" ]; then
+	PACKAGE_VERSION="1.0.0.SNAPSHOT"
 fi
 
-if [ "${SETTINGS_LOCATION}" ]; then
-  MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
-fi
+MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DnewVersion=${PACKAGE_VERSION}"
 
-./mvnw dependency:go-offline ${MAVEN_OPTIONS}
-./mvnw process-resources ${MAVEN_OPTIONS}
+./mvnw  versions:set ${MAVEN_OPTIONS}

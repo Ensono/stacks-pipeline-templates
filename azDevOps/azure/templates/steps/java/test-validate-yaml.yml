@@ -1,0 +1,18 @@
+parameters:
+  repo_root_dir: ""
+  pipeline_scripts_directory: ""
+  container: ""
+  yamllint_config_file: ""
+  yamllint_scan_directory: ""
+
+steps:
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/test-validate-yaml.bash"
+      arguments: >
+        -a "${{ parameters.yamllint_config_file }}"
+        -b "${{ parameters.yamllint_scan_directory }}"
+      workingDirectory: "${{ parameters.repo_root_dir }}"
+    target:
+      container: "${{ parameters.container }}"
+    displayName: "Validate: Yamllint Validation"

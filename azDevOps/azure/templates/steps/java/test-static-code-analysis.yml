@@ -1,0 +1,44 @@
+parameters:
+  project_root_dir: ""
+  pipeline_scripts_directory: ""
+  # PR / Branch vars
+  source_branch_ref: ""
+  target_branch_ref: ""
+  pullrequest_number: ""
+  # Sonar
+  sonar_enable: true
+  sonar_container: ""
+  sonar_host_url: ""
+  sonar_project_name: ""
+  sonar_project_key: ""
+  sonar_token: ""
+  sonar_organisation: ""
+  sonar_pullrequest_provider: ""
+  sonar_remote_repo: ""
+  sonar_command: ""
+  # Docker
+  docker_image_tag: ""
+
+steps:
+  # SonarCloud
+  - ${{ if eq(parameters.sonar_enable, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-sonar-scanner.bash"
+          arguments: >
+            -a "${{ parameters.sonar_host_url }}"
+            -b "${{ parameters.sonar_project_name }}"
+            -c "${{ parameters.sonar_project_key }}"
+            -d "${{ parameters.sonar_token }}"
+            -e "${{ parameters.sonar_organisation }}"
+            -f "${{ parameters.docker_image_tag }}"
+            -g "${{ parameters.source_branch_ref }}"
+            -V "${{ parameters.sonar_command }}"
+            -W "${{ parameters.sonar_remote_repo }}"
+            -X "${{ parameters.sonar_pullrequest_provider }}"
+            -Y "${{ parameters.target_branch_ref }}"
+            -Z "${{ parameters.pullrequest_number }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: "${{ parameters.sonar_container }}"
+        displayName: "Static Analysis: SonarScanner Run"
