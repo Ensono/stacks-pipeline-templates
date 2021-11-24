@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Installs (most) maven dependencies and processes them.
+# Compiles a Maven project, processes test resources, and compiles the tests.
+# NOTE: Relies on `build-maven-install.bash` to be run first!
 
 set -exo pipefail
 
-OPTIONS=":Z:U:P:S:"
+OPTIONS=":Z:A:S:"
 
 usage()
 {
@@ -13,14 +14,13 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
-		  -U location	Optional username for the repository
-		  -P location	Optional password for the repository
+		  -A location Optional archetype.properties file location. Default: \`archetype.properties\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
 
-	echo "${USAGE}"
+	echo "$USAGE"
 
 	set -x
 }
@@ -37,10 +37,9 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
+		A  ) ARCHETYPE_PROPERTIES_FILE="${OPTARG}";;
+		S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
-	  U  ) ARTIFACTORY_USER="${OPTARG}";;
-	  P  ) ARTIFACTORY_PASSWORD="${OPTARG}";;
-    S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -48,19 +47,18 @@ do
 	esac
 done
 
+if [ -z "${ARCHETYPE_PROPERTIES_FILE}" ]; then
+	ARCHETYPE_PROPERTIES_FILE="archetype.properties"
+fi
+
 if [ -z "${M2_LOCATION}" ]; then
-	M2_LOCATION+="./.m2"
+	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
-
-if [ "${ARTIFACTORY_USER}" ]; then
-  MAVEN_OPTIONS+=" -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD} "
-fi
+MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}"
 
 if [ "${SETTINGS_LOCATION}" ]; then
   MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
-./mvnw dependency:go-offline ${MAVEN_OPTIONS}
-./mvnw process-resources ${MAVEN_OPTIONS}
+./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS}
