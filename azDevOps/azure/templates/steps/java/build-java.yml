@@ -8,7 +8,6 @@ parameters:
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
   maven_settings_file: ""
-#  maven_repository_server: ""
   # Artifactory
   artifactory_username: ""
   artifactory_password: ""

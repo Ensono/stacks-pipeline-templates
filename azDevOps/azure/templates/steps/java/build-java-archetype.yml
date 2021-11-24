@@ -4,8 +4,6 @@ parameters:
   pipeline_scripts_directory: ""
   # Maven
   maven_cache_directory: ""
-#  maven_surefire_reports_dir: ""
-#  maven_allowed_test_tags: ""
   maven_package_version: ""
   maven_pom_file: ""
   maven_archetype_properties_file: ""
@@ -16,9 +14,6 @@ parameters:
   artifactory_password: ""
   # Docker Config
   docker_build_container: ""
-  # Vulnerability Scanning
-#  vulnerability_scan: false
-#  vulnerability_scan_fail_build_on_detection: true
   project_type: ""
 
 steps:
