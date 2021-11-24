@@ -53,7 +53,7 @@ do
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
 		*  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
-    esac
+	esac
 done
 
 if [ -z "${M2_LOCATION}" ]; then
