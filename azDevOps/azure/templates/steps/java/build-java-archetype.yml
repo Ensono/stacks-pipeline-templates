@@ -1,5 +1,4 @@
 parameters:
-#  repo_root_dir: ""
   project_root_dir: ""
   pipeline_scripts_directory: ""
   # Maven
