@@ -38,7 +38,7 @@ do
 	case "${option}" in
 		# Optional
 		A  ) ARCHETYPE_PROPERTIES_FILE="${OPTARG}";;
-    S  ) SETTINGS_LOCATION="${OPTARG}";;
+		S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
