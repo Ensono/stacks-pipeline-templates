@@ -1,11 +1,12 @@
 parameters:
-  repo_root_dir: ""
+#  repo_root_dir: ""
   project_root_dir: ""
   pipeline_scripts_directory: ""
   # Maven
   maven_cache_directory: ""
-  maven_surefire_reports_dir: ""
-  maven_allowed_test_tags: ""
+#  maven_surefire_reports_dir: ""
+#  maven_allowed_test_tags: ""
+  maven_package_version: ""
   maven_pom_file: ""
   maven_archetype_properties_file: ""
   maven_settings_file: ""
@@ -16,8 +17,8 @@ parameters:
   # Docker Config
   docker_build_container: ""
   # Vulnerability Scanning
-  vulnerability_scan: false
-  vulnerability_scan_fail_build_on_detection: true
+#  vulnerability_scan: false
+#  vulnerability_scan_fail_build_on_detection: true
   project_type: ""
 
 steps:
