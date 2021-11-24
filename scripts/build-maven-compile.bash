@@ -49,11 +49,6 @@ fi
 
 MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
 
-#./mvnw compile --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}" # TODO: Maybe this should run offline?
-#./mvnw process-test-resources --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}" --offline
-#./mvnw test-compile --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}"
-#./mvnw process-test-classes --no-transfer-progress -Dmaven.repo.local="${M2_LOCATION}" # TODO: Maybe this should be run offline?
-
 ./mvnw compile ${MAVEN_OPTIONS} # TODO: Maybe this should run offline?
 ./mvnw process-test-resources ${MAVEN_OPTIONS}
 ./mvnw test-compile ${MAVEN_OPTIONS}

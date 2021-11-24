@@ -46,10 +46,6 @@ if [ -z "$M2_LOCATION" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-#./mvnw jacoco:report \
-#	--no-transfer-progress \
-#	-Dmaven.repo.local="${M2_LOCATION}" \
-#	--offline
 ./mvnw jacoco:report \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}"
