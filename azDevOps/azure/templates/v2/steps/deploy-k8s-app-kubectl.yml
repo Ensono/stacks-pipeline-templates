@@ -1,6 +1,7 @@
 parameters:
   container: "k8s_deploy"
   download_deploy_artefact: false
+  dotnet_core_version: "3.1.x"
   deploy_artifact_name: ""
   test_artefact: "tests"
   test_baseurl: ""
@@ -79,6 +80,13 @@ steps:
           targetType: inline
           script: |
             echo "##vso[task.setvariable variable=BaseUrl]${{ parameters.test_baseurl }}"
+
+      - task: UseDotNet@2
+        displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }}'
+        inputs:
+          packageType: sdk
+          version: ${{ parameters.dotnet_core_version }}
+          installationPath: $(Agent.ToolsDirectory)/dotnet
 
       - task: DotNetCoreCLI@2
         displayName: "Test: Run Functional Tests"
