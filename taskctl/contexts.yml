@@ -1,0 +1,128 @@
+# independent-runner
+contexts:
+  docsenv:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -e
+        - PSModulePath=/app/src/modules        
+        - -w
+        - /app
+        - russellseymour/pandoc-asciidoctor
+        - pwsh
+        - -NoProfile
+        - -Command
+    quote: "'"
+
+  powershell_test:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -v
+        - /var/run/docker.sock:/var/run/docker.sock
+        - -e
+        - PSModulePath=/app/src/modules
+        - -w
+        - /app
+        - russellseymour/runner-pwsh:0.0.4
+        - pwsh
+        - -NoProfile
+        - -Command
+    quote: "'"
+
+  powershell:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --env-file envfile
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -v
+        - /var/run/docker.sock:/var/run/docker.sock
+        - -e
+        - PSModulePath=/app/src/modules
+        - -w
+        - /app
+        - russellseymour/runner-pwsh:0.0.4
+        - pwsh
+        - -NoProfile
+        - -Command
+    quote: "'"
+    before: env | grep -v PATH > envfile
+
+  dotnet:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -v
+        - /var/run/docker.sock:/var/run/docker.sock
+        - -e
+        - PSModulePath=/app/src/modules
+        - -w
+        - /app
+        - russellseymour/runner-pwsh-dotnet:0.0.3
+        - pwsh
+        - -NoProfile
+        - -Command
+    quote: "'"    
+
+# stacks cli
+
+  buildenv:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -w
+        - /app
+        - russellseymour/stacks-pwsh-golang:1.16.11
+        - pwsh
+        - -NoProfile
+        - -Command
+
+  inttestenv:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -w
+        - /app
+        - russellseymour/dotnet-git:6
+        - pwsh
+        - -NoProfile
+        - -Command        
+
+  docsenv:
+    executable:
+      bin: docker
+      args:
+        - run
+        - --rm
+        - -v
+        - ${PWD}:/app
+        - -w
+        - /app
+        - russellseymour/pandoc-asciidoctor
+        - pwsh
+        - -NoProfile
+        - -Command     
