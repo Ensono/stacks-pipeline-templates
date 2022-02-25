@@ -69,7 +69,7 @@ if [ "${POM_FILE}" ]; then
 fi
 
 if [ "${GPP_PRIVATE_KEY}" ]; then
-	MAVEN_OPTIONS+=" -Dgpg.keyname=${GPP_PRIVATE_KEY} "
+	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPP_PRIVATE_KEY} "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
