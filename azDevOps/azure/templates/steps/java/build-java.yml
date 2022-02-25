@@ -20,6 +20,8 @@ parameters:
   project_type: ""
   # Testing
   functional_testing_required: false
+  #OSSRH MAVEN CENTRAL
+  gpg_private_key: ""
 
 steps:
 
@@ -202,11 +204,10 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
       arguments: >
-        -u "${{ parameters.artifactory_username }}"
-        -p "${{ parameters.artifactory_password }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -S "${{ parameters.maven_settings_file }}"
+          -u "${{ parameters.gpg_private_key }}"
+          -Z "${{ parameters.maven_cache_directory }}"
+          -F "${{ parameters.maven_pom_file }}"
+          -S "${{ parameters.maven_settings_file }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}

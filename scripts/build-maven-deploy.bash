@@ -40,10 +40,8 @@ done
 while getopts "${OPTIONS}" option
 do
 	case "${option}" in
-        # Required
-        u ) ARTIFACTORY_USER="${OPTARG}";;
-        p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
-
+        # Required private signing key
+        u ) GPP_PRIVATE_KEY="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
@@ -60,7 +58,7 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}  --no-transfer-progress "
+MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  -Dgpg.keyname=${GPP_PRIVATE_KEY} --no-transfer-progress "
 
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
@@ -74,4 +72,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy ${MAVEN_OPTIONS}
+./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS}
