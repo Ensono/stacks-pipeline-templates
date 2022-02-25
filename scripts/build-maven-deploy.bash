@@ -58,7 +58,7 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  -Dgpg.keyname=${GPP_PRIVATE_KEY} --no-transfer-progress "
+MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-transfer-progress "
 
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
@@ -66,6 +66,10 @@ fi
 
 if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
+fi
+
+if [ "${GPP_PRIVATE_KEY}" ]; then
+	MAVEN_OPTIONS+=" -Dgpg.keyname=${GPP_PRIVATE_KEY} "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
