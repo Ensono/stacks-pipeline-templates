@@ -20,7 +20,7 @@ parameters:
   project_type: ""
   # Testing
   functional_testing_required: false
-  #OSSRH MAVEN CENTRAL
+  # OSSRH MAVEN CENTRAL
   gpg_private_key: ""
 
 steps:
