@@ -68,7 +68,7 @@ if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
 fi
 
-if [ "${GPP_PRIVATE_KEY}" ]; then
+if [ "${GPP_KEY_ID}" ]; then
 	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPG_KEY_ID} "
 fi
 
