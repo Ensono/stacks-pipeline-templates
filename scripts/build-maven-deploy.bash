@@ -75,7 +75,8 @@ fi
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
-su -
+su root
+apt install sudo
 sudo apt-get update
 sudo apt-get -y install gnupg2
 
