@@ -41,7 +41,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        u ) GPP_PRIVATE_KEY="${OPTARG}";;
+        u ) GPG_KEY_ID="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
@@ -69,7 +69,7 @@ if [ "${POM_FILE}" ]; then
 fi
 
 if [ "${GPP_PRIVATE_KEY}" ]; then
-	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPP_PRIVATE_KEY} "
+	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPG_KEY_ID} "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
