@@ -200,11 +200,11 @@ steps:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
   - bash: |
-      esudo apt-get update
+      sudo apt-get update
       sudo apt-get -y install gnupg2
-    workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
+    workingDirectory: "${{ parameters.project_root_dir }}"
     target:
-      container: node
+      container: azul_java
     displayName: "install gpg"
 
   # Maven: Deploy Application
