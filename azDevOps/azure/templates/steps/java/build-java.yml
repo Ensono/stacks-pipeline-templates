@@ -200,7 +200,8 @@ steps:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
   - bash: |
-
+       apt-get install sudo -y
+       apt-get update
        apt-get -y install gnupg2
     workingDirectory: "${{ parameters.project_root_dir }}"
     target:
