@@ -199,6 +199,14 @@ steps:
         target:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
+  - script: |
+       su root
+       apt install sudo
+       sudo apt-get update
+       sudo apt-get -y install gnupg2
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "install gnupg2 "
 
   # Maven: Deploy Application
   - task: Bash@3
