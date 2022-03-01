@@ -201,8 +201,8 @@ steps:
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - bash: |
-      echo 'whoami :  ${whoami}'
-      echo 'id is :   ${id}'
+      echo "whoami :  $(whoami)"
+      echo "id is :   $(id)"
     displayName: 'Display: root  user  Info'
 
   - bash: |
