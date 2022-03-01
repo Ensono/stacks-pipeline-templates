@@ -199,8 +199,14 @@ steps:
         target:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
-  - script: |
-       su root
+
+  - bash: |
+      echo 'whoami :  ${whoami}'
+      echo 'id is :   ${id}'
+    displayName: 'Display: root  user  Info'
+
+  - bash: |
+       su -l root
        apt install sudo
        sudo apt-get update
        sudo apt-get -y install gnupg2
