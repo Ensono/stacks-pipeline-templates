@@ -203,7 +203,8 @@ steps:
   - bash: |
       echo "whoami :  $(whoami)"
       echo "id is :   $(id)"
-    displayName: 'Display: root  user  Info'
+      echo "id is :   $(uname -a)"
+    displayName: 'Display: user  Info'
 
   - bash: |
        su -l root
