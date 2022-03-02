@@ -212,9 +212,15 @@ steps:
       echo "id is :   $(id)"
       echo "id is :   $(uname -a)"
       echo "signature : $(gpg --list-signatures)"
+      echo $gpg_private_key
+      echo '${{ parameters.gpg_private_key }} > gpg_private_key_coded.asc'
+      ls -al
+      echo 'base64 --decode ${{ parameters.gpg_private_key }}'
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "display signature "
+    env:
+      gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Deploy Application
   - task: Bash@3
