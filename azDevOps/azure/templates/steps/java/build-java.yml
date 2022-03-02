@@ -204,16 +204,17 @@ steps:
       echo "whoami :  $(whoami)"
       echo "id is :   $(id)"
       echo "id is :   $(uname -a)"
+      echo "signature : $(gpg --list-signatures)"
     displayName: 'Display: user  Info'
 
   - bash: |
-       su -l root
-       apt install sudo
-       sudo apt-get update
-       sudo apt-get -y install gnupg2
+      echo "whoami :  $(whoami)"
+      echo "id is :   $(id)"
+      echo "id is :   $(uname -a)"
+      echo "signature : $(gpg --list-signatures)"
     target:
       container: ${{ parameters.docker_build_container }}
-    displayName: "install gnupg2 "
+    displayName: "display signature "
 
   # Maven: Deploy Application
   - task: Bash@3
