@@ -201,13 +201,6 @@ steps:
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - bash: |
-      echo "whoami :  $(whoami)"
-      echo "id is :   $(id)"
-      echo "id is :   $(uname -a)"
-      echo "signature : $(gpg --list-signatures)"
-    displayName: 'Display: user  Info'
-
-  - bash: |
       base64 -d <<< "$private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       echo "displaying list secret key "
