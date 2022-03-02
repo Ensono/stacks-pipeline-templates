@@ -75,9 +75,5 @@ fi
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
-su root
-apt install sudo
-sudo apt-get update
-sudo apt-get -y install gnupg2
 
 ./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS}

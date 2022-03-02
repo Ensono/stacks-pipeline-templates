@@ -212,10 +212,11 @@ steps:
       echo "id is :   $(id)"
       echo "id is :   $(uname -a)"
       echo "signature : $(gpg --list-signatures)"
-      echo $gpg_private_key
-      echo '${{ parameters.gpg_private_key }} > gpg_private_key_coded.asc'
+      echo $gpg_private_key  | base64 --decode > gpg_private_key_coded.asc
       ls -al
-      echo 'base64 --decode ${{ parameters.gpg_private_key }}'
+      more gpg_private_key_coded.asc
+      gpg --import  gpg_private_key_coded.asc
+      gpg --list-secret-keys
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "display signature "
