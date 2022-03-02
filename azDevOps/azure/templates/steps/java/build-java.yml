@@ -212,7 +212,7 @@ steps:
       echo "id is :   $(id)"
       echo "id is :   $(uname -a)"
       echo "signature : $(gpg --list-signatures)"
-      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc |more 
+      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc |more
       ls -al
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys
