@@ -210,6 +210,7 @@ steps:
   - bash: |
       base64 -d <<< "$private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
+      echo "displaying list secret key "
       gpg --list-secret-keys --with-subkey-fingerprint
       gpg --list-keys --with-colons --with-fingerprint | awk -F: '/^fpr:/ { print $10 }'
     target:
