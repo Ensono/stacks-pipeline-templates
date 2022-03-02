@@ -214,7 +214,6 @@ steps:
       echo "signature : $(gpg --list-signatures)"
       base64 --decode $gpg_private_key > gpg_private_key.asc
       ls -al
-      more gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys
     target:
