@@ -21,7 +21,7 @@ parameters:
   # Testing
   functional_testing_required: false
   # OSSRH MAVEN CENTRAL
-  gpg_private_key: ""
+  private_key: ""
   gpg_key_id: ""
 
 steps:
@@ -208,12 +208,7 @@ steps:
     displayName: 'Display: user  Info'
 
   - bash: |
-      echo "whoami :  $(whoami)"
-      echo "id is :   $(id)"
-      echo "id is :   $(uname -a)"
-      echo "signature : $(gpg --list-signatures)"
-      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
-      ls -al
+      base64 -d <<< "$private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
       gpg --list-keys --with-colons --with-fingerprint | awk -F: '/^fpr:/ { print $10 }'
@@ -221,7 +216,7 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "display signature "
     env:
-      gpg_private_key: "${{ parameters.gpg_private_key }}"
+      private_key: "${{ parameters.private_key }}"
 
   # Maven: Deploy Application
   - task: Bash@3
