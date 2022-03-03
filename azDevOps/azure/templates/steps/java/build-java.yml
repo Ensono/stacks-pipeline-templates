@@ -204,7 +204,6 @@ steps:
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
-      ls
       cp "${{ parameters.repo_root_dir }}/settings.xml"  $HOME/.m2/settings.xml
     target:
       container: ${{ parameters.docker_build_container }}
