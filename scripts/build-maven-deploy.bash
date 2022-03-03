@@ -60,7 +60,7 @@ fi
 MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-transfer-progress "
 
 if [ "${SETTINGS_LOCATION}" ]; then
-	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
+	MAVEN_OPTIONS+=" --global-settings ${SETTINGS_LOCATION} "
 fi
 
 if [ "${POM_FILE}" ]; then
@@ -75,4 +75,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw -gs deploy -P release-sign-artifacts ${MAVEN_OPTIONS}
+./mvnw  deploy -P release-sign-artifacts ${MAVEN_OPTIONS}
