@@ -201,17 +201,9 @@ steps:
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - bash: |
-      echo "whoami :  $(whoami)"
-      echo "id is :   $(id)"
-      echo "id is :   $(uname -a)"
-      echo "signature : $(gpg --list-signatures)"
-    displayName: 'Display: user  Info'
-
-  - bash: |
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
-      gpg --list-keys --with-colons --with-fingerprint | awk -F: '/^fpr:/ { print $10 }'
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "display signature "
