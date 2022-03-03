@@ -41,7 +41,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        u ) GPG_KEY_ID= gpg --list-keys --with-colons --with-fingerprint | awk -F: '/^fpr:/ { print $10 }' ;;
+        u ) GPG_KEY_ID="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
