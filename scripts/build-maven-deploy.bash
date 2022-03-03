@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":u:p:Z:S:F:R:"
+OPTIONS=":u:Z:S:F:R:"
 
 usage()
 {
@@ -13,8 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -u username for the repository
-		  -p password for the repository
+		  -u key id user for signing release
 
 		Optional Arguments:
 		  -R location Optional alternative deployment repository. Default: \`\`
@@ -41,7 +40,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        u ) GPG_KEY_ID="${OPTARG}";;
+        u  ) GPG_KEY_ID="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
@@ -76,4 +75,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS} -X
+./mvnw -gs deploy -P release-sign-artifacts ${MAVEN_OPTIONS}
