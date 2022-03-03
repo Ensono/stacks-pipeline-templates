@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":U:Z:S:F:R:"
+OPTIONS=":U:R:F:S:Z:"
 
 usage()
 {
@@ -13,7 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -u key id user for signing release
+		  -U key id user for signing release
 
 		Optional Arguments:
 		  -R location Optional alternative deployment repository. Default: \`\`
@@ -40,7 +40,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        u  ) GPG_KEY_ID="${OPTARG}";;
+        U  ) GPG_KEY_ID="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
