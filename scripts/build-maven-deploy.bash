@@ -60,7 +60,7 @@ fi
 MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-transfer-progress "
 
 if [ "${SETTINGS_LOCATION}" ]; then
-	MAVEN_OPTIONS+=" --global-settings ${SETTINGS_LOCATION} "
+	MAVEN_OPTIONS+=" --gs ${SETTINGS_LOCATION} "
 fi
 
 if [ "${POM_FILE}" ]; then
