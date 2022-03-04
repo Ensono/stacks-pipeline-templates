@@ -8,6 +8,7 @@ parameters:
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
   maven_settings_file: ""
+  maven_settings_securtiy_file: ""
   maven_repository_server: ""
   # Artifactory
   artifactory_username: ""
@@ -204,9 +205,9 @@ steps:
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
-      ls
+      ls  $HOME/.m2
       echo "${{ parameters.repo_root_dir }}/.mvn/settings-security.xml"
-      cp "${{ parameters.repo_root_dir }}/.mvn/settings-security.xml"  $HOME/.m2/settings-security.xml
+      cp "${{ parameters.repo_root_dir }}/.mvn/settings-security.xml" $HOME/.m2/settings-security.xml
       more  $HOME/.m2/settings-security.xml
     target:
       container: ${{ parameters.docker_build_container }}
@@ -223,6 +224,7 @@ steps:
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
         -S "${{ parameters.maven_settings_file }}"
+        -T "${{ parameters.maven_settings_security_file }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}

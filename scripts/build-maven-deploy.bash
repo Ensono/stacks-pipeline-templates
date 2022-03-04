@@ -46,6 +46,8 @@ do
         F  ) POM_FILE="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
+        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
+
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
         :  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -61,6 +63,9 @@ MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-t
 
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
+fi
+if [ "${SETTINGS_SECURITY_LOCATION}" ]; then
+	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 fi
 
 if [ "${POM_FILE}" ]; then
