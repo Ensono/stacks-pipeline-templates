@@ -205,7 +205,7 @@ steps:
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
       ls
-      cp "${{ parameters.repo_root_dir }}/settings-security.xml"  $HOME/.m2/settings.xml
+      cp "${{ parameters.repo_root_dir }}/.mvn/settings-security.xml"  $HOME/.m2/settings.xml
       more $HOME/.m2/settings.xml
     target:
       container: ${{ parameters.docker_build_container }}
