@@ -64,7 +64,7 @@ MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-t
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
-if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
+if [ "${SETTINGS_SECURITY_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 fi
 
@@ -72,7 +72,7 @@ if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
 fi
 
-if [ -z "${GPP_KEY_ID}" ]; then
+if [ "${GPP_KEY_ID}" ]; then
 	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPG_KEY_ID} "
 fi
 
