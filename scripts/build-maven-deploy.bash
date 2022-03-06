@@ -79,7 +79,7 @@ if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
-  SETTINGS_SECURITY_LOCATION='.mvn/settings-security.xml'
+  SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
 fi
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 

@@ -8,7 +8,7 @@ parameters:
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
   maven_settings_file: ""
-  maven_settings_security_file: ""
+  maven_settings_security_file: ".mvn/settings-security.xml"
   maven_repository_server: ""
   # Artifactory
   artifactory_username: ""
@@ -23,7 +23,7 @@ parameters:
   functional_testing_required: false
   # OSSRH MAVEN CENTRAL
   gpg_private_key: ""
-  gpg_key_id: ""
+  gpg_key_id: "092B09487E026B19B283373689DE10D4E6D9FEDA"
 
 steps:
 
