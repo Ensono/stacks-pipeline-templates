@@ -214,9 +214,9 @@ steps:
   - task: Bash@3
     inputs:
       targetType: 'inline'
-      script: echo $GPGKEY
+      script: echo $MSS ;;echo ${{ parameters.parameters.maven_settings_security_file }}
     env:
-      GPGKEY: "${{ parameters.gpg_key_id }}"
+      MSS: "${{ parameters.maven_settings_security_file }}"
 
   # Maven: Deploy Application
   - task: Bash@3
