@@ -218,7 +218,6 @@ steps:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
       arguments: >
         -U "${{ parameters.gpg_key_id }}"
-        -U "${{ parameters.gpg_key_id }}"
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
         -S "${{ parameters.maven_settings_file }}"

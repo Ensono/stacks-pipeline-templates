@@ -13,13 +13,15 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -U key id user for signing release
-
 		Optional Arguments:
+			-U key id user for signing release
 		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
+		  -S location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
+
+
 		USAGE_STRING
 	)
 
@@ -29,11 +31,14 @@ usage()
 }
 
 # Detect `--help`, show usage and exit
+i=1 ;
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
 		exit 0
 	fi
+	 echo "gpg key id - $i: $GPG_KEY_ID ";
+   i=$((i + 1));
 done
 
 while getopts "${OPTIONS}" option
@@ -54,6 +59,9 @@ do
         *  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
     esac
 done
+echo "gpg key : $GPG_KEY_ID";
+echo "SETTINGS_SECURITY_LOCATION: $SETTINGS_SECURITY_LOCATION";
+
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
