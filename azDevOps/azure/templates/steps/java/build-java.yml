@@ -24,7 +24,7 @@ parameters:
   # OSSRH MAVEN CENTRAL
   ossrh_jira_id: ""
   ossrh_jira_password: ""
-  #GPG KEYS
+  # GPG KEYS
   gpg_private_key: ""
   gpg_key_id: "092B09487E026B19B283373689DE10D4E6D9FEDA"
 
