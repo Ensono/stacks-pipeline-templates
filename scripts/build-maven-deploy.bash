@@ -33,9 +33,9 @@ usage()
 while getopts "${OPTIONS}" flag
 do
     case "${flag}" in
-        e) echo "Got flag -e";;
-        d) echo "Got flag -d";;
-        f) echo "Got flag -f with respective option ${OPTARG}";;
+        K) echo "Got flag -e";;
+        R) echo "Got flag -d";;
+        T) echo "Got flag -f with respective option ${OPTARG}";;
     esac
 done
 
