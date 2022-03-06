@@ -1,4 +1,5 @@
 parameters:
+  maven_settings_security_file: ""
   repo_root_dir: ""
   project_root_dir: ""
   pipeline_scripts_directory: ""
@@ -216,6 +217,7 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
       arguments: >
+        -U "${{ parameters.gpg_key_id }}"
         -U "${{ parameters.gpg_key_id }}"
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
