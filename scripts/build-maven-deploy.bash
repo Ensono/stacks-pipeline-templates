@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":U:R:F:S:Z:T:"
+OPTIONS=":K:R:F:S:Z:SS:"
 
 usage()
 {
@@ -14,12 +14,12 @@ usage()
 
 		Required Arguments:
 		Optional Arguments:
-			-U key id user for signing release
+			-K id user for signing release
 		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
-		  -S location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
+		  -SS location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 
 
 		USAGE_STRING
@@ -45,13 +45,13 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        U  ) GPG_KEY_ID="${OPTARG}";;
+        K  ) GPG_KEY_ID="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
-        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
+        SS  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
 
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
