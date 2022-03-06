@@ -223,7 +223,7 @@ steps:
         echo "${{ parameters.maven_settings_security_file }}"
         echo "${{ parameters.ossrh_jira_id }}"
         echo "${{ parameters.ossrh_jira_password }}"
-        echo 
+        echo
     env:
       MSS: "${{ parameters.maven_settings_security_file }}"
 
