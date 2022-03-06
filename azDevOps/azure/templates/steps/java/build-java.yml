@@ -219,13 +219,12 @@ steps:
       targetType: 'inline'
       script: |
         echo starting display
-        echo "$MSS"
         echo "${{ parameters.maven_settings_security_file }}"
         echo "${{ parameters.ossrh_jira_id }}"
         echo "${{ parameters.ossrh_jira_password }}"
-        echo
+        echo "$OSSRH_ID"
     env:
-      MSS: "${{ parameters.maven_settings_security_file }}"
+      OSSRH_ID: "${{ parameters.ossrh_jira_id }}"
 
   # Maven: Deploy Application
   - task: Bash@3
