@@ -68,9 +68,6 @@ do
         *  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
     esac
 done
-echo "gpg key : $GPG_KEY_ID";
-echo "SETTINGS_SECURITY_LOCATION: $SETTINGS_SECURITY_LOCATION";
-
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
@@ -81,9 +78,10 @@ MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-t
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
-if [ "${SETTINGS_SECURITY_LOCATION}" ]; then
-	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
+if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
+  SETTINGS_SECURITY_LOCATION='.mvn/settings-security.xml'
 fi
+	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 
 if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
