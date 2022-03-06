@@ -221,7 +221,7 @@ steps:
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
         -S "${{ parameters.maven_settings_file }}"
-        -SS "${{ parameters.maven_settings_security_file }}"
+        -T "${{ parameters.maven_settings_security_file }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
