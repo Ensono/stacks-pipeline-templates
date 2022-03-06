@@ -214,7 +214,7 @@ steps:
   - task: Bash@3
     inputs:
       targetType: 'inline'
-      script: echo $MSS ;;echo ${{ parameters.parameters.maven_settings_security_file }}
+      script: echo "$MSS"
     env:
       MSS: "${{ parameters.maven_settings_security_file }}"
 
