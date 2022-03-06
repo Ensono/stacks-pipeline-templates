@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":K:R:F:S:Z:SS:"
+OPTIONS=":KR:F:S:Z:SS"
 
 usage()
 {
