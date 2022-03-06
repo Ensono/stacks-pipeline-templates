@@ -215,7 +215,7 @@ steps:
     inputs:
       targetType: 'inline'
       script: |
-        echo starting display 
+        echo starting display
         echo "$MSS"
         echo "${{ parameters.maven_settings_security_file }}"
     env:
