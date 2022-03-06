@@ -13,13 +13,14 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		Optional Arguments:
+		  -SS location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 			-K id user for signing release
+
+		Optional Arguments:
 		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
-		  -SS location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 
 
 		USAGE_STRING
