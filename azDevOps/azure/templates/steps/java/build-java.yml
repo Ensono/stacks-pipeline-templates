@@ -22,6 +22,9 @@ parameters:
   # Testing
   functional_testing_required: false
   # OSSRH MAVEN CENTRAL
+  ossrh_jira_id: ""
+  ossrh_jira_password: ""
+  #GPG KEYS
   gpg_private_key: ""
   gpg_key_id: "092B09487E026B19B283373689DE10D4E6D9FEDA"
 
@@ -218,6 +221,9 @@ steps:
         echo starting display
         echo "$MSS"
         echo "${{ parameters.maven_settings_security_file }}"
+        echo "${{ parameters.ossrh_jira_id }}"
+        echo "${{ parameters.ossrh_jira_password }}"
+        echo 
     env:
       MSS: "${{ parameters.maven_settings_security_file }}"
 
