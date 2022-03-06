@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":KR:F:S:Z:SS"
+OPTIONS=":KR:F:S:Z:T"
 
 usage()
 {
@@ -13,7 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -SS location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
+		  -T location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 			-K id user for signing release
 
 		Optional Arguments:
@@ -52,7 +52,7 @@ do
         F  ) POM_FILE="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
-        SS  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
+        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
 
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
