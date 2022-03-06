@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":KRFSZT"
+OPTIONS=":K:R:F:S:Z:T:"
 
 usage()
 {
@@ -30,6 +30,14 @@ usage()
 
 	set -x
 }
+while getopts "${OPTIONS}" flag
+do
+    case "${flag}" in
+        e) echo "Got flag -e";;
+        d) echo "Got flag -d";;
+        f) echo "Got flag -f with respective option ${OPTARG}";;
+    esac
+done
 
 # Detect `--help`, show usage and exit
 i=1 ;
