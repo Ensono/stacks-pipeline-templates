@@ -26,7 +26,7 @@ parameters:
   ossrh_jira_password: ""
   # GPG KEYS
   gpg_private_key: ""
-  gpg_key_id: "092B09487E026B19B283373689DE10D4E6D9FEDA"
+  signing_key_id: ""
 
 steps:
 
@@ -235,7 +235,7 @@ steps:
       arguments: >
         -U "${{ parameters.ossrh_jira_id }}"
         -P "${{ parameters.ossrh_jira_password }}"
-        -K "${{ parameters.gpg_key_id }}"
+        -K "${{ parameters.signing_key_id }}"
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
         -S "${{ parameters.maven_settings_file }}"
