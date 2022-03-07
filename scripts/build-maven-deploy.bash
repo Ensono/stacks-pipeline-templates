@@ -88,7 +88,7 @@ if [ "${POM_FILE}" ]; then
 fi
 
 if [ "${GPP_KEY_ID}" ]; then
-	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${SIGNING_KEY_ID} "
+	MAVEN_OPTIONS+=" -Dgpg.keyname=${SIGNING_KEY_ID} "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
