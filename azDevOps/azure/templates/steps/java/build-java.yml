@@ -223,7 +223,7 @@ steps:
         echo "${{ parameters.ossrh_jira_id }}"
         echo "${{ parameters.ossrh_jira_password }}" > ossrh_password.asc
         echo "$OSSRH_ID"
-        more ossrh_password.asc
+        cat ossrh_password.asc
     env:
       OSSRH_ID: "${{ parameters.ossrh_jira_id }}"
 
