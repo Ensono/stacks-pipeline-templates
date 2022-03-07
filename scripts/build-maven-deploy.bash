@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS="U:P:K:R:F:S:Z:T:"
+OPTIONS=":U:P:K:R:F:S:Z:T:"
 
 usage()
 {
@@ -33,14 +33,12 @@ usage()
 	set -x
 }
 # Detect `--help`, show usage and exit
-i=1 ;
+
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
 		exit 0
 	fi
-	 echo "gpg key id - $i: $SIGNING_KEY_ID ";
-   i=$((i + 1));
 done
 
 while getopts "${OPTIONS}" option
@@ -87,7 +85,7 @@ if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
 fi
 
-if [ "${GPP_KEY_ID}" ]; then
+if [ "${SIGNING_KEY_ID}" ]; then
 	MAVEN_OPTIONS+=" -Dgpg.keyname=${SIGNING_KEY_ID} "
 fi
 
