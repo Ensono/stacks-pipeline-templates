@@ -73,8 +73,10 @@ MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-t
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
+
 if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
   SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
+fi
 
 if [ "${OSSRH_JIRA_ID}" ]; then
   MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
