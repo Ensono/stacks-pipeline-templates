@@ -221,8 +221,7 @@ steps:
         echo starting display
         echo "$KEY_ID"
     env:
-      KEY_ID: "${{ parameters.gpg-signing-key-id }}"
-
+      KEY_ID: "${{ parameters.gpg_signing_key_id }}"
 
   # Maven: Deploy Application
   - task: Bash@3
