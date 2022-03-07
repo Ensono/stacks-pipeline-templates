@@ -26,7 +26,7 @@ parameters:
   ossrh_jira_password: ""
   # GPG KEYS
   gpg_private_key: ""
-  signing_key_id: ""
+  gpg_signing_key_id: ""
 
 steps:
 
@@ -219,13 +219,9 @@ steps:
       targetType: 'inline'
       script: |
         echo starting display
-        echo "${{ parameters.maven_settings_security_file }}"
-        echo "${{ parameters.ossrh_jira_id }}"
-        echo "${{ parameters.ossrh_jira_password }}" > ossrh_password.asc
-        echo "$OSSRH_ID"
-        cat   'ossrh_password.asc'
+        echo "$KEY_ID"
     env:
-      OSSRH_ID: "${{ parameters.ossrh_jira_id }}"
+      KEY_ID: "${{ parameters.gpg-signing-key-id }}"
 
 
   # Maven: Deploy Application
@@ -235,7 +231,7 @@ steps:
       arguments: >
         -U "${{ parameters.ossrh_jira_id }}"
         -P "${{ parameters.ossrh_jira_password }}"
-        -K "${{ parameters.signing_key_id }}"
+        -G "${{ parameters.gpg_signing_key_id }}"
         -Z "${{ parameters.maven_cache_directory }}"
         -F "${{ parameters.maven_pom_file }}"
         -S "${{ parameters.maven_settings_file }}"
