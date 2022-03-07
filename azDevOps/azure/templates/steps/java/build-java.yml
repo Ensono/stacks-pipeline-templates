@@ -223,9 +223,14 @@ steps:
         echo "${{ parameters.ossrh_jira_id }}"
         echo "${{ parameters.ossrh_jira_password }}" > ossrh_password.asc
         echo "$OSSRH_ID"
-        cat ossrh_password.asc
+        touch  ossrh_password.asc
+        cat
     env:
       OSSRH_ID: "${{ parameters.ossrh_jira_id }}"
+  - task: MavenAuthenticate@0
+    displayName: 'Maven Authenticate'
+    inputs:
+      MavenServiceConnections: ossrh
 
   # Maven: Deploy Application
   - task: Bash@3
