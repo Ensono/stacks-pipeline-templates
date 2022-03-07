@@ -77,7 +77,7 @@ if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
   SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
 
 if [ "${OSSRH_JIRA_ID}" ]; then
-  MAVEN_OPTIONS+=" -DnexusUser=${ARTIFACTORY_USER} -DnexusPassword=${ARTIFACTORY_PASSWORD} "
+  MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
 fi
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 
