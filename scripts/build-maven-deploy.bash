@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS="K:R:F:S:Z:T:"
+OPTIONS="U:P:K:R:F:S:Z:T:"
 
 usage()
 {
@@ -13,6 +13,8 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
+		  -U location	OSSRH_JIRA_ID
+		  -P location	OSSRH_JIRA_PASSWORD
 		  -T location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 			-K id user for signing release
 
@@ -30,15 +32,6 @@ usage()
 
 	set -x
 }
-while getopts "${OPTIONS}" flag
-do
-    case "${flag}" in
-        K) echo "Got flag -e";;
-        R) echo "Got flag -d";;
-        T) echo "Got flag -f with respective option ${OPTARG}";;
-    esac
-done
-
 # Detect `--help`, show usage and exit
 i=1 ;
 for var in "$@"; do
@@ -55,6 +48,8 @@ do
 	case "${option}" in
         # Required private signing key
         K  ) GPG_KEY_ID="${OPTARG}";;
+        U  ) OSSRH_JIRA_ID="${OPTARG}";;
+        P  ) OSSRH_JIRA_PASSWORD="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
@@ -80,6 +75,9 @@ if [ "${SETTINGS_LOCATION}" ]; then
 fi
 if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
   SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
+
+if [ "${OSSRH_JIRA_ID}" ]; then
+  MAVEN_OPTIONS+=" -DnexusUser=${ARTIFACTORY_USER} -DnexusPassword=${ARTIFACTORY_PASSWORD} "
 fi
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 
