@@ -39,7 +39,7 @@ for var in "$@"; do
 		usage
 		exit 0
 	fi
-	 echo "gpg key id - $i: $GPG_KEY_ID ";
+	 echo "gpg key id - $i: $SIGNING_KEY_ID ";
    i=$((i + 1));
 done
 
@@ -47,7 +47,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        K  ) GPG_KEY_ID="${OPTARG}";;
+        K  ) SIGNING_KEY_ID="${OPTARG}";;
         U  ) OSSRH_JIRA_ID="${OPTARG}";;
         P  ) OSSRH_JIRA_PASSWORD="${OPTARG}";;
         # Optional
@@ -88,7 +88,7 @@ if [ "${POM_FILE}" ]; then
 fi
 
 if [ "${GPP_KEY_ID}" ]; then
-	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${GPG_KEY_ID} "
+	MAVEN_OPTIONS+=" -Darguments=-Dgpg.keyname=${SIGNING_KEY_ID} "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
