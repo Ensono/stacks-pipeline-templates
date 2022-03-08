@@ -85,12 +85,12 @@ if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
 fi
 
-if [ "${GPG_SIGNING_KEY_ID}" ]; then
-	MAVEN_OPTIONS+=" -Dgpg.keyname=${GPG_SIGNING_KEY_ID} "
+if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
+	MAVEN_OPTIONS+=" -Dgpg.keyname=092B09487E026B19B283373689DE10D4E6D9FEDA "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS} -X
+./mvnw nexus-staging:release -P release-sign-artifacts ${MAVEN_OPTIONS} -X
