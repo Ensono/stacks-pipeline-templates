@@ -223,21 +223,6 @@ steps:
     env:
       KEY_ID: "${{ parameters.gpg_signing_key_id }}"
 
-  # Maven: Deploy Application to Artifactory
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
-      arguments: >
-        -u "${{ parameters.artifactory_username }}"
-        -p "${{ parameters.artifactory_password }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -S "${{ parameters.maven_settings_file }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Deploy Application (${{ parameters.project_type }}) to Artifactory"
-
   # Maven: Deploy Application to maven central
   - task: Bash@3
     inputs:
