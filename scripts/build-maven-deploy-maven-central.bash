@@ -94,4 +94,3 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 fi
 
 ./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS} -X
-./mvnw nexus-staging:release -P release-sign-artifacts ${MAVEN_OPTIONS} -X
