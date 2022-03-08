@@ -93,4 +93,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw nexus-staging:release -P release-sign-artifacts ${MAVEN_OPTIONS} -X
+./mvnw deploy  -P release-sign-artifacts ${MAVEN_OPTIONS} -X
