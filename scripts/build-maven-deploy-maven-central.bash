@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":u:p:Z:S:F:R:"
+OPTIONS=":U:P:G:R:F:S:Z:T:"
 
 usage()
 {
@@ -13,14 +13,18 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -u username for the repository
-		  -p password for the repository
+		  -U location	OSSRH_JIRA_ID
+		  -P location	OSSRH_JIRA_PASSWORD
+		  -T location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
+			-K id user for signing release
 
 		Optional Arguments:
 		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
+
+
 		USAGE_STRING
 	)
 
@@ -28,8 +32,8 @@ usage()
 
 	set -x
 }
-
 # Detect `--help`, show usage and exit
+
 for var in "$@"; do
 	if [ "${var}" == '--help' ]; then
 		usage
@@ -40,15 +44,17 @@ done
 while getopts "${OPTIONS}" option
 do
 	case "${option}" in
-        # Required
-        u ) ARTIFACTORY_USER="${OPTARG}";;
-        p ) ARTIFACTORY_PASSWORD="${OPTARG}";;
-
+        # Required private signing key
+        G  ) GPG_SIGNING_KEY_ID="${OPTARG}";;
+        U  ) OSSRH_JIRA_ID="${OPTARG}";;
+        P  ) OSSRH_JIRA_PASSWORD="${OPTARG}";;
         # Optional
         R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
+        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
+
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
         :  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -60,18 +66,31 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  -Dartifactory.username=${ARTIFACTORY_USER} -Dartifactory.password=${ARTIFACTORY_PASSWORD}  --no-transfer-progress "
+MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-transfer-progress "
 
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
+if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
+  SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
+fi
+
+if [ "${OSSRH_JIRA_ID}" ]; then
+  MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
+fi
+	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
+
 if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
+fi
+
+if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
+	MAVEN_OPTIONS+=" -Dgpg.keyname=092B09487E026B19B283373689DE10D4E6D9FEDA "
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy ${MAVEN_OPTIONS}
+./mvnw nexus-staging:release -P release-sign-artifacts ${MAVEN_OPTIONS} -X
