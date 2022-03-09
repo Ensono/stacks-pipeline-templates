@@ -249,4 +249,4 @@ steps:
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
           container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Deploy Application to Maven central (${{ parameters.project_type }}) to maven central"
+        displayName: "Maven: Deploy release Application to Maven central (${{ parameters.project_type }}) to maven central"
