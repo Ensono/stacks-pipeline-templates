@@ -228,10 +228,10 @@ steps:
             -F "${{ parameters.maven_pom_file }}"
             -S "${{ parameters.maven_settings_file }}"
             -T "${{ parameters.maven_settings_security_file }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build  _container }}
-    displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build  _container }}
+        displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
 
   - ${{ if eq(parameters.build_type, 'RELEASE') }}:
       # Maven: Performing a Release Deployment  to maven central
@@ -250,4 +250,3 @@ steps:
         target:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
-
