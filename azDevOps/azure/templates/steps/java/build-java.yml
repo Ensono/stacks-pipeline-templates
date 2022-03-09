@@ -214,15 +214,6 @@ steps:
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
-  - task: Bash@3
-    inputs:
-      targetType: 'inline'
-      script: |
-        echo starting display
-        echo "$KEY_ID"
-    env:
-      KEY_ID: "${{ parameters.gpg_signing_key_id }}"
-
   # Maven: Deploy Application to maven central
   - task: Bash@3
     inputs:
