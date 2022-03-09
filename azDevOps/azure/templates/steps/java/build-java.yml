@@ -8,7 +8,6 @@ parameters:
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
   maven_settings_file: ""
-  maven_settings_security_file: ".mvn/settings-security.xml"
   maven_repository_server: ""
   # Artifactory
   artifactory_username: ""
@@ -211,7 +210,7 @@ steps:
       gpg --list-secret-keys --with-subkey-fingerprint
     target:
       container: ${{ parameters.docker_build_container }}
-    displayName: "display signature "
+    displayName: "retrieve and import gpg key from key vault "
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
