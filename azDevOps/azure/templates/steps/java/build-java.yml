@@ -19,6 +19,7 @@ parameters:
   vulnerability_scan: false
   vulnerability_scan_fail_build_on_detection: true
   project_type: ""
+  build_type: ""
   # Testing
   functional_testing_required: false
   # OSSRH MAVEN CENTRAL
@@ -214,19 +215,39 @@ steps:
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
-  # Maven: Deploy Application to maven central
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
-      arguments: >
-        -U "${{ parameters.ossrh_jira_id }}"
-        -P "${{ parameters.ossrh_jira_password }}"
-        -G "${{ parameters.gpg_signing_key_id }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -S "${{ parameters.maven_settings_file }}"
-        -T "${{ parameters.maven_settings_security_file }}"
+  # Maven: Performing a Snapshot Deployment
+  - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
+          arguments: >
+            -U "${{ parameters.ossrh_jira_id }}"
+            -P "${{ parameters.ossrh_jira_password }}"
+            -G "${{ parameters.gpg_signing_key_id }}"
+            -Z "${{ parameters.maven_cache_directory }}"
+            -F "${{ parameters.maven_pom_file }}"
+            -S "${{ parameters.maven_settings_file }}"
+            -T "${{ parameters.maven_settings_security_file }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
-      container: ${{ parameters.docker_build_container }}
+      container: ${{ parameters.docker_build  _container }}
     displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
+
+  - ${{ if eq(parameters.build_type, 'RELEASE') }}:
+      # Maven: Performing a Release Deployment  to maven central
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
+          arguments: >
+            -U "${{ parameters.ossrh_jira_id }}"
+            -P "${{ parameters.ossrh_jira_password }}"
+            -G "${{ parameters.gpg_signing_key_id }}"
+            -Z "${{ parameters.maven_cache_directory }}"
+            -F "${{ parameters.maven_pom_file }}"
+            -S "${{ parameters.maven_settings_file }}"
+            -T "${{ parameters.maven_settings_security_file }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
+
