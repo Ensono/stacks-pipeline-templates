@@ -69,21 +69,6 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Build archetype (${{ parameters.project_type }})"
 
-  # Maven: Deploy Archetype
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy.bash"
-      arguments: >
-        -u "${{ parameters.artifactory_username }}"
-        -p "${{ parameters.artifactory_password }}"
-        -R "${{ parameters.maven_repository_server }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -S "${{ parameters.maven_settings_file }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Deploy Archetype (${{ parameters.project_type }}) to Artifactory"
 
   - bash: |
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
@@ -106,6 +91,7 @@ steps:
             -G "${{ parameters.gpg_key_signing_id }}"
             -Z "${{ parameters.maven_cache_directory }}"
             -F "${{ parameters.maven_pom_file }}"
+            -R "${{ parameters.maven_repository_server }}"
             -S "${{ parameters.maven_settings_file }}"
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
@@ -123,6 +109,7 @@ steps:
             -G "${{ parameters.gpg_key_signing_id }}"
             -Z "${{ parameters.maven_cache_directory }}"
             -F "${{ parameters.maven_pom_file }}"
+            -R "${{ parameters.maven_repository_server }}"
             -S "${{ parameters.maven_settings_file }}"
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
