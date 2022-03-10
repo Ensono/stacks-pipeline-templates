@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":U:P:G:R:F:S:Z:T:"
+OPTIONS=":U:P:G:R:F:S:Z:"
 
 usage()
 {
@@ -15,7 +15,6 @@ usage()
 		Required Arguments:
 		  -U location	OSSRH_JIRA_ID
 		  -P location	OSSRH_JIRA_PASSWORD
-		  -T location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 			-K id user for signing release
 
 		Optional Arguments:
@@ -70,10 +69,6 @@ MAVEN_OPTIONS=" -Dmaven.test.skip=true -Dmaven.repo.local=${M2_LOCATION}  --no-t
 
 if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
-fi
-
-if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
-  SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
 fi
 
 if [ "${OSSRH_JIRA_ID}" ]; then

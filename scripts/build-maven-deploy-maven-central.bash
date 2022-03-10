@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":U:P:G:R:F:S:Z:T:"
+OPTIONS=":U:P:G:R:F:S:Z:"
 
 usage()
 {
@@ -45,7 +45,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
         # Required private signing key
-        G  ) GPG_SIGNING_KEY_ID="${OPTARG}";;
+        G  ) GPG_KEY_SIGNING_ID="${OPTARG}";;
         U  ) OSSRH_JIRA_ID="${OPTARG}";;
         P  ) OSSRH_JIRA_PASSWORD="${OPTARG}";;
         # Optional
@@ -53,8 +53,6 @@ do
         F  ) POM_FILE="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
-        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
-
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
         :  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -72,10 +70,6 @@ if [ "${SETTINGS_LOCATION}" ]; then
 	MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
-if [ -z "${SETTINGS_SECURITY_LOCATION}" ]; then
-  SETTINGS_SECURITY_LOCATION=".mvn/settings-security.xml"
-fi
-
 if [ "${OSSRH_JIRA_ID}" ]; then
   MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
 fi
@@ -85,7 +79,7 @@ if [ "${POM_FILE}" ]; then
 	MAVEN_OPTIONS+=" -f  ${POM_FILE} "
 fi
 
-if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
+if [ -z "${GPG_KEY_SIGNING_ID}" ]; then
 	MAVEN_OPTIONS+=" -Dgpg.keyname=092B09487E026B19B283373689DE10D4E6D9FEDA "
 fi
 
@@ -93,4 +87,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy -P release-sign-artifacts ${MAVEN_OPTIONS}
+./mvnw deploy  ${MAVEN_OPTIONS}

@@ -205,7 +205,6 @@ steps:
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - bash: |
-      echo "key ID : ${{ parameters.gpg_key_signing_id }}"
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
@@ -227,7 +226,6 @@ steps:
             -Z "${{ parameters.maven_cache_directory }}"
             -F "${{ parameters.maven_pom_file }}"
             -S "${{ parameters.maven_settings_file }}"
-            -T "${{ parameters.maven_settings_security_file }}"
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
           container: ${{ parameters.docker_build_container }}
@@ -245,7 +243,6 @@ steps:
             -Z "${{ parameters.maven_cache_directory }}"
             -F "${{ parameters.maven_pom_file }}"
             -S "${{ parameters.maven_settings_file }}"
-            -T "${{ parameters.maven_settings_security_file }}"
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
           container: ${{ parameters.docker_build_container }}
