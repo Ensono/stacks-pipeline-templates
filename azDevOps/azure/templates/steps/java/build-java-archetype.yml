@@ -85,13 +85,13 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Deploy Archetype (${{ parameters.project_type }}) to Artifactory"
 
-    - bash: |
-        gpg --list-secret-keys --with-subkey-fingerprint
-      target:
-        container: ${{ parameters.docker_build_container }}
-      displayName: "display signing  key ID  "
-      env:
-        gpg_private_key: "${{ parameters.gpg_private_key }}"
+  - bash: |
+      gpg --list-secret-keys --with-subkey-fingerprint
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "display signing  key ID  "
+    env:
+      gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Performing a Snapshot  Archetype Deployment
   - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
@@ -128,4 +128,3 @@ steps:
         target:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: Deploy release Application to Maven central (${{ parameters.project_type }}) to maven central"
-
