@@ -86,10 +86,12 @@ steps:
     displayName: "Maven: Deploy Archetype (${{ parameters.project_type }}) to Artifactory"
 
   - bash: |
+      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
+      gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
     target:
       container: ${{ parameters.docker_build_container }}
-    displayName: "display signing  key ID  "
+    displayName: "retrieve and import gpg key from key vault "
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
