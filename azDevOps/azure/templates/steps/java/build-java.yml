@@ -29,6 +29,14 @@ parameters:
   gpg_private_key: ""
 
 steps:
+  - bash: |
+      echo "actual branching   :  ${{ variables['Build.SourceBranchName'] }}"
+
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "get build type  "
+    env:
+      gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Cache packages
   - task: Cache@2
@@ -216,7 +224,7 @@ steps:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Performing a Snapshot Deployment
-  - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
+  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' )) }}:
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
@@ -232,7 +240,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
 
-  - ${{ if eq(parameters.build_type, 'RELEASE') }}:
+  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' )) }}:
       # Maven: Performing a Release Deployment  to maven central
       - task: Bash@3
         inputs:
