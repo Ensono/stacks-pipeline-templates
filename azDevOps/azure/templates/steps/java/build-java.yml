@@ -216,7 +216,7 @@ steps:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Performing a Snapshot Deployment
-  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' )) }}:
+  - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
@@ -232,7 +232,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
 
-  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' )) }}:
+  - ${{ if eq(parameters.build_type, 'RELEASE') }}:
       # Maven: Performing a Release Deployment  to maven central
       - task: Bash@3
         inputs:
