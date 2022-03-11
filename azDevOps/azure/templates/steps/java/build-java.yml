@@ -45,8 +45,8 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
       arguments: >
-        -U "${{ parameters.artifactory_username }}"
-        -P "${{ parameters.artifactory_password }}"
+        -U "${{ parameters.ossrh_jira_id }}"
+        -P "${{ parameters.ossrh_jira_password }}"
         -S "${{ parameters.maven_settings_file }}"
         -Z "${{ parameters.maven_cache_directory }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
