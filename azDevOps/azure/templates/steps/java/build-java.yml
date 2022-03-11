@@ -205,8 +205,8 @@ steps:
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
   - bash: |
-      echo "build type : {{ parameters.build_type }}"
-      echo "signing key  :  {{ parameters.gpg_key_signing_id }}"
+      echo "build type : ${{ parameters.build_type }}"
+      echo "signing key  :  ${{ parameters.gpg_key_signing_id }}"
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
       gpg --list-secret-keys --with-subkey-fingerprint
