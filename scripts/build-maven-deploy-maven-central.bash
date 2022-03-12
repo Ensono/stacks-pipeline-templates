@@ -87,4 +87,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy  ${MAVEN_OPTIONS}
+./mvnw deploy   ${MAVEN_OPTIONS}
