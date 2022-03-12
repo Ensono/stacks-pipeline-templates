@@ -18,6 +18,7 @@ usage()
 			-K id user for signing release
 
 		Optional Arguments:
+		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
@@ -51,6 +52,7 @@ do
 
 
         # Optional
+        R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 
@@ -86,5 +88,5 @@ fi
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
-
+./mvnw clean install 
 ./mvnw nexus-staging:release -P release-sign-artifacts ${MAVEN_OPTIONS} -X
