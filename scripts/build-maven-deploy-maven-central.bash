@@ -87,4 +87,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw deploy   ${MAVEN_OPTIONS}
+./mvnw clean deploy -P release-sign-artifacts ${MAVEN_OPTIONS} -X
