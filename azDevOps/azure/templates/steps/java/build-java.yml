@@ -232,7 +232,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
 
-  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' )) }}:
+  - ${{ if eq( variables['Build.SourceBranchName'], 'feature/addReleasetask' ) }}:
       # Maven: Performing a Release Deployment  to maven central
       - task: Bash@3
         inputs:
