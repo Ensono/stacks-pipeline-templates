@@ -216,7 +216,7 @@ steps:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Performing a Snapshot Deployment
-  - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
+  - ${{ if or(eq(parameters.build_type, 'SNAPSHOT'),eq(parameters.build_type, 'RELEASE') }}:
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
