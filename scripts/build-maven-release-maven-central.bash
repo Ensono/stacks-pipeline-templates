@@ -18,7 +18,6 @@ usage()
 			-K id user for signing release
 
 		Optional Arguments:
-		  -R location Optional alternative deployment repository. Default: \`\`
 		  -F location Optional pom.xml file location. Default: \`pom.xml\`
 		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
@@ -47,12 +46,12 @@ do
         G  ) GPG_SIGNING_KEY_ID="${OPTARG}";;
         U  ) OSSRH_JIRA_ID="${OPTARG}";;
         P  ) OSSRH_JIRA_PASSWORD="${OPTARG}";;
-        # Optional
-        R  ) ALT_DEPLOYMENT_REPOSITORY="${OPTARG}";;
         F  ) POM_FILE="${OPTARG}";;
-        S  ) SETTINGS_LOCATION="${OPTARG}";;
         Z  ) M2_LOCATION="${OPTARG}";;
-        T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
+
+
+        # Optional
+        S  ) SETTINGS_LOCATION="${OPTARG}";;
 
 
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
