@@ -43,7 +43,7 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Install Packages (${{ parameters.project_type }})"
-    
+
   # Maven: Build archetype
   - task: Bash@3
     inputs:
