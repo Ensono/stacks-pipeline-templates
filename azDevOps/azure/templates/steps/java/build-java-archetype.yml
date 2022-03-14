@@ -101,7 +101,7 @@ steps:
       # Maven: Performing a Release  Archetype Deployment  to maven central
       - task: Bash@3
         inputs:
-          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
+          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-archetype-maven-central.bash"
           arguments: >
             -U "${{ parameters.ossrh_jira_id }}"
             -P "${{ parameters.ossrh_jira_password }}"
