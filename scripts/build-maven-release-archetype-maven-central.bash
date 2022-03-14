@@ -87,4 +87,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw mvn release:clean && release:prepare  && mvn release:perform  ${MAVEN_OPTIONS} -X
+./mvnw  release:clean ${MAVEN_OPTIONS} && mvn  release:prepare ${MAVEN_OPTIONS}  && mvn release:perform  ${MAVEN_OPTIONS} -X
