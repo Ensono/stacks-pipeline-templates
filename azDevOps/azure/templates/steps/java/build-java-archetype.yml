@@ -43,19 +43,7 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Install Packages (${{ parameters.project_type }})"
-
-  # Maven: Update version to the value defined in maven_package_version
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-version.bash"
-      arguments: >
-        -Z "${{ parameters.maven_cache_directory }}"
-        -V "${{ parameters.maven_package_version }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Update version (${{ parameters.project_type }})"
-
+    
   # Maven: Build archetype
   - task: Bash@3
     inputs:
