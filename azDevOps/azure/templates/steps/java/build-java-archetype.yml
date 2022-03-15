@@ -29,6 +29,15 @@ parameters:
 
 
 steps:
+  # Maven: Cache packages
+  - task: Cache@2
+    inputs:
+      key: 'maven | "$(Agent.OS)" | ${{ parameters.project_root_dir }}/pom.xml'
+      restoreKeys: |
+        maven | "$(Agent.OS)"
+        maven
+      path: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
+    displayName: Cache Maven packages (${{ parameters.project_type }})
 
   # Maven: Install Packages
   - task: Bash@3
@@ -83,7 +92,7 @@ steps:
   # Maven: Performing a Snapshot  Archetype Deployment
   - task: Bash@3
     inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-archetype-maven-central.bash"
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
       arguments: >
         -U "${{ parameters.ossrh_jira_id }}"
         -P "${{ parameters.ossrh_jira_password }}"
