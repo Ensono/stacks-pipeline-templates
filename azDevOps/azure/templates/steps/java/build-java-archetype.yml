@@ -58,11 +58,11 @@ steps:
 
   - task: Cache@2
     inputs:
-      key: 'maven | "$(Agent.OS)" | ${{ parameters.project_root_dir }}/${{ parameters.maven_archetype_pom_file }}'
+      key: 'maven | "$(Agent.OS)" | ${{ parameters.project_root_dir }}/${{ parameters.maven_pom_file }}'
       restoreKeys: |
         maven | "$(Agent.OS)"
         maven
-      path: "${{ parameters.project_root_dir }}/${{ parameters.maven_archetype_pom_file }}"
+      path: "${{ parameters.project_root_dir }}/${{ parameters.maven_pom_file }}"
     displayName: Cache Maven archetype  packages (${{ parameters.project_type }})
 
 
