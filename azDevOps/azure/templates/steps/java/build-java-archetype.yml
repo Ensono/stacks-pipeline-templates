@@ -36,7 +36,7 @@ steps:
         maven | "$(Agent.OS)"
         maven
       path: "${{ parameters.project_root_dir }}/${{ parameters.maven_archetype_pom_file }}"
-    displayName: Cache Maven packages (${{ parameters.project_type }})
+    displayName: Cache Maven archetype  packages (${{ parameters.project_type }})
 
   # Maven: Install Packages
   - task: Bash@3
