@@ -81,7 +81,7 @@ steps:
     displayName: Cache Maven packages (${{ parameters.project_type }})
 
   - bash: |
-      ./mvnw  install:install-file -Dfile="$file_path" -DgroupId=org.sonatype.plugins
+      mvn install:install-file -Dfile="$file_path" -DgroupId=org.sonatype.plugins
       -DartifactId=nexus-staging-maven-plugin -Dversion=1.6.7 -Dpackaging=jar
     workingDirectory: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
     target:
