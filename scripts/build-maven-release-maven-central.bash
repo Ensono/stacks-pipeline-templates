@@ -88,4 +88,4 @@ if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
 	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw nexus-staging:release  ${MAVEN_OPTIONS}
+./mvnw  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.7:release  ${MAVEN_OPTIONS}
