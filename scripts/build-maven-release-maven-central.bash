@@ -74,6 +74,7 @@ fi
 if [ "${OSSRH_JIRA_ID}" ]; then
   MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
 fi
+
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "
 
 if [ "${POM_FILE}" ]; then
@@ -85,7 +86,7 @@ if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
-	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} -DserverId=ossrh -DnexusUrl=https://s01.oss.sonatype.org -DstagingRepositoryId=com.amido "
+	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} -DserverId=ossrh -DnexusUrl=https://s01.oss.sonatype.org -DstagingRepositoryId=stacks "
 fi
 
 ./mvnw  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.7:release  ${MAVEN_OPTIONS} -X
