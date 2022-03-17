@@ -55,6 +55,7 @@ do
         T  ) SETTINGS_SECURITY_LOCATION="${OPTARG}";;
 
 
+
         \? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
         :  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
         *  ) echo "Unimplemented option: -${option}. This is probably unintended." >&2; exit 1;;
@@ -86,7 +87,7 @@ if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
-	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} -DserverId=ossrh -DnexusUrl=https://s01.oss.sonatype.org -DstagingRepositoryId=${stagingRepositoryId} "
+	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
 fi
 
-./mvnw  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.7:release  ${MAVEN_OPTIONS} -X
+./mvnw nexus-staging:release  ${MAVEN_OPTIONS}
