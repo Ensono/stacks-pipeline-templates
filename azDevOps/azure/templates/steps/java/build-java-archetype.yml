@@ -68,10 +68,19 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Build archetype (${{ parameters.project_type }})"
 
+  # Maven: update  archetype
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-archetype-maven-pom-file.bash"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Build archetype (${{ parameters.project_type }})"
+
   # Maven: Cache packages
   - task: Cache@2
     inputs:
-      key: 'maven | "$(Agent.OS)" | ${{ parameters.project_root_dir }}/pom.xml'
+      key: 'maven | "$(Agent.OS)" | ${{ parameters.project_root_dir }}/target/generated-sources/archetype/pom.xml'
       restoreKeys: |
         maven | "$(Agent.OS)"
         maven
@@ -79,15 +88,6 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: Cache Maven packages (${{ parameters.project_type }})
-
-  - bash: |
-      mvn install:install-file -Dfile="$file_path" -DgroupId=org.sonatype.plugins -DartifactId=nexus-staging-maven-plugin -Dversion=1.6.7 -Dpackaging=jar
-    workingDirectory: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "install nexus jar depnedencies  "
-    env:
-      file_path: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}/org/sonatype/plugins/nexus-staging-maven-plugin/1.6.7/nexus-staging-maven-plugin-1.6.7.jar"
 
   - bash: |
       ls -al "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}/org/sonatype/plugins/nexus-staging-maven-plugin/1.6.7/nexus-staging-maven-plugin-1.6.7.jar"
