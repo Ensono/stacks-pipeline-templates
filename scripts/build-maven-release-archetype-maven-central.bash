@@ -84,7 +84,7 @@ if [ -z "${GPG_KEY_SIGNING_ID}" ]; then
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
-	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} "
+	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY}  -DdryRun=true "
 fi
 
 ./mvnw --batch-mode release:clean release:prepare  release:perform  ${MAVEN_OPTIONS} -X
