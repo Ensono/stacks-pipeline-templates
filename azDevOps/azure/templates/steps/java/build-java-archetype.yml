@@ -101,22 +101,21 @@ steps:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
   # Maven: Performing a Snapshot  Archetype Deployment
-  - ${{ if eq(parameters.build_type, 'SNAPSHOT') }}:
-      - task: Bash@3
-        inputs:
-          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
-          arguments: >
-            -U "${{ parameters.ossrh_jira_id }}"
-            -P "${{ parameters.ossrh_jira_password }}"
-            -G "${{ parameters.gpg_key_signing_id }}"
-            -Z "${{ parameters.maven_cache_directory }}"
-            -F "${{ parameters.maven_pom_file }}"
-            -R "${{ parameters.maven_repository_server }}"
-            -S "${{ parameters.maven_settings_file }}"
-          workingDirectory: "${{ parameters.project_root_dir }}"
-        target:
-          container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
+      arguments: >
+        -U "${{ parameters.ossrh_jira_id }}"
+        -P "${{ parameters.ossrh_jira_password }}"
+        -G "${{ parameters.gpg_key_signing_id }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+        -F "${{ parameters.maven_pom_file }}"
+        -R "${{ parameters.maven_repository_server }}"
+        -S "${{ parameters.maven_settings_file }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
 
   - ${{ if eq(parameters.build_type, 'RELEASE') }}:
       # Maven: Performing a Release  Archetype Deployment  to maven central

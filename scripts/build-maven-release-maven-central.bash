@@ -86,7 +86,7 @@ if [ -z "${GPG_SIGNING_KEY_ID}" ]; then
 fi
 
 if [ "${ALT_DEPLOYMENT_REPOSITORY}" ]; then
-	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} -DserverId=ossrh -DnexusUrl=https://s01.oss.sonatype.org -DstagingRepositoryId=stacks "
+	MAVEN_OPTIONS+=" -DaltDeploymentRepository=${ALT_DEPLOYMENT_REPOSITORY} -DserverId=ossrh -DnexusUrl=https://s01.oss.sonatype.org -DstagingRepositoryId=${stagingRepositoryId} "
 fi
 
 ./mvnw  org.sonatype.plugins:nexus-staging-maven-plugin:1.6.7:release  ${MAVEN_OPTIONS} -X
