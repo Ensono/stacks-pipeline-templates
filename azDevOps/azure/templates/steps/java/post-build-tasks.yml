@@ -12,6 +12,8 @@ parameters:
   java_project_type: ""
   functional_test_project_type: ""
   coverage_test: true
+  # Docker Config
+  docker_build_container: ""
 
 steps:
 
@@ -29,6 +31,12 @@ steps:
           reportDirectory: "${{ parameters.project_root_dir }}/target/site/jacoco-inline"
         displayName: "Publish JaCoCo Coverage Results"
 
+  - bash: |
+      dir "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Display report path  "
+
   # Publish Vulnerability Artefacts if required
   - ${{ if eq(parameters.vulnerability_scan, true) }}:
       - task: PublishPipelineArtifact@1
@@ -36,6 +44,8 @@ steps:
         inputs:
           path: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
           artifact: "owasp-vulnerability-report-java"
+        target:
+          container: ${{ parameters.docker_build_container }}
         displayName: "Publish: Vulnerability Scan Report Artefact (${{ parameters.java_project_type }})"
 
   - ${{ if eq(parameters.build_file, true) }}:
