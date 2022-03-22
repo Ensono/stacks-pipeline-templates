@@ -29,6 +29,7 @@ parameters:
 
 
 steps:
+
   # Maven: Install Packages
   - task: Bash@3
     inputs:
@@ -88,6 +89,12 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: Cache Maven packages (${{ parameters.project_type }})
+
+  - bash: |
+      cat "${{ parameters.project_root_dir }}/target/generated-sources/archetype/pom.xml"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Display archetype generated xml"
 
   - bash: |
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
