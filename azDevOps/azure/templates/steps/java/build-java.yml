@@ -17,6 +17,7 @@ parameters:
   # Vulnerability Scanning
   vulnerability_scan: false
   vulnerability_scan_fail_build_on_detection: true
+  vulnerability_scan_report: ""
   project_type: ""
   build_type: ""
   # Testing
