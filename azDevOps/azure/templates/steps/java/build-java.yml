@@ -127,8 +127,6 @@ steps:
           targetFolder: $(Build.ArtifactStagingDirectory)
         displayName: "Copy File "
 
-
-
   # Maven: Compile Application
   - task: Bash@3
     inputs:
