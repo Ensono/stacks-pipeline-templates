@@ -114,7 +114,6 @@ steps:
         target:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: OWASP Vulnerability Scan (${{ parameters.project_type }})"
-
       - bash: |
           cat "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
         target:
