@@ -120,8 +120,6 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Display scan report path  "
 
-
-
   # Maven: Compile Application
   - task: Bash@3
     inputs:
