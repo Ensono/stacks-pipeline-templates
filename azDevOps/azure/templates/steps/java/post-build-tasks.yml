@@ -37,7 +37,7 @@ steps:
   # Publish Vulnerability Artefacts if required
   - ${{ if eq(parameters.vulnerability_scan, true) }}:
       - bash: |
-          ls "$(Build.ArtifactStagingDirectory)"
+          ls -al  "$(Build.ArtifactStagingDirectory)"
         target:
           container: ${{ parameters.docker_build_container }}
         displayName: "Display report path  "
@@ -45,7 +45,7 @@ steps:
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
-          path: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          path: "$(Build.ArtifactStagingDirectory)/${{ parameters.vulnerability_scan_report }}"
           artifact: "owasp-vulnerability-report-java"
         target:
           container: ${{ parameters.docker_build_container }}
