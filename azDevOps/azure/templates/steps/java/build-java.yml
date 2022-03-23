@@ -116,9 +116,18 @@ steps:
         displayName: "Maven: OWASP Vulnerability Scan (${{ parameters.project_type }})"
       - bash: |
           cat "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          ls "$(Build.ArtifactStagingDirectory)"
         target:
           container: ${{ parameters.docker_build_container }}
+
         displayName: "Display scan report path  "
+      - task: CopyFiles@2
+        inputs:
+          contents: "${{ parameters.vulnerability_scan_report }}"
+          targetFolder: $(Build.ArtifactStagingDirectory)
+        displayName: "Copy File "
+
+
 
   # Maven: Compile Application
   - task: Bash@3
