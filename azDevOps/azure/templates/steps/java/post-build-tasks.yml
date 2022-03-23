@@ -40,7 +40,7 @@ steps:
             dir "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
         target:
             container: ${{ parameters.docker_build_container }}
-          displayName: "Display report path  "
+        displayName: "Display report path  "
 
       - task: PublishPipelineArtifact@1
         condition: always()
