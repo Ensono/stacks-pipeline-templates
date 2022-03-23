@@ -41,6 +41,7 @@ steps:
           target:
             container: ${{ parameters.docker_build_container }}
           displayName: "Display report path  "
+
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
