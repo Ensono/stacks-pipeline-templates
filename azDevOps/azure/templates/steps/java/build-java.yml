@@ -123,7 +123,7 @@ steps:
         displayName: "Display scan report path  "
       - task: CopyFiles@2
         inputs:
-          contents: 'target/*'
+          contents: '${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}'
           targetFolder: $(Build.ArtifactStagingDirectory)
         displayName: "Copy File "
 
