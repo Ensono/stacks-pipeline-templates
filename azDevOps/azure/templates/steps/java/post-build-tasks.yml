@@ -42,6 +42,7 @@ steps:
             container: ${{ parameters.docker_build_container }}
           displayName: "Display report path  "
 
+  - ${{ if eq(parameters.vulnerability_scan, true) }}:
       - task: PublishPipelineArtifact@1
         condition: always()
         inputs:
