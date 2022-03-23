@@ -30,6 +30,8 @@ steps:
           codeCoverageTool: "JaCoCo"
           summaryFileLocation: "${{ parameters.project_root_dir }}/target/site/jacoco/jacoco.xml"
           reportDirectory: "${{ parameters.project_root_dir }}/target/site/jacoco-inline"
+        target:
+          container: ${{ parameters.docker_build_container }}
         displayName: "Publish JaCoCo Coverage Results"
 
   # Publish Vulnerability Artefacts if required
