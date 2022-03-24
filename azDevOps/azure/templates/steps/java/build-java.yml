@@ -116,8 +116,10 @@ steps:
         displayName: "Maven: OWASP Vulnerability Scan (${{ parameters.project_type }})"
 
       - bash: |
-          dir "1 : ${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
-          dir "2: $(Build.ArtifactStagingDirectory)"
+          echo "1"
+          dir "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          echo "2"
+          dir "$(Build.ArtifactStagingDirectory)"
         target:
           container: ${{ parameters.docker_build_container }}
 
