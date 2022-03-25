@@ -17,6 +17,7 @@ parameters:
   # Vulnerability Scanning
   vulnerability_scan: false
   vulnerability_scan_fail_build_on_detection: true
+  vulnerability_scan_report: ""
   project_type: ""
   build_type: ""
   # Testing
@@ -113,6 +114,14 @@ steps:
         target:
           container: ${{ parameters.docker_build_container }}
         displayName: "Maven: OWASP Vulnerability Scan (${{ parameters.project_type }})"
+
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: "${{ parameters.project_root_dir }}/target"
+          content: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          targetFolder: "$(Build.ArtifactStagingDirectory)/${{ parameters.vulnerability_scan_report }}"
+          cleanTargetFolder: true
+        displayName: "Copy File "
 
   # Maven: Compile Application
   - task: Bash@3
