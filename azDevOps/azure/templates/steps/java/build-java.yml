@@ -118,6 +118,8 @@ steps:
       - bash: |
           echo "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
           echo "$(Build.ArtifactStagingDirectory)"
+          echo "$(Build.SourcesDirectory)"
+          echo "$(Build.DefaultWorkingDirectory)"
         target:
           container: ${{ parameters.docker_build_container }}
 
