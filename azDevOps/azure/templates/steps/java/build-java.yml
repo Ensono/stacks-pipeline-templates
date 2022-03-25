@@ -125,7 +125,13 @@ steps:
           container: ${{ parameters.docker_build_container }}
 
         displayName: "Display scan report path  "
-
+      - task: CopyFiles@2
+        inputs:
+          sourceFolder: "${{ parameters.project_root_dir }}/target"
+          content: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          targetFolder: "$(Build.ArtifactStagingDirectory)/${{ parameters.vulnerability_scan_report }}"
+          cleanTargetFolder: true
+        displayName: "Copy File "
 
   # Maven: Compile Application
   - task: Bash@3
