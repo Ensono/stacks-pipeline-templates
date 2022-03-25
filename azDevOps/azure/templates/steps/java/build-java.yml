@@ -119,7 +119,6 @@ steps:
           echo "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
           echo "$(Build.ArtifactStagingDirectory)"
           echo "$(Build.SourcesDirectory)"
-          echo "$(Build.DefaultWorkingDirectory)"
         target:
           container: ${{ parameters.docker_build_container }}
 
@@ -128,7 +127,7 @@ steps:
         inputs:
           sourceFolder: "${{ parameters.project_root_dir }}/target"
           content: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
-          targetFolder: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
+          targetFolder: "$(Build.ArtifactStagingDirectory)"
         displayName: "Copy File "
 
   # Maven: Compile Application
