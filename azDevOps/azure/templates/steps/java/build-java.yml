@@ -128,7 +128,7 @@ steps:
         inputs:
           sourceFolder: "${{ parameters.project_root_dir }}/target"
           content: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
-          targetFolder: "$(Build.ArtifactStagingDirectory)"
+          targetFolder: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
         displayName: "Copy File "
 
   # Maven: Compile Application
