@@ -62,5 +62,5 @@ if [ "${SETTINGS_LOCATION}" ]; then
   MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
 fi
 
-./mvnw dependency:go-offline ${MAVEN_OPTIONS} -X
-./mvnw process-resources ${MAVEN_OPTIONS}  -X
+./mvnw dependency:go-offline ${MAVEN_OPTIONS}
+./mvnw process-resources ${MAVEN_OPTIONS}
