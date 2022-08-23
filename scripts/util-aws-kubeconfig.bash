@@ -55,6 +55,6 @@ fi
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip -o awscliv2.zip
-sudo ./aws/install
+sudo ./aws/install --update
 
 aws eks --region "${AWS_DEFAULT_REGION}" update-kubeconfig --name "${EKS_CLUSTER_NAME}"
