@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:c:d:"
+OPTIONS=":a:b:c:"
 
 usage()
 {
@@ -15,7 +15,7 @@ usage()
 		Required Arguments:
 		  -a ad		The AWS Account ID
 		  -b cr	    The Name of the role
-		  -c rg     The AWS Region
+		  -c rg     The AWS Default Region
 		USAGE_STRING
 	)
 

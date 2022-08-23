@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:c:d:"
+OPTIONS=":a:b:c:"
 
 usage()
 {
@@ -15,7 +15,7 @@ usage()
 		Required Arguments:
 		  -a id		AWS Access Key ID
 		  -b secret	AWS Secret Access Key
-		  -c id		AWS Default Region
+		  -c region		AWS Default Region
 		USAGE_STRING
 	)
 
