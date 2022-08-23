@@ -84,7 +84,7 @@ if [ "${DOCKER_IMAGETAG}" != "${TRIMMED_DOCKER_IMAGETAG}" ]; then
 fi
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
+unzip -o awscliv2.zip
 sudo ./aws/install
 
 aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${DOCKER_REGISTRY_NAME}"
