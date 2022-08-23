@@ -62,6 +62,6 @@ fi
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip -o awscliv2.zip
-sudo ./aws/install
+sudo ./aws/install --update
 
 aws sts assume-role --role-arn arn:aws:iam::"${AWS_ACCOUNT_ID}":role/"${AWS_CLUSTER_ROLE}" --role-session-name test --region "${AWS_DEFAULT_REGION}"

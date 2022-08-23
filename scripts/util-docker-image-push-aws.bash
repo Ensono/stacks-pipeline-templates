@@ -85,7 +85,7 @@ fi
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip -o awscliv2.zip
-sudo ./aws/install
+sudo ./aws/install --update
 
 aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${DOCKER_REGISTRY_NAME}"
 
