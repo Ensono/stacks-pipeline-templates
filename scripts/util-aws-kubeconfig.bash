@@ -53,4 +53,8 @@ if [ -z "${AWS_DEFAULT_REGION}" ]; then
 	exit 2
 fi
 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 aws eks --region "${AWS_DEFAULT_REGION}" update-kubeconfig --name "${EKS_CLUSTER_NAME}"

@@ -13,7 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -a ARGS...		Additional build arguments, such as the path to the Dockerfile.
+		  -a ARGS...    Additional build arguments, such as the path to the Dockerfile.
 		  -b image		The image name.
 		  -c tag		The tag name.
 		  -d name		The container registry name to use in tagging.
