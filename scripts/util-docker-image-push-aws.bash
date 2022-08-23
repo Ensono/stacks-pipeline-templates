@@ -5,7 +5,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:c:d:Y:Z:"
+OPTIONS=":a:b:c:d:e:Y:Z:"
 
 usage()
 {
@@ -18,6 +18,7 @@ usage()
 		  -b tag		The tag name.
 		  -c name		The container registry name to push to.
 		  -d region		The AWS Default Region
+		  -e id			The AWS Account ID
 
 		Optional Arguments:
 		  -Y true|false		Addionally tag the image with \`latest\` and push. Default: false
@@ -45,6 +46,7 @@ do
 		b  ) DOCKER_IMAGETAG="${OPTARG}";;
 		c  ) DOCKER_REGISTRY_NAME="${OPTARG}";;
 		d  ) AWS_DEFAULT_REGION="${OPTARG}";;
+		e  ) AWS_ACCOUNT_ID="${OPTARG}";;
 
 		# Optional
 		Y  ) DOCKER_TAG_LATEST="${OPTARG}";;
@@ -76,6 +78,11 @@ if [ -z "${AWS_DEFAULT_REGION}" ]; then
 	exit 5
 fi
 
+if [ -z "${AWS_ACCOUNT_ID}" ]; then
+	echo '-c: Missing AWS Account ID'
+	exit 6
+fi
+
 TRIMMED_DOCKER_IMAGETAG="${DOCKER_IMAGETAG:0:128}"
 if [ "${DOCKER_IMAGETAG}" != "${TRIMMED_DOCKER_IMAGETAG}" ]; then
 	echo "Warning: Docker Image tag trimmed to a maximum of 128 characters!"
@@ -87,7 +94,7 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip -o awscliv2.zip
 sudo ./aws/install --update
 
-aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${DOCKER_REGISTRY_NAME}"
+aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}".dkr.ecr."${AWS_DEFAULT_REGION}".amazonaws.com
 
 DOCKER_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"
 
