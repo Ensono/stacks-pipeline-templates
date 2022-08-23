@@ -76,10 +76,6 @@ if [ -z "${AWS_DEFAULT_REGION}" ]; then
 	exit 5
 fi
 
-if [ -z "${DOCKER_REGISTRY_SUFFIX}" ]; then
-	DOCKER_REGISTRY_SUFFIX=".azurecr.io"
-fi
-
 TRIMMED_DOCKER_IMAGETAG="${DOCKER_IMAGETAG:0:128}"
 if [ "${DOCKER_IMAGETAG}" != "${TRIMMED_DOCKER_IMAGETAG}" ]; then
 	echo "Warning: Docker Image tag trimmed to a maximum of 128 characters!"
@@ -93,14 +89,14 @@ sudo ./aws/install
 
 aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${DOCKER_REGISTRY_NAME}"
 
-DOCKER_IMAGE="${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"
+DOCKER_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"
 
 docker push "${DOCKER_IMAGE}"
 
 # Boolean `true` workaround
 DOCKER_TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${DOCKER_TAG_LATEST}")"
 if [ "${DOCKER_TAG_LATEST}" == 'true' ]; then
-	LATEST_IMAGE="${DOCKER_REGISTRY_NAME}${DOCKER_REGISTRY_SUFFIX}/${DOCKER_IMAGENAME}:latest"
+	LATEST_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:latest"
 	docker tag \
 		"${DOCKER_IMAGE}" \
 		"${LATEST_IMAGE}"
