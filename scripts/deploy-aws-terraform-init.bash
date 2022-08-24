@@ -73,22 +73,22 @@ if [ -z "${AWS_DEFAULT_REGION}" ]; then
 fi
 
 if [ -z "${AWS_TF_STATE_REGION}" ]; then
-	echo '-a: Missing AWS TF State Region'
+	echo '-d: Missing AWS TF State Region'
 	exit 4
 fi
 
 if [ -z "${AWS_TF_STATE_BUCKET}" ]; then
-	echo '-b: Missing AWS TF State Bucket'
+	echo '-e: Missing AWS TF State Bucket'
 	exit 5
 fi
 
 if [ -z "${AWS_TF_STATE_DYNAMOTABLE}" ]; then
-	echo '-c: Missing AWS TF State Dynamotable'
+	echo '-f: Missing AWS TF State Dynamotable'
 	exit 6
 fi
 
 if [ -z "${AWS_TF_STATE_ENCRYPTION}" ]; then
-	echo '-h: Missing AWS TF State Key'
+	echo '-g: Missing AWS TF State Key'
 	exit 7
 fi
 
