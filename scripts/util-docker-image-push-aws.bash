@@ -96,7 +96,7 @@ sudo ./aws/install --update
 
 aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}".dkr.ecr."${AWS_DEFAULT_REGION}".amazonaws.com
 
-docker build -t stacks-java
+docker build -t stacks-java .
 
 docker tag stacks-java:latest "${AWS_ACCOUNT_ID}".dkr.ecr.eu-west-2.amazonaws.com/stacks-java:latest
 
