@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:c:d:e:f:g:h:i:j:"
+OPTIONS=":a:b:c:d:e:f:g:h:i:"
 
 usage()
 {
@@ -74,32 +74,32 @@ fi
 
 if [ -z "${AWS_TF_STATE_REGION}" ]; then
 	echo '-a: Missing AWS TF State Region'
-	exit 1
+	exit 4
 fi
 
 if [ -z "${AWS_TF_STATE_BUCKET}" ]; then
 	echo '-b: Missing AWS TF State Bucket'
-	exit 2
+	exit 5
 fi
 
 if [ -z "${AWS_TF_STATE_DYNAMOTABLE}" ]; then
 	echo '-c: Missing AWS TF State Dynamotable'
-	exit 3
+	exit 6
 fi
 
 if [ -z "${AWS_TF_STATE_ENCRYPTION}" ]; then
 	echo '-h: Missing AWS TF State Key'
-	exit 8
+	exit 7
 fi
 
 if [ -z "${AWS_TF_STATE_KEY}" ]; then
 	echo '-h: Missing AWS TF State Key'
-	exit 9
+	exit 8
 fi
 
 if [ -z "${WORKSPACE_NAME}" ]; then
 	echo '-i: Missing Terraform Workspace name'
-	exit 10
+	exit 9
 fi
 
 terraform version
