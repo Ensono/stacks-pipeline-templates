@@ -96,17 +96,21 @@ sudo ./aws/install --update
 
 aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}".dkr.ecr."${AWS_DEFAULT_REGION}".amazonaws.com
 
-DOCKER_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:${DOCKER_IMAGETAG}"
+docker build -t stacks-java
 
-docker push "${DOCKER_IMAGE}"
+docker tag stacks-java:latest "${AWS_ACCOUNT_ID}".dkr.ecr.eu-west-2.amazonaws.com/stacks-java:latest
 
-# Boolean `true` workaround
-DOCKER_TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${DOCKER_TAG_LATEST}")"
-if [ "${DOCKER_TAG_LATEST}" == 'true' ]; then
-	LATEST_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:latest"
-	docker tag \
-		"${DOCKER_IMAGE}" \
-		"${LATEST_IMAGE}"
+# DOCKER_IMAGE="${AWS_ACCOUNT_ID}"."${DOCKER_REGISTRY_NAME}"/"${DOCKER_IMAGENAME}":latest
 
-	docker push "${LATEST_IMAGE}"
-fi
+docker push "${AWS_ACCOUNT_ID}".dkr.ecr.eu-west-2.amazonaws.com/stacks-java:latest
+
+# # Boolean `true` workaround
+# DOCKER_TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${DOCKER_TAG_LATEST}")"
+# if [ "${DOCKER_TAG_LATEST}" == 'true' ]; then
+# 	LATEST_IMAGE="${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:latest"
+# 	docker tag \
+# 		"${DOCKER_IMAGE}" \
+# 		"${LATEST_IMAGE}"
+
+# 	docker push "${LATEST_IMAGE}"
+# fi
