@@ -94,13 +94,11 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip -o awscliv2.zip
 sudo ./aws/install --update
 
-aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}".dkr.ecr."${AWS_DEFAULT_REGION}".amazonaws.com
-
-docker tag stacks-java:latest "${DOCKER_REGISTRY_NAME}"/stacks-java:latest
+aws ecr get-login-password --region "${AWS_DEFAULT_REGION}" | docker login --username AWS --password-stdin "${DOCKER_REGISTRY_NAME}"
 
 # DOCKER_IMAGE="${AWS_ACCOUNT_ID}"."${DOCKER_REGISTRY_NAME}"/"${DOCKER_IMAGENAME}":latest
 
-docker push "${DOCKER_REGISTRY_NAME}"/stacks-java:latest
+docker push "${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:${DOCKER_IMAGE_TAG}"
 
 # # Boolean `true` workaround
 # DOCKER_TAG_LATEST="$(tr '[:upper:]' '[:lower:]' <<< "${DOCKER_TAG_LATEST}")"

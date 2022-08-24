@@ -61,4 +61,4 @@ if [ -z "${DOCKER_REGISTRY_NAME}" ]; then
 	exit 3
 fi
 
-docker build -t "${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:latest" .
+docker build -t "${DOCKER_REGISTRY_NAME}/${DOCKER_IMAGENAME}:${DOCKER_IMAGE_TAG}" .
