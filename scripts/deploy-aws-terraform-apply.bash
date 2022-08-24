@@ -6,7 +6,7 @@
 
 set -exo pipefail
 
-OPTIONS=":a:b:c:d:Z:"
+OPTIONS=":a:b:c:Z:"
 
 usage()
 {
@@ -74,7 +74,6 @@ fi
 
 export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}"
 export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}"
-export ARM_TENANT_ID="${AZURE_TENANT_ID}"
 export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}"
 
 terraform apply "${PLAN_FILE}"
