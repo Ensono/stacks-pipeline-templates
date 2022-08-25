@@ -56,7 +56,7 @@ if [ -z "${AWS_CLUSTER_ROLE}" ]; then
 fi
 
 if [ -z "${AWS_DEFAULT_REGION}" ]; then
-	echo '-b: Missing AWS Region'
+	echo '-c: Missing AWS Region'
 	exit 3
 fi
 
