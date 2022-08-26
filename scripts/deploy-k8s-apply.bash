@@ -46,4 +46,6 @@ if [ -z "${YAML_FILENAME}" ]; then
 	exit 1
 fi
 
+kubectl get pods --all-namespaces
+
 kubectl apply -f "${YAML_FILENAME}"
