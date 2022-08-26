@@ -14,10 +14,10 @@ usage()
 
 		Required Arguments:
 		  -a ad		The AWS Account ID
-		  -b id		The Access Key ID
-		  -c secret	The Secret Access Key
-		  -d cr	    The Name of the role
-		  -e rg     The AWS Default Region
+		  -b cr	    The Name of the role
+		  -c rg     The AWS Default Region
+		  -d id		The Access Key ID
+		  -e secret	The Secret Access Key
 		USAGE_STRING
 	)
 
