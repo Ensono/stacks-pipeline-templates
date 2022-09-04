@@ -41,6 +41,8 @@ do
 	  U  ) ARTIFACTORY_USER="${OPTARG}";;
 	  P  ) ARTIFACTORY_PASSWORD="${OPTARG}";;
     S  ) SETTINGS_LOCATION="${OPTARG}";;
+    W  ) MAVEN_PROFILE="${OPTARG}";;
+
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -60,6 +62,10 @@ fi
 
 if [ "${SETTINGS_LOCATION}" ]; then
   MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
+fi
+
+if [ "${MAVEN_PROFILE}" ]; then
+  MAVEN_OPTIONS+=" -P${MAVEN_PROFILE} "
 fi
 
 ./mvnw dependency:go-offline ${MAVEN_OPTIONS}

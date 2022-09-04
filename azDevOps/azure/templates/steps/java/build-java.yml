@@ -4,6 +4,7 @@ parameters:
   pipeline_scripts_directory: ""
   # Maven
   maven_cache_directory: ""
+  maven_profile: ""
   maven_surefire_reports_dir: ""
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
@@ -50,6 +51,7 @@ steps:
         -P "${{ parameters.ossrh_jira_password }}"
         -S "${{ parameters.maven_settings_file }}"
         -Z "${{ parameters.maven_cache_directory }}"
+        -W "${{ parameters.maven_profile }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
