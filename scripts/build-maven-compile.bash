@@ -49,11 +49,13 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
+
+MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
+
 if [ "${MAVEN_PROFILE}" ]; then
   MAVEN_OPTIONS+=" -P${MAVEN_PROFILE} "
 fi
 
-MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
 
 ./mvnw compile ${MAVEN_OPTIONS} # TODO: Maybe this should run offline?
 ./mvnw process-test-resources ${MAVEN_OPTIONS}
