@@ -36,6 +36,8 @@ do
 	case "${option}" in
 		# Optional
 		Z  ) M2_LOCATION="${OPTARG}";;
+    W  ) MAVEN_PROFILE="${OPTARG}";;
+
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
 		:  ) echo "Missing option argument for -${OPTARG}" >&2; exit 1;;
@@ -45,6 +47,10 @@ done
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
+fi
+
+if [ "${MAVEN_PROFILE}" ]; then
+  MAVEN_OPTIONS+=" -P${MAVEN_PROFILE} "
 fi
 
 MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress "
