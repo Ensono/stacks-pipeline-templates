@@ -69,6 +69,12 @@ fi
 
 aws sts assume-role --role-arn arn:aws:iam::"${AWS_ACCOUNT_ID}":role/"${AWS_CLUSTER_ROLE}" --role-session-name test --region "${AWS_DEFAULT_REGION}"
 
-kubectl get pods --all-namespaces
+aws dynamodb list-tables --endpoint-url https://dynamodb.eu-west-2.amazonaws.com
+
 
 kubectl apply -f "${YAML_FILENAME}"
+
+
+
+kubectl get pods --all-namespaces
+
