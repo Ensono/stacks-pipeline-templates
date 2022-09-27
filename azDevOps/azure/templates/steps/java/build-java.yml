@@ -41,6 +41,18 @@ steps:
       path: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
     displayName: Cache Maven packages (${{ parameters.project_type }})
 
+
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/build-manifold-install.bash"
+      arguments: >
+        -Z "${{ parameters.maven_cache_directory }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Install manifold Packages (${{ parameters.project_type }})"
+
+
   # Maven: Install Packages
   - task: Bash@3
     inputs:
