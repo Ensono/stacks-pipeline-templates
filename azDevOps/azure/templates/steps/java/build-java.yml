@@ -45,8 +45,6 @@ steps:
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-manifold-install.bash"
-      arguments: >
-        -Z "${{ parameters.maven_cache_directory }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
