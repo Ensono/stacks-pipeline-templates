@@ -287,7 +287,9 @@ cp pom.template.xml pom.xml
 ls src/main/resources
 
 ###########################
-more pom.xml
+ cat pom.xml
+ echo "--------"
+ cat src/main/resources/application.yml
 ##############################
 cd . || exit 1
 
