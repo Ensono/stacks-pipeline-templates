@@ -284,8 +284,11 @@ do
 done
 
 cp pom.template.xml pom.xml
+ls src/main/resources
 
-#####################
+###########################
+more pom.xml
+##############################
 cd . || exit 1
 
 export MANIFOLD_SRC_LOCATION=.
