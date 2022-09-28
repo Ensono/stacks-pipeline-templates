@@ -234,15 +234,19 @@ do
    printf "   * %s\n" "${i}"
 done
 
-#####################
+#printf "\nPress ENTER to accept or CTRL-C to quit"
+#read -r
 
+#####################
+ls -al pom.xml
+ls -al src/main/resources/application.yml
 cp pom.xml pom.template.xml
 
 printf ""
 #echo "DELETE THESE..."
 for i in "${ALL_SPRING_PROFILES[@]}";
 do
-   #echo "$i"
+   echo "$i"
 
    xmlstarlet edit -N ns='http://maven.apache.org/POM/4.0.0' \
       --delete ".//ns:project/ns:properties/ns:${i}.profile.name" \
@@ -296,7 +300,7 @@ done
 echo "Test clean compile "
 cd src/main/java || exit 1
 
-./mvnw  -f ../../../pom.xml clean compile
+mvn -f ../../../pom.xml clean compile
 
 cd ../../../.. || exit 1
 
@@ -319,7 +323,7 @@ done
 
 cd src/test/java || exit 1
 
-./mvnw  -f ../../../pom.xml test-compile
+mvn -f ../../../pom.xml test-compile
 
 cd ../../../.. || exit 1
 
@@ -333,7 +337,7 @@ mv src/main/java.SAV src/main/java
 #####################
 echo "Test format  "
 
-./mvnw  -DskipTests=true com.coveo:fmt-maven-plugin:format
+mvn -DskipTests=true com.coveo:fmt-maven-plugin:format
 
 cd .. || exit 1
 
