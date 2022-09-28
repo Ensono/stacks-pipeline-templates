@@ -255,7 +255,7 @@ do
 
    mv pom.template.xml.work pom.template.xml
 
-   sed -i '' '/- "@${i}.profile.name@"/d' src/main/resources/application.yml
+   sed -i "" "s/- \"@${i}.profile.name@\"/- ${i}/g" src/main/resources/application.yml
 
    rm -f "src/main/resources/application-${i}.yml"
 
