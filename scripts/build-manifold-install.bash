@@ -296,7 +296,7 @@ done
 echo "Test clean compile "
 cd src/main/java || exit 1
 
-mvn -f ../../../pom.xml clean compile
+./mvnw  -f ../../../pom.xml clean compile
 
 cd ../../../.. || exit 1
 
@@ -319,7 +319,7 @@ done
 
 cd src/test/java || exit 1
 
-mvn -f ../../../pom.xml test-compile
+./mvnw  -f ../../../pom.xml test-compile
 
 cd ../../../.. || exit 1
 
@@ -333,7 +333,7 @@ mv src/main/java.SAV src/main/java
 #####################
 echo "Test format  "
 
-mvn -DskipTests=true com.coveo:fmt-maven-plugin:format
+./mvnw  -DskipTests=true com.coveo:fmt-maven-plugin:format
 
 cd .. || exit 1
 
