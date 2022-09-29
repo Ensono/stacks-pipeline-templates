@@ -255,7 +255,7 @@ do
 
    mv pom.template.xml.work pom.template.xml
    cp src/main/resources/application.yml src/main/resources/application.yml.tmp
-   sed  -i 's/- "@${i}.profile.name@"/- ${i}/g'  src/main/resources/application.yml.tmp > src/main/resources/application.yml && rm -f src/main/resources/application.yml.tmp
+   sed  -i 's/- "@${i}.profile.name@"/- ${i}/g' < src/main/resources/application.yml.tmp > src/main/resources/application.yml && rm -f src/main/resources/application.yml.tmp
 
    rm -f "src/main/resources/application-${i}.yml"
 
@@ -281,7 +281,7 @@ do
 
    mv pom.template.xml.work pom.template.xml
    cp src/main/resources/application.yml src/main/resources/application.yml.tmp
-   sed  -i 's/- "@${i}.profile.name@"/- ${i}/g'  src/main/resources/application.yml.tmp > src/main/resources/application.yml && rm -f src/main/resources/application.yml.tmp
+   sed  -i  's/- "@${i}.profile.name@"/- ${i}/g' < src/main/resources/application.yml.tmp > src/main/resources/application.yml && rm -f src/main/resources/application.yml.tmp
 
 done
 cat  src/main/resources/application.yml
