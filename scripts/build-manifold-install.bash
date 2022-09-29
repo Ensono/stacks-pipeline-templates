@@ -254,8 +254,8 @@ do
       pom.template.xml > pom.template.xml.work
 
    mv pom.template.xml.work pom.template.xml
-
-   sed  's/- "@${i}.profile.name@"/- ${i}/g' src/main/resources/application.yml
+   cp src/main/resources/application.yml src/main/resources/application.yml.tmp
+   sed  's/- "@${i}.profile.name@"/- ${i}/g' <  src/main/resources/application.yml.tmp > src/main/resources/application.yml && src/main/resources/application.yml.tmp
 
    rm -f "src/main/resources/application-${i}.yml"
 
