@@ -108,6 +108,7 @@ steps:
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
+    continueOnError: true
     displayName: "Maven: Spotbugs Check (${{ parameters.project_type }})"
 
   # Maven: OWASP Vulnerability Scan, runs if vulnerability_scan=true
