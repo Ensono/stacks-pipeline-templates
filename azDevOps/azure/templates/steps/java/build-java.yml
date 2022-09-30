@@ -16,6 +16,7 @@ parameters:
   docker_build_container: ""
   # Vulnerability Scanning
   vulnerability_scan: false
+  spot_bug_check: true
   vulnerability_scan_fail_build_on_detection: true
   vulnerability_scan_report: ""
   project_type: ""
@@ -100,16 +101,17 @@ steps:
     displayName: "Maven: Format Check (${{ parameters.project_type }})"
 
   # Maven: Spotbugs Check
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-spotbugs-check.bash"
-      arguments: >
-        -Z "${{ parameters.maven_cache_directory }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    continueOnError: true
-    displayName: "Maven: Spotbugs Check (${{ parameters.project_type }})"
+
+  - ${{ if eq(parameters.spot_bug_check, true) }}:
+      - task: Bash@3
+        inputs:
+          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-spotbugs-check.bash"
+          arguments: >
+            -Z "${{ parameters.maven_cache_directory }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: ${{ parameters.docker_build_container }}
+        displayName: "Maven: Spotbugs Check (${{ parameters.project_type }})"
 
   # Maven: OWASP Vulnerability Scan, runs if vulnerability_scan=true
   - ${{ if eq(parameters.vulnerability_scan, true) }}:
