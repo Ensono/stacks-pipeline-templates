@@ -16,7 +16,7 @@ parameters:
   docker_build_container: ""
   # Vulnerability Scanning
   vulnerability_scan: false
-  spot_bug_check: true
+  spot_bug_check: false
   vulnerability_scan_fail_build_on_detection: true
   vulnerability_scan_report: ""
   project_type: ""
@@ -71,8 +71,8 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-version.bash"
       arguments: >
-                   -Z "${{ parameters.maven_cache_directory }}"
-                   -V "${{ parameters.maven_package_version }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+        -V "${{ parameters.maven_package_version }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
