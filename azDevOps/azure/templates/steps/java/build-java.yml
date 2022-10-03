@@ -21,7 +21,7 @@ parameters:
   project_type: ""
   build_type: ""
   # Testing
-  functional_testing_required: false
+  functional_testing_required: true
   # OSSRH MAVEN CENTRAL
   ossrh_jira_id: ""
   ossrh_jira_password: ""
