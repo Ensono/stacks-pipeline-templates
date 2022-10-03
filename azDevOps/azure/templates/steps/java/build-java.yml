@@ -22,7 +22,7 @@ parameters:
   project_type: ""
   build_type: ""
   # Testing
-  functional_testing_required: false
+  functional_testing_required: true
   # OSSRH MAVEN CENTRAL
   ossrh_jira_id: ""
   ossrh_jira_password: ""
@@ -110,17 +110,15 @@ steps:
 
 
   # Maven: Spotbugs Check
-
-  - ${{ if eq(parameters.spot_bug_check, true) }}:
-      - task: Bash@3
-        inputs:
-          filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-spotbugs-check.bash"
-          arguments: >
-            -Z "${{ parameters.maven_cache_directory }}"
-          workingDirectory: "${{ parameters.project_root_dir }}"
-        target:
-          container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Spotbugs Check (${{ parameters.project_type }})"
+  - task: Bash@3
+    inputs:
+      filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-spotbugs-check.bash"
+      arguments: >
+        -Z "${{ parameters.maven_cache_directory }}"
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Spotbugs Check (${{ parameters.project_type }})"
 
   # Maven: OWASP Vulnerability Scan, runs if vulnerability_scan=true
   - ${{ if eq(parameters.vulnerability_scan, true) }}:
