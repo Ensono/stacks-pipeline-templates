@@ -280,16 +280,8 @@ do
    sed -i  "s/- \"@${i}.profile.name@\"/- ${i}/g" src/main/resources/application.yml
 
 done
-cat  src/main/resources/application.yml
 
 cp pom.template.xml pom.xml
-ls src/main/resources
-
-###########################
- cat pom.xml
- echo "--------"
- ls src/main/resources/
- cat src/main/resources/application.yml
 
 ##############################
 cd . || exit 1
@@ -345,7 +337,6 @@ echo "Test format  "
 
 mvn -DskipTests=true com.coveo:fmt-maven-plugin:format
 
-cd .. || exit 1
 
 #####################
 echo "Test 1 back pom file  "
@@ -357,9 +348,10 @@ xmlstarlet edit -N ns='http://maven.apache.org/POM/4.0.0' \
       pom.xml > pom.template.xml.work
 
 mv pom.template.xml.work pom.xml
-
+cat pom.xml
 rm -f pom.template.xml
 rm -f build.properties
 
 #####################
 unset MANIFOLD_SRC_LOCATION
+
