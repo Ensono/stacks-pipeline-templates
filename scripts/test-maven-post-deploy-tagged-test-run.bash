@@ -74,7 +74,8 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-export BASE_URL
+echo "$BASE_URL"
+export BASE_URL=$BASE_URL
 
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
