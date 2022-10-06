@@ -79,4 +79,4 @@ export BASE_URL
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
 	-Dmaven.repo.local="${M2_LOCATION}" \
-	"${TAGS_ARRAY[@]}"
+	"${TAGS_ARRAY[@]}" -X
