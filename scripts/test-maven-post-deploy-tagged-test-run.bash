@@ -74,8 +74,6 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 echo $AWS_XRAY_CONTEXT_MISSING
-export BASE_URL=$BASE_URL
-export AWS_XRAY_CONTEXT_MISSING = $AWS_XRAY_CONTEXT_MISSING
 
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
