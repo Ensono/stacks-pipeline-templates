@@ -349,6 +349,7 @@ xmlstarlet edit -N ns='http://maven.apache.org/POM/4.0.0' \
 
 mv pom.template.xml.work pom.xml
 cat pom.xml
+cat src/main/resources/application-dynamodb.yml
 rm -f pom.template.xml
 rm -f build.properties
 
