@@ -78,6 +78,9 @@ echo $BASE_URL
 env |grep BASE_URL
  aws dynamodb list-tables
 aws dynamodb list-tables --endpoint-url https://dynamodb.eu-west-2.amazonaws.com
+aws dynamodb list-tables --endpoint-url http://dynamodb.eu-west-2.amazonaws.com
+aws dynamodb list-tables --endpoint-url h
+
 
 
 ./mvnw failsafe:integration-test \
