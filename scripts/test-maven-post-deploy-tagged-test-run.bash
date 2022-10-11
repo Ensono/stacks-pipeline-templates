@@ -74,6 +74,9 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 echo $AWS_XRAY_CONTEXT_MISSING
+echo $BASE_URL
+env
+aws dynamodb list-tables --endpoint-url https://dynamodb.eu-west-2.amazonaws.com
 
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
