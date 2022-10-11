@@ -75,8 +75,10 @@ if [ -z "${M2_LOCATION}" ]; then
 fi
 echo $AWS_XRAY_CONTEXT_MISSING
 echo $BASE_URL
-env
+env |grep BASE_URL
+ aws dynamodb list-tables
 aws dynamodb list-tables --endpoint-url https://dynamodb.eu-west-2.amazonaws.com
+
 
 ./mvnw failsafe:integration-test \
 	--no-transfer-progress \
