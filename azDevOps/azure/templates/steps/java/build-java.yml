@@ -16,7 +16,6 @@ parameters:
   docker_build_container: ""
   # Vulnerability Scanning
   vulnerability_scan: false
-  spot_bug_check: false
   vulnerability_scan_fail_build_on_detection: true
   vulnerability_scan_report: ""
   project_type: ""
@@ -41,16 +40,6 @@ steps:
         maven
       path: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
     displayName: Cache Maven packages (${{ parameters.project_type }})
-
-
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-manifold-install.bash"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Install manifold Packages (${{ parameters.project_type }})"
-
 
   # Maven: Install Packages
   - task: Bash@3
@@ -99,15 +88,6 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Format Check (${{ parameters.project_type }})"
-
-  - bash: |
-      echo "signing key  :  ${{ parameters.spot_bug_check }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "retrieve and import gpg key from key vault "
-    env:
-      spot_bug_check: "${{ parameters.spot_bug_check }}"
-
 
   # Maven: Spotbugs Check
   - task: Bash@3
