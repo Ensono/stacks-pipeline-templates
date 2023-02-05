@@ -8,11 +8,13 @@ parameters:
   aks_dns_resource_group_name: ""
   aks_set_acr_perms: false
   aks_deploy_gatekeeper: false
+  helm_container: "host"
+  helm_repositories: {}
   aks_aad_pod_identity: true
   aks_aad_pod_identity_yaml: {}
   acr_name: ""
   acr_resource_group_name: ""
-  ingress_definition: []
+  ingress_definition: {}
   scripts_dir: ""
   external_dns: true
   external_dns_yml: ""
@@ -48,13 +50,19 @@ steps:
           ARM_CLIENT_SECRET: ${{ parameters.azure_client_secret }}
           ARM_TENANT_ID: ${{ parameters.azure_tenant_id }}
 
-  - ${{ each ingress in parameters.ingress_definition }}:
-      - bash: |
-          kubectl apply -f ${{ ingress }} --context ${{ parameters.aks_cluster_name }}
-        displayName: "K8s: Deploy Ingress-Nginx"
-        workingDirectory: ${{ parameters.terraform_working_dir }}
-        env:
-          FOO: BAR
+  - template: ./deploy-add-helm-repositories.yml
+    parameters:
+      container: "${{ parameters.helm_container }}"
+      helm_repositories: ${{ parameters.helm_repositories }}
+
+  # If you want multiple Ingress Controllers, deploy them after this template file.
+  # A previous version of this took in multiple yaml files for Ingress Controllers
+  # which is no longer the case.
+  - template: ./deploy-helm-app.yml
+    parameters:
+      container: "${{ parameters.helm_container }}"
+      template_input:
+        - ${{ parameters.ingress_definition }}
 
   - ${{ if eq(parameters.external_dns, true) }}:
       - bash: |
