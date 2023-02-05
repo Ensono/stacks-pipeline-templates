@@ -1,0 +1,79 @@
+parameters:
+  - name: enable
+    type: boolean
+  - name: template_name
+    type: string
+  # Azure
+  - name: azure_tenant_id
+    type: string
+  - name: azure_subscription_id
+    type: string
+  - name: azure_client_id
+    type: string
+  - name: azure_client_secret
+    type: string
+  # Kubernetes
+  - name: aks_resource_group_name
+    type: string
+  - name: aks_cluster_name
+    type: string
+  - name: aks_set_acr_perms
+    type: boolean
+  - name: acr_name
+    type: string
+  - name: acr_resource_group_name
+    type: string
+  # Helm
+  - name: helm_container
+    type: string
+  - name: display_name
+    type: string
+  - name: namespace
+    type: string
+steps:
+  - template: ./login-services.yml
+    parameters:
+      # Azure
+      login_azure: true
+      azure_tenant_id: "${{ parameters.azure_tenant_id }}"
+      azure_subscription_id: "${{ parameters.azure_subscription_id }}"
+      azure_client_id: "${{ parameters.azure_client_id }}"
+      azure_client_secret: "${{ parameters.azure_client_secret }}"
+      # Kubernetes
+      login_kubernetes: true
+      aks_resource_group_name: "${{ parameters.aks_resource_group_name }}"
+      aks_cluster_name: "${{ parameters.aks_cluster_name }}"
+      aks_set_acr_perms: ${{ parameters.aks_set_acr_perms }}
+      acr_name: ${{ parameters.acr_name }}
+      acr_resource_group_name: ${{ parameters.acr_resource_group_name }}
+
+  # Check if ingress-nginx is installed by Helm anf if not tries to delete the old ingress-nginx
+  ## Check for Helm Release and set var on the pipeline
+  - task: Bash@3
+    inputs:
+      targetType: 'inline'
+      script: |
+        OUTPUT="$(helm get manifest ${{ parameters.display_name }} -n ${{ parameters.namespace }} 2>&1)"
+        EXIT_CODE="$?"
+        echo "${OUTPUT}"
+        if [ $EXIT_CODE -ne 0 ]; then
+          echo "INFO: helm failed to get manifest, check for no release..."
+          grep "Error: release: not found" <<< "${OUTPUT}"
+          if [ $? -eq 0 ]; then
+            echo "INFO: Setting NO_NGINX_INGRESS_HELM"
+            echo "##vso[task.setvariable variable=NO_NGINX_INGRESS_HELM;]true"
+          fi
+        fi
+    target:
+      container: "${{ parameters.helm_container }}"
+    displayName: "Check for Helm 'ingress-nginx' install"
+
+  - task: Bash@3
+    condition: eq(variables['NO_NGINX_INGRESS_HELM'], 'true')
+    inputs:
+      targetType: 'inline'
+      script: |
+        kubectl delete -f "${{ parameters.template_name }}" || true
+    target:
+      container: "${{ parameters.helm_container }}"
+    displayName: "Deploy: Kubectl Delete (${{ parameters.template_name }})"

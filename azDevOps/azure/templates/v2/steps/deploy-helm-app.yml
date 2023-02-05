@@ -1,0 +1,20 @@
+parameters:
+  container: "host"
+  template_input: []
+steps:
+  - ${{ each template in parameters.template_input }}:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'filePath'
+          filePath: "../../../../../scripts/pwsh/k8s/New-HelmInstall.ps1"
+          arguments: >
+            -DeploymentName ${{ template.display_name }}
+            -DeploymentNamespace ${{ template.namespace }}
+            -ChartName ${{ template.chart_name }}
+            -ChartVersion ${{ template.chart_version }}
+            -ConfigFile ${{ template.helm_parameters_file }}
+        target:
+          container: "${{ parameters.container }}"
+        env:
+          KUBECONFIG: $(System.DefaultWorkingDirectory)/kubeconfig
+        displayName: "Deploy: Helm Install (${{ template.display_name }})"
