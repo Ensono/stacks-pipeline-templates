@@ -1,12 +1,18 @@
 parameters:
-  container: "host"
-  helm_repositories: []
+  - name: pipeline_scripts_dir
+    type: string
+  - name: container
+    type: string
+    default: "host"
+  - name: helm_repositories
+    type: object
+    default: []
 steps:
   - ${{ each repository in parameters.helm_repositories }}:
       - task: PowerShell@2
         inputs:
           targetType: 'filePath'
-          filePath: "../../../../../scripts/pwsh/k8s/New-HelmRepository.ps1"
+          filePath: "${{ parameters.pipeline_scripts_dir }}/pwsh/k8s/New-HelmRepository.ps1"
           arguments: >
             -RepositoryName ${{ repository.key }}
             -RepositoryUrl ${{ repository.value }}

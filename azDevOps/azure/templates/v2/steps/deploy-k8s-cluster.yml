@@ -16,6 +16,7 @@ parameters:
   acr_resource_group_name: ""
   ingress_definition: {}
   scripts_dir: ""
+  pipeline_scripts_dir: ""
   external_dns: true
   external_dns_yml: ""
   domain_filter: ""
@@ -52,6 +53,7 @@ steps:
 
   - template: ./deploy-add-helm-repositories.yml
     parameters:
+      pipeline_scripts_dir: "${{ parameters.pipeline_scripts_dir }}"
       container: "${{ parameters.helm_container }}"
       helm_repositories: ${{ parameters.helm_repositories }}
 
@@ -60,6 +62,7 @@ steps:
   # which is no longer the case.
   - template: ./deploy-helm-app.yml
     parameters:
+      pipeline_scripts_dir: "${{ parameters.pipeline_scripts_dir }}"
       container: "${{ parameters.helm_container }}"
       template_input:
         - ${{ parameters.ingress_definition }}
