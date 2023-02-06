@@ -36,7 +36,7 @@ steps:
       - bash: |
           az aks get-credentials --overwrite-existing --resource-group ${{ parameters.aks_resource_group_name }} --name ${{ parameters.aks_cluster_name }}
         displayName: 'Login: AKS Kubernetes'
-        failOnStderr: true
+        failOnStderr: false
         env:
           AZURE_CLOUD_NAME: AzureCloud
         target:
