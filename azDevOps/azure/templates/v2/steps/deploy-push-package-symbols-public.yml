@@ -40,20 +40,23 @@ steps:
 
         $dotnetVersion = dotnet --version
 
-        $noSymbolsArg = @()
+        $noSymbolsArgs = @()
 
-        if ([System.Version]$dotnetVersion -ge [System.Version]"6.0.200")
+        $dotnetSixOrNewerCheck = [System.Version]$dotnetVersion -ge [System.Version]"6.0.200"
+
+        Write-Host "Dotnet Version >6.0.200: $dotnetSixOrNewerCheck"
+        if ($dotnetSixOrNewerCheck -eq $true)
         {
           if ($noSymbols -eq $true)
           {
-            $noSymbolsArg = @(
+            $noSymbolsArgs = @(
               "--no-symbols"
             )
           }
         }
         else
         {
-            $noSymbolsArg = @(
+            $noSymbolsArgs = @(
               "--no-symbols",
               $noSymbols
             )
@@ -76,6 +79,6 @@ steps:
           )
         }
 
-        Write-Host "dotnet nuget push $apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols $noSymbolsArg"
-        dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols @noSymbolsArg
+        Write-Host "dotnet nuget push $apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate $noSymbolsArgs"
+        dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate @noSymbolsArg
     displayName: 'Publish: Push Packages Public'
