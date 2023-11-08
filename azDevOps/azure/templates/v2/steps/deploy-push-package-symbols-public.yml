@@ -38,6 +38,27 @@ steps:
 
         $noSymbols = -not $noSymbols
 
+        $dotnetVersion = dotnet --version
+
+        $noSymbolsArg = @()
+
+        if ([System.Version]$dotnetVersion -ge [System.Version]"6.0.200")
+        {
+          if ($noSymbols -eq $true)
+          {
+            $noSymbolsArg = @(
+              "--no-symbols"
+            )
+          }
+        }
+        else
+        {
+            $noSymbolsArg = @(
+              "--no-symbols",
+              $noSymbols
+            )
+        }
+
         try
         {
           $useServiceConnection = [System.Convert]::ToBoolean("${{ parameters.use_nuget_service_connection }}")
@@ -55,5 +76,5 @@ steps:
           )
         }
 
-        dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols $noSymbols
+        dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols @noSymbolsArg
     displayName: 'Publish: Push Packages Public'
