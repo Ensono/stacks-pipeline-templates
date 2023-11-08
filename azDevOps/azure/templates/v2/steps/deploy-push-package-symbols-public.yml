@@ -76,5 +76,6 @@ steps:
           )
         }
 
+        Write-Host "dotnet nuget push $apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols $noSymbolsArg"
         dotnet nuget push @apiKeyOption --source https://api.nuget.org/v3/index.json  **/*.nupkg --skip-duplicate --no-symbols @noSymbolsArg
     displayName: 'Publish: Push Packages Public'
