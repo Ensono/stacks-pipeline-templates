@@ -26,7 +26,7 @@ steps:
       targetType: inline
       pwsh: true
       workingDirectory: $(Build.ArtifactStagingDirectory)
-      script:
+      script: |
         try
         {
           $noSymbols = [System.Convert]::ToBoolean("${{ parameters.publish_symbols }}")
