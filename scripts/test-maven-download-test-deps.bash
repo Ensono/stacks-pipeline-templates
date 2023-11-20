@@ -64,8 +64,9 @@ fi
 
 ./mvnw test --no-transfer-progress -Dmaven.repo.local="$M2_LOCATION" -Dgroups='!'"(${ALLOWED_TAGS})"
 
-# If the directory exists it means some tests ran.
-if [ -d "$TEST_REPORT_DIR" ]; then
+# If the directory exists (older versions), or the directory is not empty (newer versions) it means some tests ran.
+# Fail the build as there shouldn't be tests with unknown tags.
+if [ -d "$TEST_REPORT_DIR" ] && [ $(ls -1A $TEST_REPORT_DIR | wc -l) -ne "0" ]; then
 	echo "FAIL: Tests with no tags or with tags not allowed detected." \
 		" Please tag tests correctly or update the \`ALLOWED_TAGS\` parameter."
 	exit 1
