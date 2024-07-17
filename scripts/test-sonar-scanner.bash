@@ -164,7 +164,7 @@ fi
 	-Dsonar.host.url="${SONAR_HOST_URL}" \
 	-Dsonar.projectName="${SONAR_PROJECT_NAME}" \
 	-Dsonar.projectKey="${SONAR_PROJECT_KEY}" \
-	-Dsonar.login="${SONAR_TOKEN}" \
+	-Dsonar.token="${SONAR_TOKEN}" \
 	-Dsonar.organization="${SONAR_ORGANISATION}" \
 	-Dsonar.projectVersion="${BUILD_NUMBER}" \
 	"${EXTRA_SONAR_ARGUMENTS[@]}"
