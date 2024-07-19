@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":W:X:Y:Z:"
+OPTIONS=":V:W:X:Y:Z:"
 
 usage()
 {
@@ -13,6 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
+		  -V true|false	Whether to enable the dotnet analyser or not
 		  -W location	A location for the OWASP database to be stored under
 		  -X key	An API key for the NVD Databases (NOTE: This will be very slow without one, they can be requested here: https://nvd.nist.gov/developers/request-an-api-key)
 		  -Y true|false	Whether to fail the build or not on vulnerabilities. Default: false
@@ -37,6 +38,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
+		V  ) DOTNET_ANALYSER_ENABLED="${OPTARG}";;
 		W  ) DATABASE_DIRECTORY="${OPTARG}";;
 		X  ) NVD_API_KEY="${OPTARG}";;
 		Y  ) FAIL_BUILD_ON_VULNERABILITY="${OPTARG}";;
@@ -56,6 +58,10 @@ fi
 
 if [ -z "${FAIL_BUILD_ON_VULNERABILITY}" ]; then
 	FAIL_BUILD_ON_VULNERABILITY="false"
+fi
+
+if [ -z "${DOTNET_ANALYSER_ENABLED}" ]; then
+	DOTNET_ANALYSER_ENABLED="false"
 fi
 
 if [ ! -z "${DATABASE_DIRECTORY}" ]; then
@@ -78,4 +84,5 @@ fi
 	-Dsun.jnu.encoding=UTF-8 \
 	-Dfile.encoding=UTF-8 \
 	-DfailBuildOnAnyVulnerability="${FAIL_BUILD_ON_VULNERABILITY}" \
+	-DassemblyAnalyzerEnabled="${DOTNET_ANALYSER_ENABLED}" \
 	"${EXTRA_OWASP_ARGUMENTS[@]}"
