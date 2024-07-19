@@ -4,7 +4,7 @@
 
 set -exo pipefail
 
-OPTIONS=":X:Y:Z:"
+OPTIONS=":W:X:Y:Z:"
 
 usage()
 {
@@ -13,6 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
+		  -W location	A location for the OWASP database to be stored under
 		  -X key	An API key for the NVD Databases (NOTE: This will be very slow without one, they can be requested here: https://nvd.nist.gov/developers/request-an-api-key)
 		  -Y true|false	Whether to fail the build or not on vulnerabilities. Default: false
 		  -Z location	Optional maven cache directory. Default: './.m2'
@@ -36,6 +37,7 @@ while getopts "${OPTIONS}" option
 do
 	case "${option}" in
 		# Optional
+		W  ) DATABASE_DIRECTORY="${OPTARG}";;
 		X  ) NVD_API_KEY="${OPTARG}";;
 		Y  ) FAIL_BUILD_ON_VULNERABILITY="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
@@ -54,6 +56,10 @@ fi
 
 if [ -z "${FAIL_BUILD_ON_VULNERABILITY}" ]; then
 	FAIL_BUILD_ON_VULNERABILITY="false"
+fi
+
+if [ ! -z "${DATABASE_DIRECTORY}" ]; then
+	EXTRA_OWASP_ARGUMENTS+=("-DdataDirectory=${DATABASE_DIRECTORY}")
 fi
 
 if [ ! -z "${NVD_API_KEY}" ]; then
