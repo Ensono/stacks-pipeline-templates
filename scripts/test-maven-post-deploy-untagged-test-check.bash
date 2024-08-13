@@ -83,8 +83,9 @@ fi
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	"${TAGS_ARRAY[@]}"
 
-# If tests ran, then the tags aren't correct.
-if [ "$(find "${TEST_HTML_REPORT_DIRECTORY}" -maxdepth 1 | wc -l)" -ne 1 ]; then
+# If the directory exists (older versions), or the directory is not empty (newer versions) it means some tests ran
+# Fail the build as there shouldn't be tests with unknown tags
+if [ -d "${TEST_HTML_REPORT_DIRECTORY}" ] && [ "$(find "${TEST_HTML_REPORT_DIRECTORY}" -maxdepth 1 | wc -l)" -ne 1 ]; then
 	echo "Untagged tests or tests with unknown tags detected!" >&2;
 	echo "Please check tags for spelling mistakes or update the allowed tags" >&2;
 	echo "Tags: ${TAGS_ARRAY[*]}" >&2;
