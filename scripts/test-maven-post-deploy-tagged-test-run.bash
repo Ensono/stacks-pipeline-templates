@@ -13,11 +13,11 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -a Tag	The test tag(s) that are allowed run, e.g. '@Functional or @Smoke or @Performance'
+		  -a Tag	The test tag(s) that are allowed run, e.g. 'Functional | Smoke | Performance'
 		  -b url	The base URL of the API, e.g. https://dev-java-api.amidostacks.com/api
 
 		Optional Arguments:
-		  -Y ignore	Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
+		  -Y ignore	Tags to ignore in JUnit5 format, e.g. 'Ignore | Foo'. Empty default
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -54,7 +54,7 @@ do
 done
 
 if [ -z "${GROUP}" ]; then
-	echo "-a: Missing a group of tests to run, e.g. '@Functional'" >&2;
+	echo "-a: Missing a group of tests to run, e.g. 'Functional'" >&2;
 	exit 1
 fi
 
@@ -64,11 +64,11 @@ if [ -z "${BASE_URL}" ]; then
 fi
 
 if [ -n "${IGNORE_GROUPS}" ]; then
-	IGNORE_GROUPS="and not(${IGNORE_GROUPS})"
+	IGNORE_GROUPS="& !(${IGNORE_GROUPS})"
 fi
 
 declare -a TAGS_ARRAY
-TAGS_ARRAY+=(-Dcucumber.filter.tags="(${GROUP}) ${IGNORE_GROUPS}")
+TAGS_ARRAY+=(-Dgroups"(${GROUP}) ${IGNORE_GROUPS}")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
