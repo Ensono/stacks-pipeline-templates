@@ -13,12 +13,12 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -a Tag	The test tag(s) that are allowed run, e.g. '@Functional or @Smoke or @Performance'
+		  -a Tag	The test tag(s) that are allowed run, e.g. 'Functional | Smoke | Performance'
 
 		Optional Arguments:
 		  -W location	The location to the serenity HTML reports. Default: "./target/site/serenity"
 		  -X location	The location to the failsafe reports. Default: "./target/failsafe-reports"
-		  -Y ignore		Tags to ignore in Cucumber format, e.g. '@Ignore or @Foo'. Empty default
+		  -Y ignore		Tags to ignore in Cucumber format, e.g. 'Ignore | Foo'. Empty default
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -55,7 +55,7 @@ do
 done
 
 if [ -z "${GROUP}" ]; then
-	echo "-a: Missing a group of tests to run, e.g. '@Functional'" >&2;
+	echo "-a: Missing a group of tests to run, e.g. 'Functional'" >&2;
 	exit 1
 fi
 
@@ -68,11 +68,11 @@ if [ -z "${TEST_REPORT_DIRECTORY}" ]; then
 fi
 
 if [ -n "${IGNORE_GROUPS}" ]; then
-	IGNORE_GROUPS="and not(${IGNORE_GROUPS})"
+	IGNORE_GROUPS="& !(${IGNORE_GROUPS})"
 fi
 
 declare -a TAGS_ARRAY
-TAGS_ARRAY+=(-Dcucumber.filter.tags="not (${GROUP}) ${IGNORE_GROUPS}")
+TAGS_ARRAY+=(-Dgroups="! (${GROUP}) ${IGNORE_GROUPS}")
 
 if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
