@@ -91,17 +91,6 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Display archetype generated xml"
 
-  # TODO: Add to Java container for EIR
-  - task: Bash@3
-    inputs:
-      targetType: inline
-      script: |
-        sudo apt-get update
-        sudo apt-get install -y gpg
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: Install `gpg`
-
   - bash: |
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
       gpg --import  gpg_private_key.asc
