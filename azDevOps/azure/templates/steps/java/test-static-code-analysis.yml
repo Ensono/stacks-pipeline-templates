@@ -38,7 +38,7 @@ steps:
             chmod u+x "/tmp/${SONAR_DIRECTORY}/bin/sonar-scanner"
 
             echo "/tmp/${SONAR_DIRECTORY}/bin"
-        workingDirectory: "${{ parameters.project_root_dir }}"
+          workingDirectory: "${{ parameters.project_root_dir }}"
         target:
           container: "${{ parameters.sonar_container }}"
         displayName: Install Sonar Scanner
