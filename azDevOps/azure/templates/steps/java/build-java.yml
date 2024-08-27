@@ -18,6 +18,8 @@ parameters:
   vulnerability_scan: false
   vulnerability_scan_fail_build_on_detection: true
   vulnerability_scan_report: ""
+  vulnerability_scan_api_key: ""
+  vulnerability_scan_database_directory: ""
   project_type: ""
   build_type: ""
   # Testing
@@ -104,8 +106,41 @@ steps:
   - ${{ if eq(parameters.vulnerability_scan, true) }}:
       - task: Bash@3
         inputs:
+          targetType: "inline"
+          script: |
+            DATE="$(date "+%F")"
+            HOUR="$(date "+%H")"
+
+            # NVD Cache lasts 4 hours (240 mins) and so cache based on the hour's time
+            # in 24 hours. E.g. 0-3 are 0, 1-4 are 1, 20-23 are 5 etc.. This gives a
+            # cache that lasts roughly 4 hours at a time.
+            HOUR_BY_FOUR="$(( ${HOUR} / 4 ))"
+
+            NVD_CACHE_FILE="${DATE}-${HOUR_BY_FOUR}"
+
+            echo "echoing to a file '${{ parameters.repo_root_dir }}/.nvd-cache-day' with value '${DATE}'"
+            echo "echoing to a file '${{ parameters.repo_root_dir }}/.nvd-cache-full' with value '${NVD_CACHE_FILE}'"
+
+            # Partial (slow) download lasts 24 hours
+            echo "${DATE}" > ${{ parameters.repo_root_dir }}/.nvd-cache-day
+            # Full Cache is 4 hours, so use the by four computed variable
+            echo "${NVD_CACHE_FILE}" > ${{ parameters.repo_root_dir }}/.nvd-cache-full
+        displayName: Set NVD Cache Variable
+
+      - task: Cache@2
+        inputs:
+          key: '${{ parameters.repo_root_dir }}/.nvd-cache-day | ${{ parameters.repo_root_dir }}/.nvd-cache-full'
+          restoreKeys: |
+            ${{ parameters.repo_root_dir }}/.nvd-cache-day
+          path: "${{ parameters.vulnerability_scan_database_directory }}"
+        displayName: Cache NVD Datatbase
+
+      - task: Bash@3
+        inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-owasp-dependency-check.bash"
           arguments: >
+            -W "${{ parameters.vulnerability_scan_database_directory }}"
+            -X "${{ parameters.vulnerability_scan_api_key }}"
             -Y "${{ parameters.vulnerability_scan_fail_build_on_detection }}"
             -Z "${{ parameters.maven_cache_directory }}"
           workingDirectory: "${{ parameters.project_root_dir }}"
@@ -218,8 +253,8 @@ steps:
     inputs:
       targetType: inline
       script: |
-        apt-get update
-        apt-get install -y gpg
+        sudo apt-get update
+        sudo apt-get install -y gpg
     displayName: Install `gpg`
 
   - bash: |
