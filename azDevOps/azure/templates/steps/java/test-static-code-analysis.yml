@@ -16,12 +16,33 @@ parameters:
   sonar_pullrequest_provider: ""
   sonar_remote_repo: ""
   sonar_command: ""
+  sonar_version: "6.1.0.4477"
   # Docker
   docker_image_tag: ""
 
 steps:
-  # SonarCloud
   - ${{ if eq(parameters.sonar_enable, true) }}:
+      - task: Bash@3
+        inputs:
+          targetType: inline
+          script: |
+            SONAR_DIRECTORY="sonar-scanner-${{ parameters.sonar_version }}"
+            ZIP_LOCATION="/tmp/${SONAR_DIRECTORY}.zip"
+
+            curl --fail-with-body -L "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ parameters.sonar_version }}.zip" -o "${ZIP_LOCATION}"
+
+            cd /tmp
+
+            unzip "${ZIP_LOCATION}"
+
+            chmod u+x "/tmp/${SONAR_DIRECTORY}/bin/sonar-scanner"
+
+            echo "/tmp/${SONAR_DIRECTORY}/bin"
+        workingDirectory: "${{ parameters.project_root_dir }}"
+        target:
+          container: "${{ parameters.sonar_container }}"
+        displayName: Install Sonar Scanner
+
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-sonar-scanner.bash"
