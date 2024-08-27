@@ -15,9 +15,6 @@ parameters:
   artifactory_password: ""
   # Docker Config
   docker_build_container: ""
-  # Vulnerability Scanning
-  vulnerability_scan: false
-  vulnerability_scan_fail_build_on_detection: true
   project_type: ""
   build_type: ""
   # OSSRH MAVEN CENTRAL
@@ -27,9 +24,7 @@ parameters:
   gpg_key_signing_id: ""
   gpg_private_key: ""
 
-
 steps:
-
   # Maven: Install Packages
   - task: Bash@3
     inputs:
@@ -69,7 +64,7 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Build archetype (${{ parameters.project_type }})"
 
-  # Maven: update  archetype
+  # Maven: update archetype
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-archetype-maven-pom-file.bash"
@@ -101,8 +96,8 @@ steps:
     inputs:
       targetType: inline
       script: |
-        apt-get update
-        apt-get install -y gpg
+        sudo apt-get update
+        sudo apt-get install -y gpg
     displayName: Install `gpg`
 
   - bash: |
@@ -115,7 +110,7 @@ steps:
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
-  # Maven: Performing a Snapshot  Archetype Deployment
+  # Maven: Performing a Snapshot Archetype Deployment
   - task: Bash@3
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
@@ -130,10 +125,10 @@ steps:
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
+    displayName: "Maven: Deploy Application to Maven Central  (${{ parameters.project_type }}) to Maven Central"
 
   - ${{ if eq(parameters.build_type, 'RELEASE') }}:
-      # Maven: Performing a Release  Archetype Deployment  to maven central
+      # Maven: Performing a Release Archetype Deployment
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
@@ -148,4 +143,4 @@ steps:
           workingDirectory: "${{ parameters.project_root_dir }}"
         target:
           container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Deploy release Application to Maven central (${{ parameters.project_type }}) to maven central"
+        displayName: "Maven: Deploy release Application to Maven Central (${{ parameters.project_type }}) to Maven Central"
