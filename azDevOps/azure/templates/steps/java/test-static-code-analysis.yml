@@ -22,6 +22,7 @@ parameters:
 
 steps:
   - ${{ if eq(parameters.sonar_enable, true) }}:
+      # TODO: Add to Java Container for EIR
       - task: Bash@3
         inputs:
           targetType: inline
