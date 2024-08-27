@@ -60,8 +60,8 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-version.bash"
       arguments: >
-                   -Z "${{ parameters.maven_cache_directory }}"
-                   -V "${{ parameters.maven_package_version }}"
+        -Z "${{ parameters.maven_cache_directory }}"
+        -V "${{ parameters.maven_package_version }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
@@ -207,11 +207,20 @@ steps:
           cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
           npm i
           ./node_modules/.bin/gulp inline-css-images
-          ./node_modules/.bin/gulp inline-sources
+          ./node_modules/i.bin/gulp inline-sources
         workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
         target:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
+
+  # TODO: Add to Java container for EIR
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: |
+        apt-get update
+        apt-get install -y gpg
+    displayName: Install `gpg`
 
   - bash: |
       echo "signing key  :  ${{ parameters.gpg_key_signing_id }}"
@@ -220,7 +229,7 @@ steps:
       gpg --list-secret-keys --with-subkey-fingerprint
     target:
       container: ${{ parameters.docker_build_container }}
-    displayName: "retrieve and import gpg key from key vault "
+    displayName: "Retrieve and import gpg key from key vault "
     env:
       gpg_private_key: "${{ parameters.gpg_private_key }}"
 
