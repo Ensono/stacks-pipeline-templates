@@ -248,17 +248,6 @@ steps:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
 
-  # TODO: Add to Java container for EIR
-  - task: Bash@3
-    inputs:
-      targetType: inline
-      script: |
-        sudo apt-get update
-        sudo apt-get install -y gpg
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: Install `gpg`
-
   - bash: |
       echo "signing key  :  ${{ parameters.gpg_key_signing_id }}"
       base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
