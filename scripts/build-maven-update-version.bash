@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Installs (most) maven dependencies and processes them.
+# Updates version numbers.
 
 set -exo pipefail
 
@@ -13,7 +13,7 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Optional Arguments:
-		  -V location	Optional maven package version file. Default: \`1.0.0.SNAPSHOT\`
+		  -V location	Optional maven package version file. Default: \`1.0.0-SNAPSHOT\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -49,9 +49,9 @@ if [ -z "${M2_LOCATION}" ]; then
 fi
 
 if [ -z "${PACKAGE_VERSION}" ]; then
-	PACKAGE_VERSION="1.0.0.SNAPSHOT"
+	PACKAGE_VERSION="1.0.0-SNAPSHOT"
 fi
 
 MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DnewVersion=${PACKAGE_VERSION}"
 
-./mvnw  versions:set ${MAVEN_OPTIONS}
+./mvnw versions:set ${MAVEN_OPTIONS}

@@ -55,10 +55,10 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=" -Dmaven.repo.local=${M2_LOCATION} --no-transfer-progress -DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}"
+MAVEN_OPTIONS=("-Dmaven.repo.local=${M2_LOCATION}" "--no-transfer-progress" "-DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}")
 
 if [ "${SETTINGS_LOCATION}" ]; then
-  MAVEN_OPTIONS+=" --settings ${SETTINGS_LOCATION} "
+	MAVEN_OPTIONS+=("--settings ${SETTINGS_LOCATION}")
 fi
 
-./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS}
+./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS[@]}

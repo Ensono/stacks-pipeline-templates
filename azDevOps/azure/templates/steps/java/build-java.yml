@@ -32,7 +32,6 @@ parameters:
   gpg_private_key: ""
 
 steps:
-
   # Maven: Cache packages
   - task: Cache@2
     inputs:
@@ -241,7 +240,8 @@ steps:
         inputs:
           targetType: inline
           script: |
-            cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
+            . /opt/microsoft/powershell/7/Microsoft.PowerShell_profile.ps1
+            Copy-Item -Path "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/*" -Destination . -Recurse
             npm ci
             ./node_modules/.bin/gulp inline-css-images
             ./node_modules/.bin/gulp inline-sources

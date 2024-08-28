@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#this script update the generated  archetype  pom with build plugin dependencies
+# This script updates the generated archetype pom with build plugin dependencies
 # TODO add parameter variable for ossrh url and nexus staging verison
 
 set -exo pipefail
