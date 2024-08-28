@@ -236,14 +236,16 @@ steps:
 
   # Gulp: Inline Jacoco report assets, runs if functional_testing_required=true
   - ${{ if eq(parameters.functional_testing_required, true) }}:
-      # TODO: Pull this out into a bash script?
-      - bash: |
-          set -euxo pipefail
-          cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
-          npm i
-          ./node_modules/.bin/gulp inline-css-images
-          ./node_modules/i.bin/gulp inline-sources
-        workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
+      # TODO: Pull this out into a pwsh script?
+      - task: PowerShell@2
+        inputs:
+          targetType: inline
+          script: |
+            cp "${{ parameters.repo_root_dir }}/build/azDevOps/azure/coverage/"* .
+            npm ci
+            ./node_modules/.bin/gulp inline-css-images
+            ./node_modules/.bin/gulp inline-sources
+          workingDirectory: "${{ parameters.project_root_dir }}/target/site/"
         target:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
