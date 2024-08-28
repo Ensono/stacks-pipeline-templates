@@ -81,8 +81,7 @@ steps:
         maven | "$(Agent.OS)"
         maven
       path: "${{ parameters.project_root_dir }}/${{ parameters.maven_cache_directory }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
+
     displayName: Cache Maven packages (${{ parameters.project_type }})
 
   - bash: |
