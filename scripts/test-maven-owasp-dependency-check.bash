@@ -74,7 +74,9 @@ fi
 
 FAIL_BUILD_ON_VULNERABILITY="$(tr '[:upper:]' '[:lower:]' <<< "${FAIL_BUILD_ON_VULNERABILITY}")"
 if [ "${FAIL_BUILD_ON_VULNERABILITY}" != "true" ]; then
-	FAIL_BUILD_ON_VULNERABILITY="false"
+	FAIL_BUILD_ON_VULNERABILITY="0"
+else
+	FAIL_BUILD_ON_VULNERABILITY="11"
 fi
 
 ./mvnw org.owasp:dependency-check-maven:check \
@@ -83,6 +85,6 @@ fi
 	-Dmaven.repo.local="${M2_LOCATION}" \
 	-Dsun.jnu.encoding=UTF-8 \
 	-Dfile.encoding=UTF-8 \
-	-DfailBuildOnAnyVulnerability="${FAIL_BUILD_ON_VULNERABILITY}" \
+	-DfailBuildOnCVSS="${FAIL_BUILD_ON_VULNERABILITY}" \
 	-DassemblyAnalyzerEnabled="${DOTNET_ANALYSER_ENABLED}" \
 	"${EXTRA_OWASP_ARGUMENTS[@]}"
