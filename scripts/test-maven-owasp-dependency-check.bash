@@ -74,9 +74,9 @@ fi
 
 FAIL_BUILD_ON_VULNERABILITY="$(tr '[:upper:]' '[:lower:]' <<< "${FAIL_BUILD_ON_VULNERABILITY}")"
 if [ "${FAIL_BUILD_ON_VULNERABILITY}" != "true" ]; then
-	FAIL_BUILD_ON_VULNERABILITY="0"
-else
 	FAIL_BUILD_ON_VULNERABILITY="11"
+else
+	FAIL_BUILD_ON_VULNERABILITY="0"
 fi
 
 ./mvnw org.owasp:dependency-check-maven:check \
