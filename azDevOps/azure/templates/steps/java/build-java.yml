@@ -168,8 +168,8 @@ steps:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Compile Application (${{ parameters.project_type }})"
 
-  # Test: Download Test Dependencies, runs if functional_testing_required=true
   - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Test: Download Test Dependencies
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-download-test-deps.bash"
@@ -182,8 +182,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Test: Download Test Deps (${{ parameters.project_type }})"
 
-  # Test: Unit tests, runs if functional_testing_required=true
-  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Test: Unit tests
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
@@ -195,8 +194,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Test: Unit tests (${{ parameters.project_type }})"
 
-  # Test: Component tests, runs if functional_testing_required=true
-  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Test: Component tests
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
@@ -208,8 +206,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Test: Component tests (${{ parameters.project_type }})"
 
-  # Test: Integration tests, runs if functional_testing_required=true
-  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Test: Integration tests
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-tagged-test-run.bash"
@@ -221,8 +218,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Test: Integration tests (${{ parameters.project_type }})"
 
-  # Test: Generate Jacoco coverage reports, runs if functional_testing_required=true
-  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Test: Generate Jacoco coverage reports
       - task: Bash@3
         inputs:
           filePath: "${{ parameters.pipeline_scripts_directory }}/test-maven-generate-jacoco-report.bash"
@@ -233,8 +229,7 @@ steps:
           container: ${{ parameters.docker_build_container }}
         displayName: "Generate Jacoco coverage reports (${{ parameters.project_type }})"
 
-  # Gulp: Inline Jacoco report assets, runs if functional_testing_required=true
-  - ${{ if eq(parameters.functional_testing_required, true) }}:
+      # Gulp: Inline Jacoco report assets
       # TODO: Pull this out into a pwsh script?
       - task: PowerShell@2
         inputs:
@@ -249,47 +244,3 @@ steps:
         target:
           container: node
         displayName: "Gulp: Inline Jacoco report assets (${{ parameters.project_type }})"
-
-  - bash: |
-      echo "signing key  :  ${{ parameters.gpg_key_signing_id }}"
-      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
-      gpg --import  gpg_private_key.asc
-      gpg --list-secret-keys --with-subkey-fingerprint
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Retrieve and import gpg key from key vault "
-    env:
-      gpg_private_key: "${{ parameters.gpg_private_key }}"
-
-  # Maven: Performing a Snapshot Deployment
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
-      arguments: >
-        -U "${{ parameters.ossrh_jira_id }}"
-        -P "${{ parameters.ossrh_jira_password }}"
-        -G "${{ parameters.gpg_key_signing_id }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -S "${{ parameters.maven_settings_file }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Deploy Application to Maven central  (${{ parameters.project_type }}) to maven central"
-
-  - ${{ if eq(parameters.build_type, 'RELEASE') }}:
-      # Maven: Performing a Release Deployment  to maven central
-      - task: Bash@3
-        inputs:
-          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
-          arguments: >
-            -U "${{ parameters.ossrh_jira_id }}"
-            -P "${{ parameters.ossrh_jira_password }}"
-            -G "${{ parameters.gpg_key_signing_id }}"
-            -Z "${{ parameters.maven_cache_directory }}"
-            -F "${{ parameters.maven_pom_file }}"
-            -S "${{ parameters.maven_settings_file }}"
-          workingDirectory: "${{ parameters.project_root_dir }}"
-        target:
-          container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Deploy release Application to Maven central (${{ parameters.project_type }}) to maven central"
