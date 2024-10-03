@@ -4,6 +4,7 @@ parameters:
   pipeline_scripts_directory: ""
   # Docker Config
   docker_build_container: ""
+  # Project
   project_type: ""
   build_type: ""
   # MAVEN CENTRAL
