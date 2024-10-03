@@ -42,7 +42,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        ./mvnw deploy
+        ./mvnw deploy --no-transfer-progress --settings settings.xml
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
