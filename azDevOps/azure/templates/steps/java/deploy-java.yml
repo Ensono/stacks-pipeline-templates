@@ -31,7 +31,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        echo "<server><id>${{ parameters.maven_id }}</id><username>${{ parameters.maven_username }</username><password>${{ parameters.maven_password }}</password></server>" > settings.xml
+        echo "<server><id>${{ parameters.maven_id }}</id><username>${{ parameters.maven_username }}</username><password>${{ parameters.maven_password }}</password></server>" > settings.xml
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
