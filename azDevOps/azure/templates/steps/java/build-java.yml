@@ -148,7 +148,7 @@ steps:
           content: "${{ parameters.project_root_dir }}/${{ parameters.vulnerability_scan_report }}"
           targetFolder: "$(Build.ArtifactStagingDirectory)/${{ parameters.vulnerability_scan_report }}"
           cleanTargetFolder: true
-        displayName: "Copy File "
+        displayName: "Copy Vulnerability files to the Artefact directory"
 
   # Maven: Compile Application
   - task: Bash@3
