@@ -73,7 +73,7 @@ if [ "${SETTINGS_LOCATION}" ]; then
 fi
 
 if [ "${OSSRH_JIRA_ID}" ]; then
-  MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
+	MAVEN_OPTIONS+=" -Dossrh.jira.id=${OSSRH_JIRA_ID} -Dossrh.jira.password=${OSSRH_JIRA_PASSWORD} "
 fi
 
 	MAVEN_OPTIONS+=" -Dsettings.security=${SETTINGS_SECURITY_LOCATION} "

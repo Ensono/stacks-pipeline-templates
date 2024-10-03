@@ -1,0 +1,48 @@
+parameters:
+  repo_root_dir: ""
+  project_root_dir: ""
+  pipeline_scripts_directory: ""
+  # Docker Config
+  docker_build_container: ""
+  project_type: ""
+  build_type: ""
+  # MAVEN CENTRAL
+  maven_id: "central"
+  maven_username: ""
+  maven_password: ""
+  # GPG KEYS
+  gpg_key_signing_id: ""
+  gpg_private_key: ""
+
+steps:
+  - bash: |
+      echo "signing key: ${{ parameters.gpg_key_signing_id }}"
+      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
+      gpg --import  gpg_private_key.asc
+      gpg --list-secret-keys --with-subkey-fingerprint
+    target:
+      container: ${{ parameters.docker_build_container }}
+    env:
+      gpg_private_key: "${{ parameters.gpg_private_key }}"
+    displayName: "Retrieve and import gpg key from key vault"
+
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: |
+        echo "<server><id>${{ parameters.maven_id }}</id><username>${{ parameters.maven_username }</username><password>${{ parameters.maven_password }}</password></server>" > settings.xml
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: Set up the 'settings.xml' for Maven Central Publishing
+
+  # Maven: Performing a Deployment to Maven Central
+  - task: Bash@3
+    inputs:
+      targetType: inline
+      script: |
+        ./mvnw deploy
+      workingDirectory: "${{ parameters.project_root_dir }}"
+    target:
+      container: ${{ parameters.docker_build_container }}
+    displayName: "Maven: Deploy Application to Maven Central (${{ parameters.project_type }})"
