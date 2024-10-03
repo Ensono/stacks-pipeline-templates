@@ -24,13 +24,6 @@ parameters:
   build_type: ""
   # Testing
   functional_testing_required: false
-  # OSSRH MAVEN CENTRAL
-  ossrh_jira_id: ""
-  ossrh_jira_password: ""
-  # GPG KEYS
-  gpg_key_signing_id: ""
-  gpg_private_key: ""
-
 steps:
   # Maven: Cache packages
   - task: Cache@2
