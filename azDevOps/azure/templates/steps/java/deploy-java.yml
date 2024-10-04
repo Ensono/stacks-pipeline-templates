@@ -43,8 +43,12 @@ steps:
   - task: Bash@3
     inputs:
       targetType: inline
-      script: |
-        ./mvnw deploy --no-transfer-progress --settings settings.xml -DdeploymentName="${{ parameters.project_type }} @ ${{ parameters.maven_package_version }}"
+      script: >
+        ./mvnw deploy
+        --no-transfer-progress
+        --settings settings.xml
+        -DdeploymentName="${{ parameters.project_type }} @ ${{ parameters.maven_package_version }}"
+        -f ${{ parameters.pom_dir }}/pom.xml
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
