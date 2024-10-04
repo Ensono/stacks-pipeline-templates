@@ -13,9 +13,6 @@ usage()
 		Usage: $(basename "${0}") [OPTION]...
 
 		Required Arguments:
-		  -U location	OSSRH_JIRA_ID
-		  -P location	OSSRH_JIRA_PASSWORD
-		  -T location	Optional maven settings security  file. Default: \`./.mvn/settings-security.xml\`
 			-K id user for signing release
 
 		Optional Arguments:

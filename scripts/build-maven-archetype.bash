@@ -5,7 +5,7 @@
 
 set -exo pipefail
 
-OPTIONS=":Z:A:S:"
+OPTIONS=":Z:A:"
 
 usage()
 {
@@ -15,7 +15,6 @@ usage()
 
 		Optional Arguments:
 		  -A location Optional archetype.properties file location. Default: \`archetype.properties\`
-		  -S location	Optional maven settings file. Default: \`./.mvn/settings.xml\`
 		  -Z location	Optional maven cache directory. Default: \`./.m2\`
 		USAGE_STRING
 	)
@@ -38,7 +37,6 @@ do
 	case "${option}" in
 		# Optional
 		A  ) ARCHETYPE_PROPERTIES_FILE="${OPTARG}";;
-		S  ) SETTINGS_LOCATION="${OPTARG}";;
 		Z  ) M2_LOCATION="${OPTARG}";;
 
 		\? ) echo "Unknown option: -${OPTARG}" >&2; exit 1;;
@@ -56,9 +54,5 @@ if [ -z "${M2_LOCATION}" ]; then
 fi
 
 MAVEN_OPTIONS=("-Dmaven.repo.local=${M2_LOCATION}" "--no-transfer-progress" "-DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}")
-
-if [ "${SETTINGS_LOCATION}" ]; then
-	MAVEN_OPTIONS+=("--settings ${SETTINGS_LOCATION}")
-fi
 
 ./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS[@]}

@@ -4,25 +4,12 @@ parameters:
   pipeline_scripts_directory: ""
   # Maven
   maven_cache_directory: ""
-  maven_surefire_reports_dir: ""
-  maven_allowed_test_tags: ""
-  maven_pom_file: ""
   maven_archetype_properties_file: ""
-  maven_settings_file: ""
-  maven_repository_server: ""
-  # Artifactory
-  artifactory_username: ""
-  artifactory_password: ""
+  maven_package_version: ""
   # Docker Config
   docker_build_container: ""
   project_type: ""
   build_type: ""
-  # OSSRH MAVEN CENTRAL
-  ossrh_jira_id: ""
-  ossrh_jira_password: ""
-  # GPG KEYS
-  gpg_key_signing_id: ""
-  gpg_private_key: ""
 
 steps:
   # Maven: Install Packages
@@ -30,9 +17,6 @@ steps:
     inputs:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-install.bash"
       arguments: >
-        -U "${{ parameters.ossrh_jira_id }}"
-        -P "${{ parameters.ossrh_jira_password }}"
-        -S "${{ parameters.maven_settings_file }}"
         -Z "${{ parameters.maven_cache_directory }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
@@ -57,21 +41,11 @@ steps:
       filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-archetype.bash"
       arguments: >
         -A "${{ parameters.maven_archetype_properties_file }}"
-        -S "${{ parameters.maven_settings_file }}"
         -Z "${{ parameters.maven_cache_directory }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "Maven: Build archetype (${{ parameters.project_type }})"
-
-  # Maven: update archetype
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-update-archetype-maven-pom-file.bash"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Update  generated archtype Pom file  (${{ parameters.project_type }})"
 
   # Maven: Cache packages
   - task: Cache@2
@@ -89,48 +63,3 @@ steps:
     target:
       container: ${{ parameters.docker_build_container }}
     displayName: "Display archetype generated xml"
-
-  - bash: |
-      base64 -d <<< "$gpg_private_key" > gpg_private_key.asc
-      gpg --import  gpg_private_key.asc
-      gpg --list-secret-keys --with-subkey-fingerprint
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Retrieve and import gpg key from key vault "
-    env:
-      gpg_private_key: "${{ parameters.gpg_private_key }}"
-
-  # Maven: Performing a Snapshot Archetype Deployment
-  - task: Bash@3
-    inputs:
-      filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-deploy-maven-central.bash"
-      arguments: >
-        -U "${{ parameters.ossrh_jira_id }}"
-        -P "${{ parameters.ossrh_jira_password }}"
-        -G "${{ parameters.gpg_key_signing_id }}"
-        -Z "${{ parameters.maven_cache_directory }}"
-        -F "${{ parameters.maven_pom_file }}"
-        -R "${{ parameters.maven_repository_server }}"
-        -S "${{ parameters.maven_settings_file }}"
-      workingDirectory: "${{ parameters.project_root_dir }}"
-    target:
-      container: ${{ parameters.docker_build_container }}
-    displayName: "Maven: Deploy Application to Maven Central  (${{ parameters.project_type }}) to Maven Central"
-
-  - ${{ if eq(parameters.build_type, 'RELEASE') }}:
-      # Maven: Performing a Release Archetype Deployment
-      - task: Bash@3
-        inputs:
-          filePath: "${{ parameters.pipeline_scripts_directory }}/build-maven-release-maven-central.bash"
-          arguments: >
-            -U "${{ parameters.ossrh_jira_id }}"
-            -P "${{ parameters.ossrh_jira_password }}"
-            -G "${{ parameters.gpg_key_signing_id }}"
-            -Z "${{ parameters.maven_cache_directory }}"
-            -F "${{ parameters.maven_pom_file }}"
-            -R "${{ parameters.maven_repository_server }}"
-            -S "${{ parameters.maven_settings_file }}"
-          workingDirectory: "${{ parameters.project_root_dir }}"
-        target:
-          container: ${{ parameters.docker_build_container }}
-        displayName: "Maven: Deploy release Application to Maven Central (${{ parameters.project_type }}) to Maven Central"

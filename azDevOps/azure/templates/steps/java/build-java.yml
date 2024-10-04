@@ -7,11 +7,6 @@ parameters:
   maven_surefire_reports_dir: ""
   maven_allowed_test_tags: ""
   maven_pom_file: "pom.xml"
-  maven_settings_file: ""
-  maven_repository_server: ""
-  # Artifactory
-  artifactory_username: ""
-  artifactory_password: ""
   # Docker Config
   docker_build_container: ""
   # Vulnerability Scanning
