@@ -55,4 +55,6 @@ fi
 
 MAVEN_OPTIONS=("-Dmaven.repo.local=${M2_LOCATION}" "--no-transfer-progress" "-DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}")
 
+echo "<settings></settings>" > /root/.m2/settings.xml
+
 ./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS[@]}
