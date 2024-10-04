@@ -53,8 +53,8 @@ if [ -z "${M2_LOCATION}" ]; then
 	M2_LOCATION="./.m2"
 fi
 
-MAVEN_OPTIONS=("-Dmaven.repo.local=${M2_LOCATION}" "--no-transfer-progress" "-DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}")
+MAVEN_OPTIONS=("--settings settings.xml" "-Dmaven.repo.local=${M2_LOCATION}" "--no-transfer-progress" "-DpropertyFile=${ARCHETYPE_PROPERTIES_FILE}")
 
-echo "<settings></settings>" > /root/.m2/settings.xml
+echo "<settings></settings>" > settings.xml
 
 ./mvnw clean archetype:create-from-project ${MAVEN_OPTIONS[@]}
