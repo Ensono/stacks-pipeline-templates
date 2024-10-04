@@ -1,6 +1,7 @@
 parameters:
   repo_root_dir: ""
   project_root_dir: ""
+  pom_dir: ""
   pipeline_scripts_directory: ""
   # Docker Config
   docker_build_container: ""
