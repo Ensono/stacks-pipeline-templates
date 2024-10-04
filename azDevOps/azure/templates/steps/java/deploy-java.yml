@@ -11,6 +11,7 @@ parameters:
   maven_id: "central"
   maven_username: ""
   maven_password: ""
+  maven_package_version: ""
   # GPG KEYS
   gpg_key_signing_id: ""
   gpg_private_key: ""
@@ -42,7 +43,7 @@ steps:
     inputs:
       targetType: inline
       script: |
-        ./mvnw deploy --no-transfer-progress --settings settings.xml
+        ./mvnw deploy --no-transfer-progress --settings settings.xml -DdeploymentName="${{ parameters.project_type }} @ ${{ parameters.maven_package_version }}"
       workingDirectory: "${{ parameters.project_root_dir }}"
     target:
       container: ${{ parameters.docker_build_container }}
