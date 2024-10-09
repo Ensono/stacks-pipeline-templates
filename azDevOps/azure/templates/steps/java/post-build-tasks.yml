@@ -15,7 +15,6 @@ parameters:
   # Docker
   docker_build_container: ""
 
-
 steps:
 
   - task: PublishTestResults@2
