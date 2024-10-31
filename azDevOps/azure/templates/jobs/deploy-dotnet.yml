@@ -17,7 +17,7 @@ parameters:
   appinsights_enabled: false
   appinsights_accountName: ''
   performance_test: false
-  dotnet_core_version: '2.2.x'
+  dotnet_core_version: '8.x.x'
 
 jobs:
   - deployment: ${{ parameters.environment }}
