@@ -3,7 +3,7 @@ parameters:
   package_path: ''
   package_feed: ''
   # .NET Core version variable
-  dotnet_core_version: '2.2.x'
+  dotnet_core_version: '8.x.x'
   # Name of the variable that holds the version number to version
   # the package with
   version_variable_name: Build.BuildNumber

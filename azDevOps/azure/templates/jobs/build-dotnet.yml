@@ -41,7 +41,7 @@ parameters:
   build_file_path: ''
   build_file_artefact: ''
   # .NET Core version variable
-  dotnet_core_version: '2.2.x'
+  dotnet_core_version: '8.x.x'
 
 jobs:
   - job: BuildDotNet
@@ -94,9 +94,9 @@ jobs:
             displayName: 'Set Sonar Extra Properties variable'
 
           - task: UseDotNet@2
-            displayName: 'Use .NET Core SDK 2.2.x For SonarCloud'
+            displayName: 'Use .NET Core SDK ${{ parameters.dotnet_core_version }} For SonarCloud'
             inputs:
-              version: '2.2.x'
+              version: '${{parameters.dotnet_core_version}}'
               packageType: runtime
 
           - task: SonarCloudPrepare@1
