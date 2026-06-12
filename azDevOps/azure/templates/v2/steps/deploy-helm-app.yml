@@ -1,0 +1,24 @@
+parameters:
+  - name: pipeline_scripts_dir
+    type: string
+  - name: container
+    type: string
+    default: "host"
+  - name: template_input
+    type: object
+    default: []
+steps:
+  - ${{ each template in parameters.template_input }}:
+      - task: PowerShell@2
+        inputs:
+          targetType: 'filePath'
+          filePath: "${{ parameters.pipeline_scripts_dir }}/pwsh/k8s/New-HelmInstall.ps1"
+          arguments: >
+            -DeploymentName ${{ template.display_name }}
+            -DeploymentNamespace ${{ template.namespace }}
+            -ChartName ${{ template.chart_name }}
+            -ChartVersion ${{ template.chart_version }}
+            -ConfigFile ${{ template.helm_parameters_file }}
+        target:
+          container: "${{ parameters.container }}"
+        displayName: "Deploy: Helm Install (${{ template.display_name }})"
